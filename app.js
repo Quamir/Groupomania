@@ -4,6 +4,7 @@ const path = require('path');
 const app = express();
 
 const userRouter = require('./routes/userRoutes');
+const postRouter = require('./routes/postRoutes');
 
 // prevent CORS issues 
 app.use((req, res, next) => {
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.use('/api/user',userRouter);
+app.use('/api/post', postRouter);
 
 // error handling middleware 
 app.use((err,req,res,next) =>{
