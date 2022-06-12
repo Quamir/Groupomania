@@ -1,8 +1,9 @@
 const express = require('express');
-const pool = require('./database');
-
+const path = require('path');
 
 const app = express();
+
+const userRouter = require('./routes/userRoutes');
 
 // prevent CORS issues 
 app.use((req, res, next) => {
@@ -16,13 +17,24 @@ app.use(express.urlencoded({ extended : true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+app.use('/api/user',userRouter);
 
-s
-app.listen(3000, () => {
-    console.log("sever started on port 3000");
+// error handling middleware 
+app.use((err,req,res,next) =>{
+    err.statusCode = err.statusCode || 500;
+    err.status = err.status || 'error';
+
+    res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+        operational: err.isOperational,
+        stacktrace: err.stack
+    });
 });
 
 
+
+module.exports = app;
 
 // https://www.postgresql.org/docs/current/ddl-constraints.html
 // https://codehunter.cc/a/postgresql/mongoose-schema-vs-model
