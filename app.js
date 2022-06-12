@@ -3,8 +3,11 @@ const path = require('path');
 
 const app = express();
 
+// route paths
 const userRouter = require('./routes/userRoutes');
 const postRouter = require('./routes/postRoutes');
+const commentRouter = require('./routes/commentRoutes');
+const reactionsRouter = require('./routes/reactionsRouter');
 
 // prevent CORS issues 
 app.use((req, res, next) => {
@@ -18,8 +21,11 @@ app.use(express.urlencoded({ extended : true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// main routes
 app.use('/api/user',userRouter);
 app.use('/api/post', postRouter);
+app.use('/api/comment',commentRouter);
+app.use('/api/reaction',reactionsRouter);
 
 // error handling middleware 
 app.use((err,req,res,next) =>{
@@ -33,8 +39,6 @@ app.use((err,req,res,next) =>{
         stacktrace: err.stack
     });
 });
-
-
 
 module.exports = app;
 
