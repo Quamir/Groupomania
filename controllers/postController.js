@@ -16,7 +16,7 @@ exports.showAllPost = catchAsync(async (req,res,next) =>{
     });
 });
 
-// show post 
+// show single post 
 exports.showSinglePost = catchAsync(async (req,res,next) =>{
     post = {id: req.body.id}
 

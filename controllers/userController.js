@@ -3,9 +3,11 @@ const pool = require('../database');
 
 const AppError = require('../utils/appError');
 const catchAsync  = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 
 // create an account
+
 exports.createAccount = catchAsync(async (req,res,next) => {
     const user = {
         firstName: req.body.firstName,
