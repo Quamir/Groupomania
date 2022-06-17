@@ -1,0 +1,67 @@
+const express = require('express');
+const pool = require('../database');
+
+class User{
+    constructor(firstName,lastName,email,password,newPassword,newEmail,id){
+        this.firstName = firstName;
+        this.lastName = lastName
+        this.email = email
+        this.password = password
+        this.newPassword = newPassword
+        this.newEmail = newEmail
+        this.id = id
+    }
+
+    async createAccount(){
+        // checking db for existing email 
+        const exist = 'SELECT EXISTS(SELECT email FROM user_account WHERE email = $1)';
+        const existValue = [this.email];
+        const existsQuery = await pool.query(exist, existValue);
+              
+        if(existsQuery.rows[0].exists === true){
+            return 'an account with this email adddresss has already been made';
+        }else{
+            const sql =  'INSERT INTO user_account(first_name, last_name,email, user_password) VALUES($1,$2,$3,$4) RETURNING*';
+            const values = [this.firstName, this.lastName, this.email, this.password];
+            const newAccount = await pool.query(sql, values);
+            return newAccount.rows[0];
+        }
+    }
+
+    async login(){
+        const sql = 'SELECT email, user_password FROM user_account WHERE email = $1 AND user_password = $2';
+        const values = [this.email, this.password];
+        const login = await pool.query(sql,values);
+        return login.rows[0];
+    }
+
+    async deleteAccount(){
+        const sql = 'DELETE FROM user_account WHERE email = $1 AND user_password = $2';
+        const values = [this.email, this.password];
+        const deleteUserAccount = await pool.query(sql,values);
+        return deleteUserAccount;
+    }
+
+    async changePassword(){
+        const sql = 'UPDATE user_account SET user_password = $1 WHERE email = $2 AND user_password = $3';
+        const values = [this.newPassword, this.email, this.password];
+        const changeUserPassword = await pool.query(sql,values);
+        return changeUserPassword;
+    }
+
+    async changeEmail(){
+        const sql = 'UPDATE user_account SET email = $1 WHERE email = $2 AND user_password = $3';
+        const values = [this.newEmail, this.email, this.password];
+        const changeUserEmail = await  pool.query(sql,values);
+        return changeUserEmail;
+    }
+
+    async changeName(){
+        const sql = 'UPDATE user_account SET first_name = $1, last_name = $2 WHERE id = $3';
+        const values = [this.firstName, this.lastName, this.id];
+        const changeUserName = await pool.query(sql,values);
+        return changeUserName;
+    }
+}
+
+module.exports = User;

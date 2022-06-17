@@ -22,7 +22,6 @@ exports.showSinglePost = catchAsync(async (req,res,next) =>{
 
     const sql = 'SELECT * FROM user_post WHERE id = $1';
     const values = [post.id];
-
     const showSingleUserPost = await pool.query(sql,values);
 
     res.status(200).json({
@@ -62,7 +61,6 @@ exports.editPost = catchAsync(async (req,res,next) =>{
 
     const sql = 'UPDATE user_post SET title_text = $1, description_text = $2  WHERE id = $3 RETURNING*';
     const values = [userInfo.titleText,userInfo.descriptionText, userInfo.id];
-
     const editUserPost = await pool.query(sql,values);
 
     res.status(200).json({
@@ -72,13 +70,11 @@ exports.editPost = catchAsync(async (req,res,next) =>{
 
 // delete post
 exports.deletePost = catchAsync(async (req,res,next) => {
-    postId = {
+    const postId = {
         id: req.body.id
     };
-
     const sql = 'DELETE FROM user_post WHERE id = $1 RETURNING*';
     const values= [postId.id];
-
     const deleteUserPost = await pool.query(sql,values);
 
     res.status(200).json({
