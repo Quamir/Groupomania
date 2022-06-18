@@ -2,7 +2,6 @@ const express = require('express');
 const pool = require('../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
 const {promisify} = require('util');
 
 const signToken = id =>{
@@ -83,7 +82,6 @@ class User{
         const changeUserName = await pool.query(sql,values);
         return changeUserName;
     }
-
 }
 
 module.exports = User;
