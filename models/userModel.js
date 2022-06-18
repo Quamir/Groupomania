@@ -1,5 +1,15 @@
 const express = require('express');
 const pool = require('../database');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const {promisify} = require('util');
+
+const signToken = id =>{
+    return jwt.sign({id},`${process.env.JWT_SECRET}`,{
+        expiresIn: "2h"
+    });
+}
 
 class User{
     constructor(firstName,lastName,email,password,newPassword,newEmail,id){
@@ -17,22 +27,33 @@ class User{
         const exist = 'SELECT EXISTS(SELECT email FROM user_account WHERE email = $1)';
         const existValue = [this.email];
         const existsQuery = await pool.query(exist, existValue);
-              
+        
+        this.password = await bcrypt.hash(this.password, 12);
+        
+
         if(existsQuery.rows[0].exists === true){
             return 'an account with this email adddresss has already been made';
         }else{
             const sql =  'INSERT INTO user_account(first_name, last_name,email, user_password) VALUES($1,$2,$3,$4) RETURNING*';
             const values = [this.firstName, this.lastName, this.email, this.password];
             const newAccount = await pool.query(sql, values);
-            return newAccount.rows[0];
+            const token = signToken(newAccount.rows[0].id);
+            return [newAccount.rows[0],token]; 
         }
     }
 
     async login(){
-        const sql = 'SELECT email, user_password FROM user_account WHERE email = $1 AND user_password = $2';
+        //  gets user id 
+        const id = 'SELECT id FROM user_account WHERE email = $1 ';
+        const idValue = [this.email];
+        const idQuery = await pool.query(id, idValue);
+
+        const token = signToken(idQuery.rows[0].id);
+
+        const sql = 'SELECT email, user_password, id FROM user_account WHERE email = $1 AND user_password = $2 ';
         const values = [this.email, this.password];
         const login = await pool.query(sql,values);
-        return login.rows[0];
+        return {token, login}
     }
 
     async deleteAccount(){
@@ -62,6 +83,7 @@ class User{
         const changeUserName = await pool.query(sql,values);
         return changeUserName;
     }
+
 }
 
 module.exports = User;

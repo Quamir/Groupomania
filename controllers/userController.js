@@ -13,7 +13,8 @@ exports.createAccount = catchAsync(async (req,res,next) => {
    const createUser =  await user.createAccount();
 
     res.status(200).json({
-        message: createUser
+        message: createUser[0],
+        token: createUser[1]
     });
 });
 
@@ -23,7 +24,8 @@ exports.login = catchAsync(async (req,res,next) => {
     const loginUser = await user.login();
 
     res.status(200).json({
-        message: loginUser
+        message: loginUser.login,
+        token: loginUser.token
     });
 });
 
@@ -61,7 +63,7 @@ exports.changeEmail = catchAsync(async (req,res,nest) => {
 exports.changeName = catchAsync(async (req,res,next) => {
     const user = new User(...[req.body.firstName, req.body.lastName, , , , ,req.body.id]);
     const changeUserName =  await user.changeName();
-
+    console.log(req.body);
     res.status(200).json({
         message: changeUserName
     });
