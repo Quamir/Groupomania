@@ -3,6 +3,8 @@ const pool = require('../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {promisify} = require('util');
+const AppError = require('../utils/appError');
+const Media = require('./imageModel');
 
 const signToken = id =>{
     return jwt.sign({id},`${process.env.JWT_SECRET}`,{
@@ -11,7 +13,7 @@ const signToken = id =>{
 }
 
 class User{
-    constructor(firstName,lastName,email,password,newPassword,newEmail,id){
+    constructor(firstName,lastName,email,password,newPassword,newEmail,id,profilePicture){
         this.firstName = firstName;
         this.lastName = lastName
         this.email = email
@@ -19,6 +21,7 @@ class User{
         this.newPassword = newPassword
         this.newEmail = newEmail
         this.id = id
+        this.profilePicture = profilePicture
     }
 
     async createAccount(){
@@ -31,10 +34,10 @@ class User{
         
 
         if(existsQuery.rows[0].exists === true){
-            return 'an account with this email adddresss has already been made';
+            return {message: 'an account with this email adddresss has already been made'}
         }else{
-            const sql =  'INSERT INTO user_account(first_name, last_name,email, user_password) VALUES($1,$2,$3,$4) RETURNING*';
-            const values = [this.firstName, this.lastName, this.email, this.password];
+            const sql =  'INSERT INTO user_account(first_name, last_name,email, user_password, profile_picture) VALUES($1,$2,$3,$4,$5) RETURNING*';
+            const values = [this.firstName, this.lastName, this.email, this.password, this.profilePicture];
             const newAccount = await pool.query(sql, values);
             const token = signToken(newAccount.rows[0].id);
             return [newAccount.rows[0],token]; 
@@ -43,23 +46,62 @@ class User{
 
     async login(){
         //  gets user id 
-        const id = 'SELECT id FROM user_account WHERE email = $1 ';
+        const id = 'SELECT id, user_password FROM user_account WHERE email = $1 ';
         const idValue = [this.email];
         const idQuery = await pool.query(id, idValue);
-
         const token = signToken(idQuery.rows[0].id);
+        const userPassword = idQuery.rows[0].user_password
 
-        const sql = 'SELECT email, user_password, id FROM user_account WHERE email = $1 AND user_password = $2 ';
-        const values = [this.email, this.password];
-        const login = await pool.query(sql,values);
-        return {token, login}
+        // compare password to hash
+        const compare = await bcrypt.compare(this.password,userPassword);
+        console.log(compare);
+        if(compare === true){
+            return {token}
+        }else{
+            return (new AppError('',404));
+        }
     }
 
     async deleteAccount(){
-        const sql = 'DELETE FROM user_account WHERE email = $1 AND user_password = $2';
-        const values = [this.email, this.password];
-        const deleteUserAccount = await pool.query(sql,values);
-        return deleteUserAccount;
+        //  checks if user exist 
+        const exist = 'SELECT EXISTS(SELECT email, user_password FROM user_account WHERE email = $1)';
+        const value = [this.email];
+        const existsQuery = await pool.query(exist, value);
+        //  checks if a profile picture exists 
+        const ProfilePictureExists = 'SELECT EXISTS(SELECT profile_picture FROM user_account WHERE email = $1)';
+        const profilePictureQuery = await pool.query(ProfilePictureExists, value);
+
+        if(existsQuery.rows[0].exists === true){
+            // check hashed password
+            const hashPassWordQuery = 'SELECT user_password FROM user_account WHERE email = $1'
+            const hashPassWordValues = [this.email];
+            const hashPassword = await pool.query(hashPassWordQuery, hashPassWordValues);
+            const compare = await bcrypt.compare(this.password,hashPassword.rows[0].user_password);
+
+
+            if(profilePictureQuery.rows[0].exists === true){
+                // find file location of profile picture
+                const findProfilePicture = 'SELECT profile_picture FROM user_account WHERE email = $1';
+                const queryForProfilePicture = await pool.query(findProfilePicture,value);
+                const getProfilePicture = queryForProfilePicture.rows[0].profile_picture
+            
+                // delete profile picture 
+                const media =  new Media(getProfilePicture);
+                const fileStatus = media.unLink('public/images/profile_pictures');
+            }
+
+            if(compare === true){
+                //  delete account 
+                const sql = 'DELETE FROM user_account WHERE email = $1';
+                const deleteUserAccount = await pool.query(sql,value);
+            }
+
+
+        } else{
+            return {notice: 'user account does not exist'}
+        }
+
+        return {notice: 'user profile has delted'}
     }
 
     async changePassword(){
@@ -82,6 +124,7 @@ class User{
         const changeUserName = await pool.query(sql,values);
         return changeUserName;
     }
+
 }
 
 module.exports = User;

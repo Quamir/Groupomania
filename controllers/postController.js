@@ -1,6 +1,12 @@
 const catchAsync  = require('../utils/catchAsync');
 const Post = require('../models/postModel');
+const Media = require('../models/imageModel');
+const multer = require('multer');
 
+
+const media = new Media('./public/images/post_pictures');
+const upload = media.upload();
+exports.uploadPostMedia = upload.single('image');
 
 // show All post 
 exports.showAllPost = catchAsync(async (req,res,next) =>{
@@ -24,13 +30,16 @@ exports.showSinglePost = catchAsync(async (req,res,next) =>{
 
 // create post 
 exports.createPost = catchAsync(async (req,res,next) =>{
-    // media is null until multer is added 
+    // multer 
     const post = new Post(
-        req.body.id,
-        req.body.userId,
-        req.body.titleText,
-        req.body.descriptionText,
-        req.body.media
+        ...[
+            ,
+            req.body.userId,
+            req.body.titleText,
+            req.body.descriptionText,
+            `${req.protocol}://${req.get('host')}/public/images/post_pictures/${req.file.filename}`
+        ]
+      
     );
     const createUserPost = await post.createPost();
 
@@ -59,8 +68,10 @@ exports.editPost = catchAsync(async (req,res,next) =>{
 
 // delete post
 exports.deletePost = catchAsync(async (req,res,next) => {
-    const post = new Post(req.body.id);
+    const post = new Post(...[req.body.id, , , ,]);
     const deleteUserPost = await post.deletePost();
+
+    console.log(req.body.id);
   
     res.status(200).json({
         message: deleteUserPost

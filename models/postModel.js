@@ -1,4 +1,5 @@
 const pool = require('../database');
+const Media = require('./imageModel');
 
 class Post{
     constructor(id,userId,titleText,descriptionText,media){
@@ -6,7 +7,7 @@ class Post{
         this.userId = userId;
         this.titleText = titleText;
         this.descriptionText = descriptionText;
-        this.media = null;
+        this.media = media;
     }
 
     async showAllPost(){
@@ -39,8 +40,18 @@ class Post{
     async deletePost(){
         const sql = 'DELETE FROM user_post WHERE id = $1 RETURNING*';
         const values= [this.id];
+        // find file that will be used in fs unlink
+        const findFileLocation  = 'SELECT(media) FROM user_post WHERE id = $1';
+        const getMediaLocation = await pool.query(findFileLocation, values);
+        const fileLocation = getMediaLocation.rows[0].media;
+
+        // console.log(getMediaLocation.rows[0].media);
+
         const deleteUserPost = await pool.query(sql,values);
-        return deleteUserPost.rows
+        const media = new Media(fileLocation);
+        const fileStatus = media.unLink('public/images/post_pictures');
+
+        return [getMediaLocation.rows[0], deleteUserPost, fileStatus]
     }
 }
 

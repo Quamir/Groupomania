@@ -1,14 +1,27 @@
 const catchAsync  = require('../utils/catchAsync');
 const User = require('../models/userModel');
+const Media = require('../models/imageModel');
+const multer = require('multer');
+
+const media = new Media('./public/images/profile_pictures');
+const upload = media.upload();
+exports.uploadProfilePicture = upload.single('image');
 
 
 // create an account
 exports.createAccount = catchAsync(async (req,res,next) => {
     const user =  new User(
-        req.body.firstName,
-        req.body.lastName,
-        req.body.email,
-        req.body.password
+        ...[
+            req.body.firstName,
+            req.body.lastName,
+            req.body.email,
+            req.body.password,
+            ,
+            ,
+            ,
+            `${req.protocol}://${req.get('host')}/public/images/profile_pictures/${req.file.filename}`
+        ]
+       
     );
    const createUser =  await user.createAccount();
 
@@ -24,8 +37,7 @@ exports.login = catchAsync(async (req,res,next) => {
     const loginUser = await user.login();
 
     res.status(200).json({
-        message: loginUser.login,
-        token: loginUser.token
+        message: loginUser
     });
 });
 

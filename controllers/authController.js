@@ -20,7 +20,7 @@ exports.protect = catchAsync(async (req, res, next) =>{
 
     // validate token 
     const decoded = await promisify(jwt.verify)(token, `${process.env.JWT_SECRET}`);
-    req.body.id = decoded.id
+    req.body.jwtId = decoded.id
     // check if user exists
     const sql =  'SELECT EXISTS(SELECT * FROM user_account WHERE id = $1)';
     const values = [decoded.id];
