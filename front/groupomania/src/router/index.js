@@ -10,7 +10,7 @@ const router = createRouter({
     { path: '/', redirect: '/login'},
     { path: '/login', component: Login,
     children:[
-      { path: '/signup', component: null },
+      { path: '/signup', component: Login },
     ]},
     { path: '/timeline', component: Timeline,
       children:[
@@ -18,12 +18,11 @@ const router = createRouter({
       ]},
     { path: '/post/:id', component: null },
     { path: '/settings', component: Settings,
-      component: null,
       children:[
-        { path: '/delteaccount', component: null },
-        { path: '/changepassword', component: null },
-        { path: '/changeemail', component: null },
-        { path: 'updateprofilepicture', component: null },
+        { path: '/deleteaccount', component: Settings },
+        { path: '/changepassword', component: Settings },
+        { path: '/changeemail', component: Settings },
+        { path: 'updateprofilepicture', component: Settings },
       ]},
   ],
 });
