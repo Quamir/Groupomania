@@ -58,10 +58,10 @@
 .form-content{
     display: flex;
     flex-direction: column;
-    padding-left: 40px;
+    align-items: center;
     margin-top: 25px;
 
-    & label{
+    & label, & p{
     padding-bottom: 10px;
     padding-top: 10px;
     font-size: rem(20);

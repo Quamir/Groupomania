@@ -194,6 +194,7 @@ export default {
             flex-direction: column;
             flex-grow: 1;
             padding-bottom: 20px;
+            padding-left: 20px;
             & input{
                 width: 60%;
             }

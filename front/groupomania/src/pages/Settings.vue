@@ -35,15 +35,80 @@
             <img src="../assets/images/footer/group_3.jpg" class="footer__img" alt="group of professionals">
         </footer>
 
-        <div class="tint" v-if="renderFilter()">
+        <div class="tint" v-if="renderFilter()"></div>
 
-            <base-module class="delete-account"></base-module>
-            <!-- <base-module class="change-password"></base-module>
-            <base-module class="change-email"></base-module>
-            <base-module class="change-picture"></base-module> -->
+        <base-module v-if="checkPath('/deleteaccount')">
+            <template #form-content>
+                <p>Are you sure you want to</p>
+                <p>permanently delete your account?</p>
+                <label for="password">Password</label>
+                <input type="password" id="password"/>
+                <label for="confrimpassword">Confrim Password</label>
+                <input type="password" id="Confrim Password">
+            </template>
+            <template #buttons>
+                <base-button class="module__btn">Delete Account</base-button>
+            </template>
+        </base-module>
 
-        </div>
-    
+        <base-module v-if="checkPath('/changepassword')">
+            <template #form-content>
+                <p>Change Password</p>
+                <label for="password">Password</label>
+                <input type="password" id="password"/>
+                <label for="email">Email</label>
+                <input type="email" id="email"/>
+                <label for="new password">New Password</label>
+                <input type="password" id="new password"/>
+                <label for="confrimpassword">Confrim Password</label>
+                <input type="password" id="Confrim Password"/>
+            </template>
+            <template #buttons>
+                <base-button class="module__btn">Update Password</base-button>
+            </template>
+        </base-module>
+
+        <base-module v-if="checkPath('/changeemail')">
+            <template #form-content>
+                <p>Change Email</p>
+                <label for="password">Password</label>
+                <input type="password" id="password"/>
+                <label for="email">Email</label>
+                <input type="email" id="email"/>
+                <label for="new email">New Email</label>
+                <input type="email" id="new email"/>
+                <label for="confirm email">Confrim Email</label>
+                <input type="email" id="confirm email"/>
+            </template>
+            <template #buttons>
+                <base-button class="module__btn">Update Email</base-button>
+            </template>
+        </base-module>
+
+          <base-module v-if="checkPath('/changename')">
+            <template #form-content>
+                <p>Change Name</p>
+                <label for="firstname">First Name</label>
+                <input type="text" id="firstname"/>
+                <label for="lastname">Last Name</label>
+                <input type="text" id="lastname">
+                <label for="password">Password</label>
+                <input type="password" id="password"/>
+            </template>
+            <template #buttons>
+                <base-button class="module__btn">Update Name</base-button>
+            </template>
+        </base-module>
+
+          <base-module v-if="checkPath('/updateprofilepicture')">
+            <template #form-content>
+                <p>Update Picture</p>
+                <img src="../assets/images/profile_img.svg" alt="profile picture" class="profile-picture">
+            </template>
+            <template #buttons>
+                <base-button class="module__btn">Update Picture</base-button>
+            </template>
+        </base-module>    
     </section>
 </template>
 
@@ -56,6 +121,7 @@ export default {
                 useRoute().path === '/deleteaccount' ||
                 useRoute().path === '/changepassword' ||
                 useRoute().path === '/changeemail' ||
+                 useRoute().path === '/changename' ||
                 useRoute().path === '/updateprofilepicture'
             ){
                 return true;
@@ -63,6 +129,14 @@ export default {
                 return false;
             }
         },
+
+        checkPath(path){
+            if(useRoute().path === path){
+                return true;
+            }else{
+                return false
+            }
+        }
     },
 
     created(){
@@ -151,7 +225,6 @@ export default {
             height: 40px;
             font-size: rem(16);
         }
-
     }
     
 }
@@ -176,6 +249,42 @@ footer{
     top: 0px;
     position: absolute;
     background: rgba(107,104,104,0.7);
+}
+
+.module{
+    height: 600px;
+    width: 650px;
+    margin-top: 10px;
+    background-color: white;
+    box-shadow: 0px 0px 25px 25px rgba(253,45,1,0.1);   
+    border: 5px solid   rgba(253,45,1,0.3);
+    position: absolute;
+    top: 10%;
+    left: 30vw;
+
+    & p{
+        margin: auto;
+        font-size: rem(25);   
+    }
+
+    & label{
+        margin: auto;
+    }
+
+    & input{
+        width: 60%;
+    }
+
+    &__btn{
+        width: 50%;
+        height: 40px;
+        margin-top: 30px;
+        font-size: rem(20);
+    }
+} 
+
+.profile-picture{
+    width: 200px;
 }
 
 </style>

@@ -22,7 +22,8 @@ const router = createRouter({
         { path: '/deleteaccount', component: Settings },
         { path: '/changepassword', component: Settings },
         { path: '/changeemail', component: Settings },
-        { path: 'updateprofilepicture', component: Settings },
+        { path: '/changename', component: Settings },
+        { path: '/updateprofilepicture', component: Settings }
       ]},
   ],
 });
