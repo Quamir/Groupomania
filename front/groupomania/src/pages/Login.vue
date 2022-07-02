@@ -86,6 +86,7 @@ export default {
 
 
 <style lang="scss" scoped>
+
 .homepage{
    width: 100%;
    height: 100%;
@@ -96,10 +97,12 @@ export default {
     height: 92.5%;
     width: 100%;
     display: flex;
+    overflow: hidden;
 }
 
 .left-landing{
     width: 65%;
+    height: 93vh;
 
         &__text{
         width: 50%;
@@ -149,12 +152,10 @@ export default {
 
         & span{
             padding-top: 10px;
-            padding-left: 90px;
         }
 
         &__btn{
             margin-top: 10px;
-            margin-bottom: 15px;
             width: 75%;
             height: 45px;
             font-size: rem(20);
@@ -179,7 +180,7 @@ export default {
         width: 650px;
         margin-top: 10px;
         background-color: white;
-        box-shadow: 0px 0px 25px 25px rgba(253,45,1,0.1);   
+       
         border: 5px solid   rgba(253,45,1,0.3);
 
         &__form{

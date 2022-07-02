@@ -25,7 +25,10 @@
 <style lang="scss">
 .module{
     border-radius: 25px;
-    box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.1); 
+    box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.1);
+    margin-top: 10px;
+    background-color: white; 
+    border: 5px solid   rgba(253,45,1,0.3);
 }
 
 .header{
@@ -41,7 +44,7 @@
 
     &__title{
         position: relative;
-        left: -150px;
+        left: -15%;
         font-weight: bold;
         font-size: rem(20);
         color: $secondary-color;
@@ -84,7 +87,15 @@
         &[type='password']{
             font-size: rem(20);
         }
+
+        &:focus{
+            border: 3px solid orange;
+        }
     }
+
+      & textarea:focus{
+         border: 5px solid orange;
+      }
 
       & span{
         font-style: italic;

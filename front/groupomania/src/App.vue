@@ -24,14 +24,28 @@ export default {
 html{
   margin:0;
   padding:0;
-  max-height:100vh;
-}
-body {
-  background: rgba(1, 1, 1, 0);
-  height: 100%;
 }
 
-.main-section{
-  height: 100vh;
+body {
+  background: rgba(1, 1, 1, 0);
 }
+
+::-webkit-scrollbar{
+  width: 0.5em;
+}
+
+::-webkit-scrollbar-track{
+  background: $primary-color;
+}
+
+::-webkit-scrollbar-thumb{
+  background: $secondary-color;
+}
+
+@supports(scrollbar-color: $primary-color $secondary-color){
+  *{
+    scrollbar-color: $primary-color $secondary-color;
+  }
+}
+
 </style>

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '../pages/Login.vue';
 import Settings from '../pages/Settings.vue';
 import Timeline from '../pages/Timeline.vue';
+import Post from '../pages/Post.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,9 +15,9 @@ const router = createRouter({
     ]},
     { path: '/timeline', component: Timeline,
       children:[
-        { path: '/makeapost',component: null}
+        { path: '/makeapost',component: Timeline }
       ]},
-    { path: '/post/:id', component: null },
+    { path: '/post/', component: Post },
     { path: '/settings', component: Settings,
       children:[
         { path: '/deleteaccount', component: Settings },

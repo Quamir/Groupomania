@@ -30,7 +30,7 @@ export default {
 
 <style lang="scss">
 header{
-    width: 100vw;
+    max-width: 100vw;
     height: 7vh;
     background-color: $secondary-color;
     display: flex;
@@ -59,8 +59,8 @@ nav{
     }
 
     & .profile-picture{
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         border-radius: 25px;
         border: 3px solid black;
         margin-left: 20px;

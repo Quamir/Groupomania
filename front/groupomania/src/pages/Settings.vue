@@ -25,7 +25,6 @@
                 <div class="delete-account">
                     <p>DELETE ACCOUNT</p>
                 </div>
-                <!-- <img src="../assets/images/logoorange.png" alt=""> -->
             </div>
         </div>
 
@@ -121,7 +120,7 @@ export default {
                 useRoute().path === '/deleteaccount' ||
                 useRoute().path === '/changepassword' ||
                 useRoute().path === '/changeemail' ||
-                 useRoute().path === '/changename' ||
+                useRoute().path === '/changename' ||
                 useRoute().path === '/updateprofilepicture'
             ){
                 return true;
@@ -233,7 +232,7 @@ footer{
     width: 100%;
     height: 37.2vh;
     display: flex;
-    align-items: end;
+    align-items: flex-end;
 }
 
 .footer__img{
