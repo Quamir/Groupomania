@@ -35,6 +35,7 @@ header{
     background-color: $secondary-color;
     display: flex;
     justify-content: space-between;
+
 }
 
 .logo{

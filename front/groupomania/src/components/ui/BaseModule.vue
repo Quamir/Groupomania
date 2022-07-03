@@ -43,8 +43,7 @@
     }
 
     &__title{
-        position: relative;
-        left: -15%;
+        padding-right: 30px;
         font-weight: bold;
         font-size: rem(20);
         color: $secondary-color;
