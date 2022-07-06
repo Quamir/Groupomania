@@ -4,6 +4,7 @@ import Login from '../pages/Login.vue';
 import Settings from '../pages/Settings.vue';
 import Timeline from '../pages/Timeline.vue';
 import Post from '../pages/Post.vue';
+import ProfilePage from '../pages/ProfilePage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,6 +27,7 @@ const router = createRouter({
         { path: '/changename', component: Settings },
         { path: '/updateprofilepicture', component: Settings }
       ]},
+    { path: '/profilepage', component: ProfilePage}
   ],
 });
 

@@ -167,8 +167,19 @@ section{
     height: max-content;
     margin-bottom: 30px;
 
+    @include breakpoint-down(mobile){
+        width: 100vw;
+        justify-content: center;
+    }
+
     &__wrapper{
         margin-right: 50px;
+
+        @include breakpoint-down(mobile){
+            width: 100px;
+            margin: 2px;
+            
+        }
     }
 
     & img {
@@ -176,6 +187,12 @@ section{
         height: 150px;
         object-fit: fill;
         margin-bottom: -4px;
+
+        @include breakpoint-down(mobile){
+            width: 100px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
     }
 
     &__text{
@@ -194,11 +211,30 @@ section{
     margin-bottom: 50px;
     border: 3px solid $secondary-color;
 
+    @include breakpoint-down(mobile){
+        flex-direction: column;
+        width: 90vw;
+        height: max-content;
+    }
+
     &__btn{
         height: 60%;
         padding-left: 20px;
         padding-right: 20px;
         padding-bottom: 10px;
+
+        @include breakpoint-down(mobile){
+            margin-bottom: 15px;
+            width: 60%;
+
+            & span{
+                font-size: rem(18);
+            }
+
+            &:first-child{
+                margin-top: 20px;
+            }
+        }
     }
 }
 
@@ -215,6 +251,10 @@ section{
     margin-top: 70px;
     padding-left: 50px;
     display: inline-block;
+
+    @include breakpoint-down(mobile){
+        display: none;
+    }
 
     & h2{
         text-align: center;
@@ -269,21 +309,46 @@ section{
     z-index: 1;
     background-color: white;
 
+    @include breakpoint-down(mobile){
+        position: absolute;
+        flex-direction: column;
+        width: 100vw;
+        height: 100vh;
+        left: 0px;
+        top: 0px;
+        margin: unset;
+        border-radius: 0px;
+    }
+
     & textarea{
         resize: none;
         outline: none;
         border: 2.5px solid $secondary-color;
+
+        @include breakpoint-down(mobile){
+            width: 90vw;
+        }
     }
 
     &__btn-wrapper{
         display: flex;
         align-items: center;
+
+        @include breakpoint-down(mobile){
+            flex-direction: column;
+        }
     }
 
     &__icon{
         width: 150px;
         height: 150px;
         margin-right: 100px;
+
+        @include breakpoint-down(mobile){
+            width: 200px;
+            margin-left: 90px;
+            margin-bottom: 40px;
+        }
     }
 
     &__btns-wrapper{
@@ -295,6 +360,12 @@ section{
         width: 200px;
         height: 45px;
         margin-bottom: 20px;
+
+        @include breakpoint-down(mobile){
+            width:  70vw;
+            height: 60px;
+            font-size: rem(20)
+        }
     }
 }
 </style>

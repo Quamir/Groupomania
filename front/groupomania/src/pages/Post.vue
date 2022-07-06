@@ -1,11 +1,11 @@
 <template>
-  <section>
-      <div class="post-img__wrapper">
+  <section >
+      <div class="post-img__wrapper"  @click="exitOnClick()">
         <img src="../assets/images/x_icon.svg" alt="exit button" class="post-img__exit-btn">
         <img src="../assets/images/dev-data-imgs/img1.jpg" alt="post image" class="post-img__img">
     </div>
-    <div class="comments">
-        <div class="comments__poster-info">
+    <div class="comments" >
+        <div class="comments__poster-info"  @click="exitOnClick()">
             <img src="../assets/images/people/Lora_Gertie.jpg" alt="profile picture" class="comments__profile-picture">
             <div class="comments-info__text">
                 <p>Lora Gertie</p>
@@ -14,7 +14,8 @@
         </div>
         <div class="comments__likes">
             <p>likes</p>
-            <img src="../assets/images/reactions/like.svg" alt="like button">
+            <img src="../assets/images/reactions/like.svg" alt="like button"  class="like-desktop">
+             <img src="../assets/images/reactions/like.svg" alt="like button" @click="toggleModel()" class="like-mobile">
             <p>10</p>
             <img src="../assets/images/reactions/comment.png" alt="comment button">
             <p>5</p>
@@ -36,7 +37,7 @@
             <img src="../assets/images/reactions/like.svg" alt="like button" class="comments__emoji">
             <p>1</p>
         </div>
-        <div class="commenter">
+        <div class="commenter" @click="exitOnClick()">
             <div class="commenter__wrapper">
                 <div class="commenter__info">
                     <p class="commenter__name">Tisha Lorri</p>
@@ -57,7 +58,7 @@
                 </div>
                 
             </div>
-            <div class="commenter__wrapper">
+            <div class="commenter__wrapper"  @click="exitOnClick()">
                 <div class="commenter__info">
                     <p class="commenter__name">Rex Benton</p>
                     <img src="../assets/images/people/Rex_Benton.jpg" alt="commenter's picture" class="commenter__img">
@@ -116,15 +117,42 @@
             </div>
             
         </div>
+        
+        <emoji-pop-up v-if="modelVisable" class="emoji-pop"></emoji-pop-up>
     </div>
   </section>
 </template>
 
+<script>
+export default {
+   data(){
+    return{
+        modelVisable: false
+    }
+  },
+  methods:{
+    toggleModel(){
+        this.modelVisable = !this.modelVisable;
+        console.log(this.modelVisable);
+    },
+
+    exitOnClick(){
+        if(this.modelVisable = true){
+            this.modelVisable = !this.modelVisable;
+        }
+    }
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 
 section{
-     display: flex;
+    display: flex;
+    
+    @include breakpoint-down(mobile){
+        flex-direction: column;
+    }
 }
 
 .post-img{
@@ -132,6 +160,11 @@ section{
         width: 50vw;
         height: 93vh;
         overflow: hidden;
+
+        @include breakpoint-down(mobile){
+            width: 100vw;
+            height: 40vh;
+        }
     }
 
     &__exit-btn{
@@ -150,12 +183,22 @@ section{
         width: 100%;
         height: 100%;
         object-fit: cover;
+
+        @include breakpoint-down(mobile){
+            width: 100%;
+            object-fit: fill;
+        }
     }
 }
 
 .comments{
     width: 50vw;
     height: 93vh;
+
+    @include breakpoint-down(mobile){
+        width: 100%;
+        height: max-content;
+    }
 
     &__poster-info{
         display: flex;
@@ -207,6 +250,20 @@ section{
             font-weight: 500;
             padding-right: 15px;
         }
+
+        & .like-desktop{
+            @include breakpoint-down(mobile){
+                display: none;
+            }
+        }
+
+        & .like-mobile{
+            display: none;
+
+            @include breakpoint-down(mobile){
+                display: unset;
+            }
+        }
     }
 
     &__reactions{
@@ -220,6 +277,11 @@ section{
             padding-right: 10px;
             font-size: rem(20);
             font-weight: 500;
+        }
+
+        
+        @include breakpoint-down(mobile){
+            display: none;
         }
     }
 
@@ -292,5 +354,15 @@ section{
         }
     }
 }
+
+.emoji-pop{
+        display: none;
+        
+        @include breakpoint-down(mobile){
+            position: absolute;
+            top: 250px;
+            background-color: #6B6868 !important;
+        }
+    }
 
 </style>
