@@ -103,7 +103,7 @@
 }
 
 .posts{
-    width: 100vw;
+    width: 99vw;
     display: flex;
     justify-content: center;
     align-items: center;

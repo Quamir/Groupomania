@@ -15,10 +15,10 @@ exports.reaction = (insertSql,deleteSql) => catchAsync(async(req,res,next) =>{
     let sql
 
     if(react.reactOrunReact === 1){
-        sql = insertSql
+        sql = insertSql;
         values = [react.postId,react.userId];
     }else{
-        sql = deleteSql
+        sql = deleteSql;
         values = [react.id];
     }
 
@@ -29,3 +29,22 @@ exports.reaction = (insertSql,deleteSql) => catchAsync(async(req,res,next) =>{
     });
 });
 
+
+exports.userGenReact = async (check ,insertSql ,userId ,postId ) => {
+
+    const values = [userId, postId.id];
+    const dbCheck = await pool.query(check, values);
+
+    console.log(dbCheck.rowCount);
+
+
+    if(dbCheck.rowCount === 0){
+        const sql = insertSql;
+        const insertValues = [postId.id, userId];
+        const userReact = await pool.query(sql,insertValues);
+        console.log(userReact.rows);
+    }else{
+        console.log('there is a problem');
+    }
+
+};

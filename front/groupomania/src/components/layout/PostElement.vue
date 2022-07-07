@@ -13,7 +13,7 @@
                 <p>Ptas assumenda est, omnis dolor repe</p>
             </div>
             <div class="post__img-wrapper">
-                <img src="../../assets/images/dev-data-imgs/img1.jpg" alt="img relating to post" class="post__img">
+                <img src="http://localhost:3000/images/post_pictures/BEIMG22.jpg" alt="img relating to post" class="post__img">
                 <div class="post__text">
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
