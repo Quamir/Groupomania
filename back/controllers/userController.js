@@ -2,6 +2,8 @@ const catchAsync  = require('../utils/catchAsync');
 const User = require('../models/userModel');
 const Media = require('../models/imageModel');
 const multer = require('multer');
+const jwt = require('jsonwebtoken');
+const {promisify} = require('util');
 
 const media = new Media('./public/images/profile_pictures');
 const upload = media.upload();
@@ -11,7 +13,7 @@ exports.uploadProfilePicture = upload.single('image');
 // create an account
 exports.createAccount = catchAsync(async (req,res,next) => {
 
-    console.log(req.file.originalname);
+    // console.log(req.file.originalname);
 
     const user =  new User(
         ...[
@@ -22,7 +24,7 @@ exports.createAccount = catchAsync(async (req,res,next) => {
             ,
             ,
             ,
-            `${req.protocol}://${req.get('host')}/public/images/profile_pictures/${req.file.originalname}`
+            `${req.protocol}://${req.get('host')}/images/profile_pictures/${req.file.filename}`
         ]
        
     );
@@ -43,6 +45,20 @@ exports.login = catchAsync(async (req,res,next) => {
         message: loginUser
     });
 });
+
+// get user data
+exports.userData = catchAsync(async(req,res,next) =>{
+    token = req.headers.authorization.split(' ')[1];
+    const decoded = await promisify(jwt.verify)(token, `${process.env.JWT_SECRET}`);
+    jwtId = decoded.id
+
+    const user = new User(...[, , , , , ,jwtId]);
+    const getUserData = await user.getUserData();
+
+    res.status(200).json({
+        message: getUserData
+    });
+})
 
 // delete account
 exports.deleteAccount = catchAsync(async (req,res,next) => {

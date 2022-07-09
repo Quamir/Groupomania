@@ -47,12 +47,12 @@ class User{
     async login(){
         //  gets user id 
         const id = 'SELECT id, user_password FROM user_account WHERE email = $1';
-        const idValue = [this.email];
-        const idQuery = await pool.query(id, idValue);
+        const email = [this.email];
+        const idQuery = await pool.query(id, email);
+        console.log(idQuery);
         const token = signToken(idQuery.rows[0].id);
         const userPassword = idQuery.rows[0].user_password
 
-        
         // compare password to hash
         const compare = await bcrypt.compare(this.password,userPassword);
         console.log('::passwordmatch');
@@ -60,10 +60,17 @@ class User{
         if(compare === true){
             return {token}
         }else{
-           
             return  (new AppError('wrong username or password',404))
-
         }
+    }
+
+    async getUserData(){
+        const sql = 'SELECT * FROM user_account WHERE id = $1';
+        const value = [this.id];
+        const query = await pool.query(sql, value);
+
+        console.log(query.rows);
+        return query.rows[0];
     }
 
     async deleteAccount(){

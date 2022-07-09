@@ -1,129 +1,163 @@
 <template>
-    <section>
+    <section v-if="auth">
+        <the-header picture="profilePicture"></the-header>
+        <div class="wrapper">
+            <aside class="people">
+                <div class="people-wrapper">
+                    <h2>People</h2>
+                    <div class="people__detail-wrapper">
+                        <img src="../assets/images/people/Lora_Gertie.jpg" alt="profile picture" class="people__profile-picture">
+                        <div class="people__name">
+                            <p>Lora Gertie</p>
+                        </div>
+                    </div>
+                    <div class="people__detail-wrapper">
+                        <img src="../assets/images/people/Steve_Roman.jpg" alt="profile picture" class="people__profile-picture">
+                        <div class="people__name">
+                            <p>Steve Roman</p>
+                        </div>
+                    </div>
+                    <div class="people__detail-wrapper">
+                        <img src="../assets/images/people/Toni_Isbel.jpg" alt="profile picture" class="people__profile-picture">
+                        <div class="people__name">
+                            <p>Toni Isbel</p>
+                        </div>
+                    </div>
+                    <div class="people__detail-wrapper">
+                        <img src="../assets/images/people/Jez_Jerald.jpg" alt="profile picture" class="people__profile-picture">
+                        <div class="people__name">
+                            <p>Jez Jerald</p>
+                        </div>
+                    </div>
+                    <div class="people__detail-wrapper">
+                        <img src="../assets/images/people/Seth_Silas.jpg" alt="profile picture" class="people__profile-picture">
+                        <div class="people__name">
+                            <p>Seth Silas</p>
+                        </div>
+                    </div>
+                    <div class="people__detail-wrapper">
+                        <img src="../assets/images/people/Rex_Benton.jpg" alt="profile picture" class="people__profile-picture">
+                        <div class="people__name">
+                            <p>Rex Benton</p>
+                        </div>
+                    </div>
+                    <div class="people__detail-wrapper">
+                        <img src="../assets/images/people/Shaun_Aydan.jpg" alt="profile picture" class="people__profile-picture">
+                        <div class="people__name">
+                            <p>Shaun Aydan</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
 
-        <aside class="people">
-            <div class="people-wrapper">
-                <h2>People</h2>
-                <div class="people__detail-wrapper">
-                    <img src="../assets/images/people/Lora_Gertie.jpg" alt="profile picture" class="people__profile-picture">
-                    <div class="people__name">
-                        <p>Lora Gertie</p>
+            <div class="post-wrapper">
+                <h2>Top Post</h2>
+                <div class="top-post">
+                    <div class="top-post__wrapper">
+                        <img src="../assets/images/dev-data-imgs/img1.jpg" alt="image of top post" class="top-post__picture">
+                        <div class="top-post__text">
+                            <h3>Title</h3>
+                        </div>
+                    </div>
+                    <div class="top-post__wrapper">
+                        <div class="top-post__picture">
+                            <img src="../assets/images/dev-data-imgs/img2.jpg" alt="image of top post">
+                        </div>
+                        <div class="top-post__text">
+                            <h3>Title</h3>
+                        </div>
+                    </div>
+                    <div class="top-post__wrapper">
+                        <div class="top=post__picture">
+                            <img src="../assets/images/dev-data-imgs/img3.jpg" alt="image of top post">
+                        </div>
+                        <div class="top-post__text">
+                            <h3>Title</h3>
+                        </div>
                     </div>
                 </div>
-                <div class="people__detail-wrapper">
-                    <img src="../assets/images/people/Steve_Roman.jpg" alt="profile picture" class="people__profile-picture">
-                    <div class="people__name">
-                        <p>Steve Roman</p>
-                    </div>
-                </div>
-                <div class="people__detail-wrapper">
-                    <img src="../assets/images/people/Toni_Isbel.jpg" alt="profile picture" class="people__profile-picture">
-                    <div class="people__name">
-                        <p>Toni Isbel</p>
-                    </div>
-                </div>
-                <div class="people__detail-wrapper">
-                    <img src="../assets/images/people/Jez_Jerald.jpg" alt="profile picture" class="people__profile-picture">
-                    <div class="people__name">
-                        <p>Jez Jerald</p>
-                    </div>
-                </div>
-                <div class="people__detail-wrapper">
-                    <img src="../assets/images/people/Seth_Silas.jpg" alt="profile picture" class="people__profile-picture">
-                    <div class="people__name">
-                        <p>Seth Silas</p>
-                    </div>
-                </div>
-                <div class="people__detail-wrapper">
-                    <img src="../assets/images/people/Rex_Benton.jpg" alt="profile picture" class="people__profile-picture">
-                    <div class="people__name">
-                        <p>Rex Benton</p>
-                    </div>
-                </div>
-                <div class="people__detail-wrapper">
-                    <img src="../assets/images/people/Shaun_Aydan.jpg" alt="profile picture" class="people__profile-picture">
-                    <div class="people__name">
-                        <p>Shaun Aydan</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
 
-        <div class="post-wrapper">
-            <h2>Top Post</h2>
-            <div class="top-post">
-                <div class="top-post__wrapper">
-                    <img src="../assets/images/dev-data-imgs/img1.jpg" alt="image of top post" class="top-post__picture">
-                    <div class="top-post__text">
-                        <h3>Title</h3>
-                    </div>
+                <div class="sorter">
+                    <base-button class="sorter__btn">
+                        <span>Most likes</span>
+                    </base-button>
+                    <base-button class="sorter__btn">
+                        <span>Most commented</span>
+                    </base-button>
+                    <base-button class="sorter__btn">
+                        <span>Most recent</span>
+                    </base-button>
                 </div>
-                <div class="top-post__wrapper">
-                    <div class="top-post__picture">
-                        <img src="../assets/images/dev-data-imgs/img2.jpg" alt="image of top post">
-                    </div>
-                    <div class="top-post__text">
-                        <h3>Title</h3>
-                    </div>
-                </div>
-                <div class="top-post__wrapper">
-                    <div class="top=post__picture">
-                        <img src="../assets/images/dev-data-imgs/img3.jpg" alt="image of top post">
-                    </div>
-                    <div class="top-post__text">
-                        <h3>Title</h3>
-                    </div>
-                </div>
-            </div>
 
-            <div class="sorter">
-                <base-button class="sorter__btn">
-                    <span>Most likes</span>
+                <base-button class="post-btn">
+                    <span>Make A Post</span>
                 </base-button>
-                <base-button class="sorter__btn">
-                    <span>Most commented</span>
-                </base-button>
-                <base-button class="sorter__btn">
-                    <span>Most recent</span>
-                </base-button>
+
+                <post-element></post-element>
+
             </div>
 
-            <base-button class="post-btn">
-                <span>Make A Post</span>
-            </base-button>
-
-            <post-element></post-element>
-
+            <div class="tint" v-if="render()"></div>
+            <base-module class="make-post" v-if="render()">
+                <template #title>
+                Make A Post
+                </template>
+                <template #form-content>
+                    <label for="title">Title</label>
+                    <input type="text" id="title">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" cols="70" rows="10"></textarea>
+                </template>
+                <template #buttons>
+                    <div class="make-post__btn-wrapper">
+                        <img src="../assets/images/image_icon.svg" alt="image icon" class="make-post__icon">
+                        <div class="make-post__btns-wrapper">
+                            <base-button class="make-post__btn">Upload Picture</base-button>
+                            <base-button class="make-post__btn">Post</base-button>
+                        </div>
+                    </div>
+                </template>
+            </base-module>
         </div>
-
-        <div class="tint" v-if="render()"></div>
-        <base-module class="make-post" v-if="render()">
-            <template #title>
-               Make A Post
-            </template>
-            <template #form-content>
-                <label for="title">Title</label>
-                <input type="text" id="title">
-                <label for="description">Description</label>
-                <textarea name="description" id="description" cols="70" rows="10"></textarea>
-            </template>
-            <template #buttons>
-                <div class="make-post__btn-wrapper">
-                    <img src="../assets/images/image_icon.svg" alt="image icon" class="make-post__icon">
-                    <div class="make-post__btns-wrapper">
-                        <base-button class="make-post__btn">Upload Picture</base-button>
-                        <base-button class="make-post__btn">Post</base-button>
-                    </div>
-                </div>
-            </template>
-        </base-module>
     </section>
 </template>
 
 <script>
 import { useRoute } from 'vue-router';
+import router from '../router/index.js';
+import TheHeader from '../components/layout/TheHeader.vue';
 export default {
-    
+    components:{
+        TheHeader
+    },
+    data(){
+        return{
+            auth: false,
+            user: null,
+            profilePicture: 'https://skyandtelescope.org/wp-content/uploads/planetary-nebulae-1000px.jpg'
+        }
+    },
+    async created(){
+      console.log(localStorage.getItem('token'));
+      const response = await fetch('http://localhost:3000/api/user/user',{
+        headers:{
+            Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+        }
+      });
+
+      const responseData = await response.json();
+      console.log(responseData.message);
+
+      this.profilePicture = responseData.message.profile_picture;
+      console.log(this.profilePicture);
+
+      if(responseData.status === 'fail' || responseData.status === 'error'){
+        router.replace({path: '/login'});
+      }else{
+        this.auth = true;
+      }
+
+    },
     methods:{
         render(){
             if(useRoute().path === '/makeapost'){
@@ -144,9 +178,8 @@ html{
     height: max-content;
 }
 
-section{
+.wrapper{
     display: flex;
-  
 }
 
 .post-wrapper{

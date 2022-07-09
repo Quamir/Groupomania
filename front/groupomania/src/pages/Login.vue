@@ -175,9 +175,10 @@ export default {
             this[input].isValid = true;
         },
 
-        loginValidation(){
+
+        signInValidation(){
             this.formIsValid = true;
-            if(this.email.val === ''){
+             if(this.email.val === ''){
                 this.email.isValid = false;
                 this.formIsValid = false;
             }
@@ -185,6 +186,10 @@ export default {
                 this.password.isValid = false;
                 this.formIsValid = false;
             }
+        },
+
+        loginValidation(){
+            this.formIsValid = true;
             if(this.signUpEmail.val === ''){
                 this.signUpEmail.isValid = false;
                 this.formIsValid = false;
@@ -221,19 +226,20 @@ export default {
                 password: this.password.val
             }
 
-            this.loginValidation();
+            this.signInValidation();
 
             const response = await fetch('http://localhost:3000/api/user/login',{
                 method: 'POST',
                 body: JSON.stringify(formData),
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
                 }
             });
 
             const responseData = await response.json();
 
-            console.log(responseData);
+            console.log(responseData.message.token);
            
             if(!response.ok){
                 const error = new Error(responseData.status.message || 'Failed to send request.');
@@ -246,6 +252,7 @@ export default {
                 return 'error'
             }
 
+            localStorage.setItem('token', responseData.message.token);
             router.replace({path: '/timeline'});
         },
 
@@ -271,6 +278,9 @@ export default {
             const response = await fetch('http://localhost:3000/api/user/signup',{
                 method: 'POST',
                 body: fd,
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
     
             });
 
@@ -288,6 +298,7 @@ export default {
                 return 'error'
             }
 
+            localStorage.setItem('token', responseData.token);
             router.replace({path: '/timeline'});
 
         }

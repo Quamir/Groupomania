@@ -6,10 +6,10 @@ const router = express.Router();
 
 router.post('/signup', userController.uploadProfilePicture ,userController.createAccount);
 router.post('/login', userController.login);
-router.delete('/deleteaccount', userController.deleteAccount);
+router.get('/user',authController.protect,userController.userData);
+router.delete('/deleteaccount',  authController.protect, userController.deleteAccount);
 router.patch('/changepassword', authController.protect, userController.changePassword);
 router.patch('/changeemail', authController.protect, userController.changeEmail);
 router.patch('/changename', authController.protect, userController.changeName);
-
 
 module.exports = router;

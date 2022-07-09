@@ -1,6 +1,5 @@
 <template>
 <section class="main-section">
-  <the-header></the-header>
   <router-view></router-view>
 </section>
 </template>

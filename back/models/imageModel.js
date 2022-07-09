@@ -18,6 +18,7 @@ class Media{
             const name = file.originalname.split('.')[0];
             const extension = file.mimetype.split('/')[1];
             cb(null, name + Date.now() + '.' + extension);
+            console.log(cb);
           }
         });
 
@@ -34,6 +35,8 @@ class Media{
             fileFilter: multerFilter
         });
 
+
+        console.log(upload);
         return upload;
     }
 

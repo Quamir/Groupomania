@@ -7,7 +7,7 @@
              <button class="theme-btn">
              <img src="../../assets/images/buttons/sun.svg" alt="change theme">
             </button>
-             <img src="../../assets/images/tyson.jpg" alt="profile picture" class="profile-picture">
+             <img src="" alt="profile picture" class="profile-picture">
         </nav>
     </header>
 </template>
@@ -15,6 +15,7 @@
 <script>
 import {useRoute} from 'vue-router';
 export default {
+    props:['picture'],
     methods:{
         loginRender(){
             if(useRoute().path === '/login' || useRoute().path === '/signup'){

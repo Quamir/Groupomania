@@ -26,6 +26,8 @@ app.use(express.json());
 app.use(bodyParser.json({extended: true, limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 
+
+
 // main routes
 app.use('/api/user',userRouter);
 app.use('/api/post', postRouter);
