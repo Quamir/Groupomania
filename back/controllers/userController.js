@@ -13,7 +13,6 @@ exports.uploadProfilePicture = upload.single('image');
 // create an account
 exports.createAccount = catchAsync(async (req,res,next) => {
 
-    // console.log(req.file.originalname);
 
     const user =  new User(
         ...[
@@ -59,6 +58,17 @@ exports.userData = catchAsync(async(req,res,next) =>{
         message: getUserData
     });
 })
+
+// get people for people pannel
+exports.getProfiles = catchAsync(async(req,res,next) =>{
+    const user = new User();
+
+    const profiles = await user.getProfiles(8); 
+
+    res.status(200).json({
+        message: profiles
+    });
+});
 
 // delete account
 exports.deleteAccount = catchAsync(async (req,res,next) => {

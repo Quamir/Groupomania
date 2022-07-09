@@ -1,130 +1,136 @@
 <template>
-    <section class="landing">
-
-        <div class="left-landing" v-if="!loginRender()">
-            <div class="left-landing__text">
-                <div class="left-landing__text-box">
-                    <p>Connect with collegues</p>
+    <section>
+        <the-header></the-header>
+        <div class="landing">
+            <div class="left-landing" v-if="!loginRender()">
+                <div class="left-landing__text">
+                    <div class="left-landing__text-box">
+                        <p>Connect with collegues</p>
+                    </div>
+                    <div class="left-landing__text-box">
+                        <p>Share innovative ideas</p>
+                    </div>
                 </div>
-                <div class="left-landing__text-box">
-                    <p>Share innovative ideas</p>
-                </div>
+                <img src="../assets/images/homepage.jpg" alt="" class="homepage">
             </div>
-            <img src="../assets/images/homepage.jpg" alt="" class="homepage">
-        </div>
 
-        <img src="../assets/images/homepage.jpg" alt="" class="mobile-backdrop" v-if="loginRender()">
+            <img src="../assets/images/homepage.jpg" alt="" class="mobile-backdrop" v-if="loginRender()">
 
-        <aside  class="log-in" v-if="!loginRender()">
-            <form @submit.prevent="submitForm">
-                <base-module class="module">
-                <template #form-content>
-                        <label for="email">Email</label>
-                        <input 
-                            type="text" 
-                            id="email" 
-                            v-model.trim="email.val" 
-                            :class="{invalid: !email.isValid}"
-                            @blur="clearValidity('email')"
-                        />
-                        <label for="password">Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            v-model.trim="password.val" 
-                            :class="{invalid: !password.isValid}"
-                            @blur="clearValidity('password')"
-                           
-                        />
-                        <span>Frogot password</span>
-                        <p class="validation-text" v-if="!formIsValid">Email or Password is wrong or invalid</p>
-                </template>
-                <template #buttons>
-                    <base-button class="module__btn" type="submit">Log In</base-button>
-                    <router-link to="/signup" class="link">
-                        <base-button class="module__btn" type="button">Create new account</base-button>
-                    </router-link>
-                </template>
-                </base-module>
-            </form>
-            <img src="../assets/images/logoorange.png" alt="" class="logo">
-            <img src="../assets/images/logos/logo_white.svg" alt="Groupomania logo" class="mobile-logo">
-        </aside>
-
-        <div class="sign-up" v-if="loginRender()">
-
-            <form @submit.prevent="createUser">
-                <base-module class="module">
-                    <template #title>Sign Up</template>
+            <aside  class="log-in" v-if="!loginRender()">
+                <form @submit.prevent="submitForm">
+                    <base-module class="module">
                     <template #form-content>
-                        <section class="module__form">
-                            <div class="module__form-text">
-                                <p class="validation-text" v-if="!formIsValid">One or more Invalid Inputs</p>
-                                <p class="validation-text" v-if="!equalPasswords">passwords do not Match</p>
-                                <label for="firstname">First Name</label>
-                                <input 
-                                    type="text" 
-                                    id="firstname"  
-                                    v-model.trim="firstName.val"  
-                                    :class="{invalid: !firstName.isValid}" 
-                                    @blur="clearValidity('firstName')"
-                                />
-                                <label for="lastname">Last Name</label>
-                                <input 
-                                    type="text" 
-                                    id="lastname"  
-                                    v-model.trim="lastName.val"  
-                                    :class="{invalid: !lastName.isValid}" 
-                                    @blur="clearValidity('lastName')"
-                                />
-                                <label for="email">Email</label>
-                                <input 
-                                    type="email" 
-                                    id="email"  
-                                    v-model.trim="signUpEmail.val"  
-                                    :class="{invalid: !signUpEmail.isValid}" 
-                                    @blur="clearValidity('signUpEmail')"
-                                />
-                                <label for="password">Password</label>
-                                <input 
-                                    type="password" 
-                                    id="password"  
-                                    v-model.trim="signUpPassword.val"  
-                                    :class="{invalid: !signUpPassword.isValid}" 
-                                    @blur="clearValidity('signUpPassword')"
-                                />
-                                <label for="confrimpassword">Confrim Password</label>
-                                <input 
-                                    type="password" 
-                                    id="Confrim Password"  
-                                    v-model.trim="confrimPassword.val"  
-                                    :class="{invalid: !confrimPassword.isValid}" 
-                                    @blur="clearValidity('confrimPassword')"
-                                />
-                            </div>
-                            <div class="module__form-upload">
-                                <img src=
-                                    "../assets/images/profile_img.svg" 
-                                    alt="profile picture" 
-                                    class="sign-up__upload-picture"
-                                />
-                            <label for="file">upload picture</label>
-                            <input type="file" id="file" name="file" @change="onFileSelected"/>
-                            </div>
-                        </section>
-                        <base-button type="submit" class="sign-up__btn">Create Account</base-button>
+                            <label for="email">Email</label>
+                            <input 
+                                type="text" 
+                                id="email" 
+                                v-model.trim="email.val" 
+                                :class="{invalid: !email.isValid}"
+                                @blur="clearValidity('email')"
+                            />
+                            <label for="password">Password</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                v-model.trim="password.val" 
+                                :class="{invalid: !password.isValid}"
+                                @blur="clearValidity('password')"
+                            
+                            />
+                            <span>Frogot password</span>
+                            <p class="validation-text" v-if="!formIsValid">Email or Password is wrong or invalid</p>
                     </template>
-                </base-module>
-            </form>
-        </div>
+                    <template #buttons>
+                        <base-button class="module__btn" type="submit">Log In</base-button>
+                        <router-link to="/signup" class="link">
+                            <base-button class="module__btn" type="button">Create new account</base-button>
+                        </router-link>
+                    </template>
+                    </base-module>
+                </form>
+                <img src="../assets/images/logoorange.png" alt="" class="logo">
+                <img src="../assets/images/logos/logo_white.svg" alt="Groupomania logo" class="mobile-logo">
+            </aside>
+
+            <div class="sign-up" v-if="loginRender()">
+
+                <form @submit.prevent="createUser">
+                    <base-module class="module">
+                        <template #title>Sign Up</template>
+                        <template #form-content>
+                            <section class="module__form">
+                                <div class="module__form-text">
+                                    <p class="validation-text" v-if="!formIsValid">One or more Invalid Inputs</p>
+                                    <p class="validation-text" v-if="!equalPasswords">passwords do not Match</p>
+                                    <label for="firstname">First Name</label>
+                                    <input 
+                                        type="text" 
+                                        id="firstname"  
+                                        v-model.trim="firstName.val"  
+                                        :class="{invalid: !firstName.isValid}" 
+                                        @blur="clearValidity('firstName')"
+                                    />
+                                    <label for="lastname">Last Name</label>
+                                    <input 
+                                        type="text" 
+                                        id="lastname"  
+                                        v-model.trim="lastName.val"  
+                                        :class="{invalid: !lastName.isValid}" 
+                                        @blur="clearValidity('lastName')"
+                                    />
+                                    <label for="email">Email</label>
+                                    <input 
+                                        type="email" 
+                                        id="email"  
+                                        v-model.trim="signUpEmail.val"  
+                                        :class="{invalid: !signUpEmail.isValid}" 
+                                        @blur="clearValidity('signUpEmail')"
+                                    />
+                                    <label for="password">Password</label>
+                                    <input 
+                                        type="password" 
+                                        id="password"  
+                                        v-model.trim="signUpPassword.val"  
+                                        :class="{invalid: !signUpPassword.isValid}" 
+                                        @blur="clearValidity('signUpPassword')"
+                                    />
+                                    <label for="confrimpassword">Confrim Password</label>
+                                    <input 
+                                        type="password" 
+                                        id="Confrim Password"  
+                                        v-model.trim="confrimPassword.val"  
+                                        :class="{invalid: !confrimPassword.isValid}" 
+                                        @blur="clearValidity('confrimPassword')"
+                                    />
+                                </div>
+                                <div class="module__form-upload">
+                                    <img src=
+                                        "../assets/images/profile_img.svg" 
+                                        alt="profile picture" 
+                                        class="sign-up__upload-picture"
+                                    />
+                                <label for="file">upload picture</label>
+                                <input type="file" id="file" name="file" @change="onFileSelected"/>
+                                </div>
+                            </section>
+                            <base-button type="submit" class="sign-up__btn">Create Account</base-button>
+                        </template>
+                    </base-module>
+                </form>
+            </div>
+        </div>    
     </section>
 </template>
 
 <script>
 import {useRoute} from 'vue-router';
 import router from '../router/index.js';
+import TheHeader from '../components/layout/TheHeader.vue';
 
 export default {
+    components:{
+        TheHeader
+    },
     data(){
         return{
             email: {
@@ -161,7 +167,6 @@ export default {
             uploadImage:''
         }
     },
-
     methods:{
         loginRender(){
             if(useRoute().path === '/signup'){

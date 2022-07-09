@@ -5,13 +5,13 @@
             <aside class="people">
                 <div class="people-wrapper">
                     <h2>People</h2>
-                    <div class="people__detail-wrapper">
-                        <img :src="profilePicture" alt="profile picture" class="people__profile-picture">
+                    <div class="people__detail-wrapper" v-for="profile in profileArray" :profile="profile" :key="profile.index">
+                        <img :src="profile.profile_picture" alt="profile picture" class="people__profile-picture">
                         <div class="people__name">
-                            <p>Lora Gertie</p>
+                            <p>{{profile.first_name}}  {{profile.last_name}}</p>
                         </div>
                     </div>
-                    <div class="people__detail-wrapper">
+                    <!-- <div class="people__detail-wrapper">
                         <img src="../assets/images/people/Steve_Roman.jpg" alt="profile picture" class="people__profile-picture">
                         <div class="people__name">
                             <p>Steve Roman</p>
@@ -46,7 +46,7 @@
                         <div class="people__name">
                             <p>Shaun Aydan</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </aside>
 
@@ -134,9 +134,12 @@ export default {
         return{
             auth: false,
             user: null,
-            profilePicture: null
+            profilePicture: null,
+            profileArray:[]
+
         }
     },
+    
     async created(){
       console.log(localStorage.getItem('token'));
       const response = await fetch('http://localhost:3000/api/user/user',{
@@ -157,6 +160,8 @@ export default {
         this.auth = true;
       }
 
+     this.getProfiles();
+
     },
     methods:{
         render(){
@@ -167,7 +172,28 @@ export default {
                 return false;
             }
         },
+
+        async getProfiles(){
+            const response = await fetch('http://localhost:3000/api/user/profiles',{
+                headers:{
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+
+            const responseData = await response.json();
+            const array = responseData.message;
+
+            array.forEach(person =>{
+                this.profileArray.push(person);
+            })
+
+            console.log(this.profileArray);
+
+
+        }
     },
+
 }
 </script>
 
@@ -299,6 +325,11 @@ html{
         flex-direction: column;
         align-items: center;
         margin-bottom: 20px;
+        width: 170px;
+
+        &:hover{
+            cursor: pointer;
+        }
     }
 
     &__profile-picture{
@@ -312,7 +343,7 @@ html{
     &__name{
         display: flex;
         justify-content: center;
-        width: 80%;
+        width: 100%;
         border: 3px solid $secondary-color;
         border-radius: 25px;
         

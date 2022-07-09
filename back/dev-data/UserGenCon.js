@@ -48,7 +48,7 @@ class UserGenContent{
                 lastName: 'Felicity'
             },
             {
-                firstName: 'Lorra',
+                firstName: 'Lora',
                 lastName: 'Gertie'
             },
             {
