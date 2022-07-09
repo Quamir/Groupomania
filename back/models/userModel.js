@@ -49,18 +49,20 @@ class User{
         const id = 'SELECT id, user_password FROM user_account WHERE email = $1';
         const idValue = [this.email];
         const idQuery = await pool.query(id, idValue);
-        console.log(idQuery);
         const token = signToken(idQuery.rows[0].id);
         const userPassword = idQuery.rows[0].user_password
 
         
         // compare password to hash
         const compare = await bcrypt.compare(this.password,userPassword);
+        console.log('::passwordmatch');
         console.log(compare);
         if(compare === true){
             return {token}
         }else{
-            return (new AppError('',404));
+           
+            return  (new AppError('wrong username or password',404))
+
         }
     }
 

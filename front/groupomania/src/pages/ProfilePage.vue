@@ -21,8 +21,6 @@
     </section>
 </template>
 
-
-
 <style lang="scss" scoped>
 
 .cover{

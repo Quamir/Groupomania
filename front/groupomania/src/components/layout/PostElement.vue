@@ -10,7 +10,7 @@
                  <p class="post__timestamp">June 2 at 11:30 AM</p>
             </div>
             <div class="post__title">
-                <p>Ptas assumenda est, omnis dolor repe</p>
+                <p></p>
             </div>
             <div class="post__img-wrapper">
                 <img src="http://localhost:3000/images/post_pictures/BEIMG22.jpg" alt="img relating to post" class="post__img">
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+
 export default {
   data(){
     return{
@@ -57,8 +58,7 @@ export default {
     toggleModel(){
         this.modelVisable = !this.modelVisable;
     }
-  }
-
+  },
 }
 </script>
 <style lang="scss" scoped>

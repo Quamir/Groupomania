@@ -10,6 +10,9 @@ exports.uploadProfilePicture = upload.single('image');
 
 // create an account
 exports.createAccount = catchAsync(async (req,res,next) => {
+
+    console.log(req.file.originalname);
+
     const user =  new User(
         ...[
             req.body.firstName,
@@ -19,7 +22,7 @@ exports.createAccount = catchAsync(async (req,res,next) => {
             ,
             ,
             ,
-            `${req.protocol}://${req.get('host')}/public/images/profile_pictures/${req.file.filename}`
+            `${req.protocol}://${req.get('host')}/public/images/profile_pictures/${req.file.originalname}`
         ]
        
     );

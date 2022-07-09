@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -18,9 +19,12 @@ app.use((req, res, next) => {
     next();
 });
 
+
 app.use(express.urlencoded({ extended : true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(bodyParser.json({extended: true, limit: '50mb'}));
+app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 
 // main routes
 app.use('/api/user',userRouter);

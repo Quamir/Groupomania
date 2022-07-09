@@ -16,58 +16,152 @@
         <img src="../assets/images/homepage.jpg" alt="" class="mobile-backdrop" v-if="loginRender()">
 
         <aside  class="log-in" v-if="!loginRender()">
-            <base-module class="module">
-               <template #form-content>
-                    <label for="email">Email</label>
-                    <input type="text" id="email"/>
-                    <label for="password">Password</label>
-                    <input type="password" id="password"/>
-                    <span>Frogot password</span>
-               </template>
-               <template #buttons>
-                    <base-button class="module__btn">Log In</base-button>
-                    <base-button class="module__btn">Create new account</base-button>
-               </template>
-            </base-module>
+            <form @submit.prevent="submitForm">
+                <base-module class="module">
+                <template #form-content>
+                        <label for="email">Email</label>
+                        <input 
+                            type="text" 
+                            id="email" 
+                            v-model.trim="email.val" 
+                            :class="{invalid: !email.isValid}"
+                            @blur="clearValidity('email')"
+                        />
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            v-model.trim="password.val" 
+                            :class="{invalid: !password.isValid}"
+                            @blur="clearValidity('password')"
+                           
+                        />
+                        <span>Frogot password</span>
+                        <p class="validation-text" v-if="!formIsValid">Email or Password is wrong or invalid</p>
+                </template>
+                <template #buttons>
+                    <base-button class="module__btn" type="submit">Log In</base-button>
+                    <router-link to="/signup" class="link">
+                        <base-button class="module__btn" type="button">Create new account</base-button>
+                    </router-link>
+                </template>
+                </base-module>
+            </form>
             <img src="../assets/images/logoorange.png" alt="" class="logo">
             <img src="../assets/images/logos/logo_white.svg" alt="Groupomania logo" class="mobile-logo">
         </aside>
 
         <div class="sign-up" v-if="loginRender()">
-            <base-module class="module">
-                <template #title>Sign Up</template>
-                <template #form-content>
-                    <section class="module__form">
-                        <div class="module__form-text">
-                            <label for="firstname">First Name</label>
-                            <input type="text" id="firstname"/>
-                            <label for="lastname">Last Name</label>
-                            <input type="text" id="lastname">
-                            <label for="email">Email</label>
-                            <input type="email" id="email"/>
-                            <label for="password">Password</label>
-                            <input type="password" id="password"/>
-                            <label for="confrimpassword">Confrim Password</label>
-                            <input type="password" id="Confrim Password">
-                        </div>
-                        <div class="module__form-upload">
-                            <img src=
-                                "../assets/images/profile_img.svg" 
-                                alt="profile picture" 
-                                class="sign-up__upload-picture">
-                            <base-button class="module__form-btn">Upload Picture</base-button>
-                        </div>
-                    </section>
-                    <base-button class="sign-up__btn">Create Account</base-button>
-                </template>
-            </base-module>
+
+            <form @submit.prevent="createUser">
+                <base-module class="module">
+                    <template #title>Sign Up</template>
+                    <template #form-content>
+                        <section class="module__form">
+                            <div class="module__form-text">
+                                <p class="validation-text" v-if="!formIsValid">One or more Invalid Inputs</p>
+                                <p class="validation-text" v-if="!equalPasswords">passwords do not Match</p>
+                                <label for="firstname">First Name</label>
+                                <input 
+                                    type="text" 
+                                    id="firstname"  
+                                    v-model.trim="firstName.val"  
+                                    :class="{invalid: !firstName.isValid}" 
+                                    @blur="clearValidity('firstName')"
+                                />
+                                <label for="lastname">Last Name</label>
+                                <input 
+                                    type="text" 
+                                    id="lastname"  
+                                    v-model.trim="lastName.val"  
+                                    :class="{invalid: !lastName.isValid}" 
+                                    @blur="clearValidity('lastName')"
+                                />
+                                <label for="email">Email</label>
+                                <input 
+                                    type="email" 
+                                    id="email"  
+                                    v-model.trim="signUpEmail.val"  
+                                    :class="{invalid: !signUpEmail.isValid}" 
+                                    @blur="clearValidity('signUpEmail')"
+                                />
+                                <label for="password">Password</label>
+                                <input 
+                                    type="password" 
+                                    id="password"  
+                                    v-model.trim="signUpPassword.val"  
+                                    :class="{invalid: !signUpPassword.isValid}" 
+                                    @blur="clearValidity('signUpPassword')"
+                                />
+                                <label for="confrimpassword">Confrim Password</label>
+                                <input 
+                                    type="password" 
+                                    id="Confrim Password"  
+                                    v-model.trim="confrimPassword.val"  
+                                    :class="{invalid: !confrimPassword.isValid}" 
+                                    @blur="clearValidity('confrimPassword')"
+                                />
+                            </div>
+                            <div class="module__form-upload">
+                                <img src=
+                                    "../assets/images/profile_img.svg" 
+                                    alt="profile picture" 
+                                    class="sign-up__upload-picture"
+                                />
+                            <label for="file">upload picture</label>
+                            <input type="file" id="file" name="file" @change="onFileSelected"/>
+                            </div>
+                        </section>
+                        <base-button type="submit" class="sign-up__btn">Create Account</base-button>
+                    </template>
+                </base-module>
+            </form>
         </div>
     </section>
 </template>
 
 <script>
 import {useRoute} from 'vue-router';
+import router from '../router/index.js';
+
 export default {
+    data(){
+        return{
+            email: {
+                val: '',
+                isValid: true
+            },
+            password: {
+                val: '',
+                isValid: true
+            },
+            signUpEmail:{
+                val: '',
+                isValid: true
+            },
+            signUpPassword:{
+                val: '',
+                isValid: true
+            },
+            firstName:{
+                val: '',
+                isValid: true
+            },
+            confrimPassword:{
+                val: '',
+                isValid: true
+            },
+            lastName:{
+                val: '',
+                isValid: true
+            },
+            selectedFile: null,
+            formIsValid: true,
+            equalPasswords: true,
+            uploadImage:''
+        }
+    },
+
     methods:{
         loginRender(){
             if(useRoute().path === '/signup'){
@@ -76,6 +170,127 @@ export default {
                 return false;
             }
         },
+
+        clearValidity(input){
+            this[input].isValid = true;
+        },
+
+        loginValidation(){
+            this.formIsValid = true;
+            if(this.email.val === ''){
+                this.email.isValid = false;
+                this.formIsValid = false;
+            }
+            if(this.password.val === ''){
+                this.password.isValid = false;
+                this.formIsValid = false;
+            }
+            if(this.signUpEmail.val === ''){
+                this.signUpEmail.isValid = false;
+                this.formIsValid = false;
+            }
+            if(this.signUpPassword.val === ''){
+                this.signUpPassword.isValid = false;
+                this.formIsValid = false;
+            }
+            if(this.firstName.val === ''){
+                this.firstName.isValid = false;
+                this.formIsValid = false;
+            }
+            if(this.lastName.val === ''){
+                this.lastName.isValid = false;
+                this.formIsValid = false
+            }
+            if(this.confrimPassword.val === ''){
+                this.confrimPassword.isValid = false;
+                this.formIsValid = false;
+            }
+        },
+
+        passwordMatch(){
+            if(this.confrimPassword.val === this.signUpPassword.val){
+                console.log('equal');
+            }else{
+                this.equalPasswords = false;
+            }
+        },
+
+        async submitForm(){
+            const formData = {
+                email: this.email.val,
+                password: this.password.val
+            }
+
+            this.loginValidation();
+
+            const response = await fetch('http://localhost:3000/api/user/login',{
+                method: 'POST',
+                body: JSON.stringify(formData),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const responseData = await response.json();
+
+            console.log(responseData);
+           
+            if(!response.ok){
+                const error = new Error(responseData.status.message || 'Failed to send request.');
+                this.formIsValid = false;
+                throw error;
+            }
+
+
+            if(responseData.message.status === 'fail'){
+                return 'error'
+            }
+
+            router.replace({path: '/timeline'});
+        },
+
+        onFileSelected(event){
+            this.selectedFile = event.target.files[0]
+        },
+
+        async createUser(){
+            this.passwordMatch();
+            this.loginValidation();
+            const fd = new FormData();
+            fd.append('firstName', this.firstName.val);
+            fd.append('lastName', this.lastName.val);
+            fd.append('email', this.signUpEmail.val);
+            fd.append('password', this.signUpPassword);
+            fd.append('image', this.selectedFile,this.selectedFile.name);
+
+            console.log(fd);
+            console.log(this.selectedFile.name);
+
+            this.uploadImage = this.selectedFile;
+             
+            const response = await fetch('http://localhost:3000/api/user/signup',{
+                method: 'POST',
+                body: fd,
+    
+            });
+
+            const responseData = await response.json();
+
+            if(!response.ok){
+                const error = new Error(responseData.status.message || 'Failed to send request.');
+                this.formIsValid = false;
+                throw error;
+            }
+
+            console.log(responseData);
+
+            if(responseData.message.status === 'fail'){
+                return 'error'
+            }
+
+            router.replace({path: '/timeline'});
+
+        }
     },
 }
 </script>
@@ -173,13 +388,18 @@ export default {
     }
 
     & .module{
-        height: 450px;
+        height: 500px;
         width: 400px;
         margin-top: 60px;
 
         @include breakpoint-down(mobile){
             width: 90vw;
             
+        }
+
+        & p{
+            color: red;
+            text-align: center;
         }
 
         & span{
@@ -214,7 +434,7 @@ export default {
     }
 
     & .module{
-        height: 600px;
+        height: 690px;
         width: 650px;
         margin-top: 10px;
         background-color: white;
@@ -222,19 +442,24 @@ export default {
 
         @include breakpoint-down(mobile){
             height: max-content;
+            width: 100vw;
             border-radius: unset;
             font-size: 30px;
             margin: unset;
         }
+
+      
 
         &__form{
             display: flex;
             justify-content: space-between;
             width: 100%;
             height: max-content;
+            padding-bottom: 25px;
 
             @include breakpoint-down(mobile){
                flex-direction: column;
+               padding: unset;
             }
         }
 
@@ -244,20 +469,24 @@ export default {
             flex-grow: 1;
             padding-bottom: 20px;
             padding-left: 20px;
-            & input{
-                width: 60%;
 
-                @include breakpoint-down(mobile){
-                    width: 90%;
-                }
-            }
-
-             @include breakpoint-down(mobile){
+            @include breakpoint-down(mobile){
                 align-items: center;
                 padding: unset;
             }
 
-            
+            & input{
+                width: 90%;
+
+                @include breakpoint-down(mobile){
+                    width: 90%;
+                }
+            }        
+
+            & .validation-text{
+                padding: 0;
+                color: red;
+            }
         }
 
         &__form-upload{
@@ -284,8 +513,7 @@ export default {
 
     &__btn{
         width: 50%;
-        height: 35px;
-        margin-left: 120px;
+        height: 45px;
         font-size: rem(18);
 
         @include breakpoint-down(mobile){
@@ -300,6 +528,20 @@ export default {
         height: 150px;
 
     }
+}
+
+input[type="file"]{
+    border: none;
+    width: 200px;
+    padding-left: 15px;
+   
+    @include breakpoint-down(mobile){
+        padding-left: 80px;
+    }
+}
+
+input[type="file"]:hover{
+    cursor: pointer;
 }
 
 .logo{
@@ -338,4 +580,13 @@ export default {
     }
 }
 
+.link{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.invalid{
+    box-shadow: 0px 0px 2px 4px red;
+}
 </style>
