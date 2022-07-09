@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const pool = require('../database');
 const factory = require('../controllers/handlerFactory');
+const bcrypt = require('bcrypt');
+const { query } = require('express');
 
 class UserGenContent{
     constructor(id,media,des,title){
@@ -9,6 +11,107 @@ class UserGenContent{
         this.des = des,
         this.title = title,
         this.media = media
+    }
+
+    async generateAccounts(){
+        const userArray = [
+            {
+                firstName: 'Albin',
+                lastName: 'Pierre'
+            },
+            {
+                firstName: 'Alden',
+                lastName: 'Hale'
+            },
+            {
+                firstName: 'Cade',
+                lastName: 'Weldon'
+            },
+            {
+                firstName: 'Daxton',
+                lastName: 'Indiana'
+            },
+            {
+                firstName: 'Hudson',
+                lastName: 'Jaron'
+            },
+            {
+                firstName: 'Jez',
+                lastName: 'Jerald'
+            },
+            {
+                firstName: 'Joanna',
+                lastName: 'Noelene'
+            },
+            {
+                firstName: 'Laurencia',
+                lastName: 'Felicity'
+            },
+            {
+                firstName: 'Lorra',
+                lastName: 'Gertie'
+            },
+            {
+                firstName: 'Mack',
+                lastName: 'Casimir'
+            },
+            {
+                firstName: 'Marissa',
+                lastName: 'Deonne'
+            },
+            {
+                firstName: 'Ned',
+                lastName: 'Thorburn'
+            },
+            {
+                firstName: 'Petunia',
+                lastName: 'Ariel'
+            },
+            {
+                firstName: 'Rex',
+                lastName: 'Benton'
+            },
+            {
+                firstName: 'Roscoe',
+                lastName: 'Kendall'
+            },
+            {
+                firstName: 'Seth',
+                lastName: 'Silas'
+            },
+            {
+                firstName: 'Shaun',
+                lastName: 'Aydan'
+            },
+            {
+                firstName: 'shayne',
+                lastName: 'Campbell'
+            },
+            {
+                firstName: 'Steve',
+                lastName: 'Roman'
+            },
+            {
+                firstName: 'Sydney',
+                lastName: 'Virgee'
+            },
+            {
+                firstName: 'Tisha',
+                lastName: 'Lorri'
+            },
+            {
+                firstName: 'Toni',
+                lastName: 'Isbel',
+            },
+            {
+                firstName: 'Tyson',
+                lastName: 'Bryant'
+            }
+        ];
+
+        userArray.forEach(person =>{
+            genUser(person.firstName, person.lastName);
+        });
     }
 
     async generateUserPosts(){
@@ -203,7 +306,48 @@ function genRanComment(){
     return commentArray[getRandomIntInclusive(0, commentArray.length)];
 }
 
+
+async function genUser(firstName, lastName){
+    const name = firstName;
+    const secondName = lastName;
+    let emailEnd = '';
+
+    const ranEMail = getRandomIntInclusive(1,2);
+
+    if(ranEMail < 2){
+        emailEnd = '@yahoo.com';
+    }else{
+        emailEnd = '@gmail.com';
+    }
+
+    function titleCase(string){
+        return string[0].toUpperCase() + string.slice(1).toLowerCase();
+    }
+
+    const email = lastName + emailEnd;
+    const password = titleCase(lastName) + '12345';
+    const passwordHashed = await bcrypt.hash(password, 12);
+
+    const profilePicture = `http://localhost:3000/images/profile_pictures/${name}_${secondName}.jpg`;
+
+    const user = {
+        firstName: name,
+        lastName: secondName,
+        email: email,
+        pwd:  passwordHashed,
+        profilePicture: profilePicture
+    }
+
+    const sql = 'INSERT INTO user_account(first_name, last_name, email, user_password, profile_picture) VALUES ($1,$2,$3,$4,$5) RETURNING*';
+    const values = [user.firstName, user.lastName, user.email, user.pwd, user.profilePicture];
+    const query = await pool.query(sql,values);
+
+    console.log(query.rows[0]);
+}   
+
 const userContent = new UserGenContent
+
+userContent.generateAccounts();
 
 // generate user post first 
 // userContent.generateUserPosts();

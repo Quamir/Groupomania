@@ -7,7 +7,7 @@
              <button class="theme-btn">
              <img src="../../assets/images/buttons/sun.svg" alt="change theme">
             </button>
-             <img src="" alt="profile picture" class="profile-picture">
+             <img :src="picture" alt="profile picture" class="profile-picture">
         </nav>
     </header>
 </template>

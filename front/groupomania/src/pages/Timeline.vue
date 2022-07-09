@@ -1,12 +1,12 @@
 <template>
     <section v-if="auth">
-        <the-header picture="profilePicture"></the-header>
+        <the-header :picture="profilePicture"></the-header>
         <div class="wrapper">
             <aside class="people">
                 <div class="people-wrapper">
                     <h2>People</h2>
                     <div class="people__detail-wrapper">
-                        <img src="../assets/images/people/Lora_Gertie.jpg" alt="profile picture" class="people__profile-picture">
+                        <img :src="profilePicture" alt="profile picture" class="people__profile-picture">
                         <div class="people__name">
                             <p>Lora Gertie</p>
                         </div>
@@ -134,7 +134,7 @@ export default {
         return{
             auth: false,
             user: null,
-            profilePicture: 'https://skyandtelescope.org/wp-content/uploads/planetary-nebulae-1000px.jpg'
+            profilePicture: null
         }
     },
     async created(){
