@@ -5,48 +5,14 @@
             <aside class="people">
                 <div class="people-wrapper">
                     <h2>People</h2>
-                    <div class="people__detail-wrapper" v-for="profile in profileArray" :profile="profile" :key="profile.index">
-                        <img :src="profile.profile_picture" alt="profile picture" class="people__profile-picture">
-                        <div class="people__name">
-                            <p>{{profile.first_name}}  {{profile.last_name}}</p>
+                        <div class="people__detail-wrapper" v-for="profile in profileArray" :profile="profile" :key="profile.index">
+                            <router-link :to="'/profile/'+profile.id +'.' + profile.first_name+ '_' + profile.last_name">
+                            <img :src="profile.profile_picture" alt="profile picture" class="people__profile-picture">
+                            </router-link>
+                            <div class="people__name">
+                                <p>{{profile.first_name}}  {{profile.last_name}}</p>
+                            </div>
                         </div>
-                    </div>
-                    <!-- <div class="people__detail-wrapper">
-                        <img src="../assets/images/people/Steve_Roman.jpg" alt="profile picture" class="people__profile-picture">
-                        <div class="people__name">
-                            <p>Steve Roman</p>
-                        </div>
-                    </div>
-                    <div class="people__detail-wrapper">
-                        <img src="../assets/images/people/Toni_Isbel.jpg" alt="profile picture" class="people__profile-picture">
-                        <div class="people__name">
-                            <p>Toni Isbel</p>
-                        </div>
-                    </div>
-                    <div class="people__detail-wrapper">
-                        <img src="../assets/images/people/Jez_Jerald.jpg" alt="profile picture" class="people__profile-picture">
-                        <div class="people__name">
-                            <p>Jez Jerald</p>
-                        </div>
-                    </div>
-                    <div class="people__detail-wrapper">
-                        <img src="../assets/images/people/Seth_Silas.jpg" alt="profile picture" class="people__profile-picture">
-                        <div class="people__name">
-                            <p>Seth Silas</p>
-                        </div>
-                    </div>
-                    <div class="people__detail-wrapper">
-                        <img src="../assets/images/people/Rex_Benton.jpg" alt="profile picture" class="people__profile-picture">
-                        <div class="people__name">
-                            <p>Rex Benton</p>
-                        </div>
-                    </div>
-                    <div class="people__detail-wrapper">
-                        <img src="../assets/images/people/Shaun_Aydan.jpg" alt="profile picture" class="people__profile-picture">
-                        <div class="people__name">
-                            <p>Shaun Aydan</p>
-                        </div>
-                    </div> -->
                 </div>
             </aside>
 
@@ -141,7 +107,7 @@ export default {
     },
     
     async created(){
-      console.log(localStorage.getItem('token'));
+    //   console.log(localStorage.getItem('token'));
       const response = await fetch('http://localhost:3000/api/user/user',{
         headers:{
             Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
@@ -149,10 +115,10 @@ export default {
       });
 
       const responseData = await response.json();
-      console.log(responseData.message);
+    //   console.log(responseData.message);
 
       this.profilePicture = responseData.message.profile_picture;
-      console.log(this.profilePicture);
+    //   console.log(this.profilePicture);
 
       if(responseData.status === 'fail' || responseData.status === 'error'){
         router.replace({path: '/login'});

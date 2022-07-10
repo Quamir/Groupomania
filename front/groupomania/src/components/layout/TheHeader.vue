@@ -1,13 +1,18 @@
 <template>
     <header>
-        <img src="../../assets/images/logos/logoblack.svg" alt="" class="logo">
+
+        <router-link to="/timeline">
+            <img src="../../assets/images/logos/logoblack.svg" alt="" class="logo">
+        </router-link>
 
         <nav v-if="!loginRender()">
              <base-button class="base-btn">Logout</base-button>
              <button class="theme-btn">
              <img src="../../assets/images/buttons/sun.svg" alt="change theme">
             </button>
-             <img :src="picture" alt="profile picture" class="profile-picture">
+            <router-link :to="'/profile/'+id+'.'+name">
+                <img :src="picture" alt="profile picture" class="profile-picture">
+            </router-link>
         </nav>
     </header>
 </template>
@@ -16,6 +21,15 @@
 import {useRoute} from 'vue-router';
 export default {
     props:['picture'],
+    data(){
+        return{
+            id: null,
+            name: null
+        }
+    },
+    created(){
+        this.goToProfile();
+    },
     methods:{
         loginRender(){
             if(useRoute().path === '/login' || useRoute().path === '/signup'){
@@ -23,6 +37,17 @@ export default {
             }else{
                 return false;
             }
+        },
+        async goToProfile(){
+            const response = await fetch('http://localhost:3000/api/user/user',{
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+
+            const responseData = await response.json();
+            this.id = responseData.message.id;
+            this.name = `${responseData.message.first_name}_${responseData.message.last_name}`;
         }
     },
 }

@@ -27,7 +27,7 @@ const router = createRouter({
         { path: '/changename', component: Settings },
         { path: '/updateprofilepicture', component: Settings }
       ]},
-    { path: '/profilepage', component: ProfilePage}
+    { path: '/profile/:id', component: ProfilePage}
   ],
 });
 

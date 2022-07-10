@@ -74,10 +74,19 @@ class User{
     }
 
     async getProfiles(limit){
-        const sql = 'SELECT first_name, last_name, profile_picture FROM user_account ORDER BY RANDOM() LIMIT $1';
+        const sql = 'SELECT id, first_name, last_name, profile_picture FROM user_account ORDER BY RANDOM() LIMIT $1';
         const values = [limit]
         const query = await pool.query(sql, values);
         
+        console.log(query.rows);
+        return query.rows;
+    }
+
+    async getProfile(){
+        const sql = 'SELECT first_name, last_name, profile_picture FROM user_account WHERE id = $1';
+        const values = [this.id];
+        const query = await pool.query(sql, values);
+
         console.log(query.rows);
         return query.rows;
     }
