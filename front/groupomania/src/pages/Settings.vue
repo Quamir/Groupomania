@@ -1,20 +1,21 @@
 <template>
     <section>
+        <the-header :picture="profilePicture"></the-header>
         <div class="user-info">
             <div class="user-info__profile-picture">
-                <h3 class="title">Tyson Bryant</h3>
-                <img src="../assets/images/tyson.jpg" class="profile-picture" alt="">
+                <h3 class="title">{{firstName}} {{lastName}}</h3>
+                <img :src="profilePicture" class="profile-picture" alt="">
                 <base-button class="base-btn">Change Picture</base-button>
             </div>
             <div class="user-info__text">
                 <div class="user-info__row">
                     <p>Name</p>
-                    <p>Tyson Bryant</p>
+                    <p>{{firstName}} {{lastName}}</p>
                     <base-button class="change-btn">change</base-button>
                 </div>
                 <div class="user-info__row">
                     <p>Email</p>
-                    <p>Bryant_@gmail.com</p>
+                    <p>{{email}}</p>
                     <base-button class="change-btn">change</base-button>
                 </div>
                 <div class="user-info__row">
@@ -113,7 +114,22 @@
 
 <script>
 import {useRoute} from 'vue-router';
+import TheHeader from '../components/layout/TheHeader.vue';
 export default {
+    data(){
+        return{
+            profilePicture: null,
+            firstName: null,
+            lastName: null,
+            email: null
+        }
+    },
+    components:{
+        TheHeader
+    },
+    created(){
+        this.getUserData();
+    },
     methods:{
         renderFilter(){
             if(
@@ -137,13 +153,22 @@ export default {
             }else{
                 return false
             }
+        },
+
+        async getUserData(){
+            const response = await fetch('http://localhost:3000/api/user/user',{
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+            const responseData = await response.json();
+            console.log(responseData.message);
+            this.profilePicture = responseData.message.profile_picture;
+            this.firstName = responseData.message.first_name,
+            this.lastName = responseData.message.last_name,
+            this.email = responseData.message.email
         }
     },
-
-    created(){
-        console.log(useRoute().path);
-        console.log(this.renderFilter());
-    }
 }
 </script>
 
