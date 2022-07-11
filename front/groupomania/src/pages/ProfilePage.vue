@@ -1,7 +1,7 @@
 <template>
     <section>
-        <the-header :picture="profilePicture" class="profile-header"></the-header>
-        <div class="cover" v-if="paramsEqual">
+        <the-header :picture="userProfilePicture" class="profile-header"></the-header>
+        <div class="cover" v-if="paramsEqual || findUser">
             <div class="cover__color-bg">
                 <div class="cover__img-container">
                     <img :src="profilePicture" alt="profile picture" class="cover__profile-img" >
@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <div class="page-error" v-show="!paramsEqual">
+        <div class="page-error" v-show="!paramsEqual && !findUser">
             <p>Cant find Page</p>
             <img src="../assets/images/cantfind.jpg" alt="unable to find page">
         </div>
@@ -40,8 +40,10 @@ export default {
             id: null,
             firstName: null,
             lastName: null,
+            userProfilePicture: null,
             profilePicture: null,
-            paramsEqual: null
+            paramsEqual: null,
+            findUser: null
         }
     },
     created(){
@@ -60,7 +62,7 @@ export default {
             
             const responseData = await response.json();
             console.log(responseData.message)
-            this.profilePicture = responseData.message.profile_picture;
+            this.userProfilePicture = responseData.message.profile_picture;
             const id = responseData.message.id;
             const name = `${responseData.message.first_name}_${responseData.message.last_name}`;
 
@@ -80,19 +82,32 @@ export default {
         async vistProfilePage(){
             const route = this.$route.path.split('.');
             const splitRoute = route[0].split('/');
-            console.log(splitRoute[2]);
+            const data = JSON.stringify({ id: parseInt(splitRoute[2])});
 
             const response = await fetch('http://localhost:3000/api/user/profile',{
                 method: 'POST',
-                body: JSON.stringify({"id": parseInt(splitRoute[2])}),
+                body: data,
                 headers:{
                     Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json',
                 }
             });
 
-           
             const responseData = await response.json();
-            console.log(responseData.message);
+            console.log(responseData);
+
+            if(responseData.message.status === 'fail'){
+                console.log('can\t find user');
+                this.findUser = false;
+                console.log(this.findUser);
+                console.log(this.paramsEqual);
+            }else{
+              this.findUser = true;
+              this.firstName = responseData.message.first_name;
+              this.lastName = responseData.message.last_name;
+              this.profilePicture = responseData.message.profile_picture;
+
+            }
             
         }
     },

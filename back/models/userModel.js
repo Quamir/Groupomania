@@ -49,14 +49,11 @@ class User{
         const id = 'SELECT id, user_password FROM user_account WHERE email = $1';
         const email = [this.email];
         const idQuery = await pool.query(id, email);
-        console.log(idQuery);
         const token = signToken(idQuery.rows[0].id);
         const userPassword = idQuery.rows[0].user_password
 
         // compare password to hash
         const compare = await bcrypt.compare(this.password,userPassword);
-        console.log('::passwordmatch');
-        console.log(compare);
         if(compare === true){
             return {token}
         }else{
@@ -78,7 +75,6 @@ class User{
         const values = [limit]
         const query = await pool.query(sql, values);
         
-        console.log(query.rows);
         return query.rows;
     }
 
@@ -86,9 +82,13 @@ class User{
         const sql = 'SELECT first_name, last_name, profile_picture FROM user_account WHERE id = $1';
         const values = [this.id];
         const query = await pool.query(sql, values);
-
-        console.log(query.rows);
-        return query.rows;
+        
+        console.log(query);
+        if(query.rowCount === 0){
+            return  (new AppError('can\'t find user ',404));
+        }else{
+            return query.rows[0];
+        }
     }
 
     async deleteAccount(){

@@ -72,8 +72,7 @@ exports.getProfiles = catchAsync(async(req,res,next) =>{
 
 // gets a single profile 
 exports.getProfile = catchAsync(async(req,res,next) =>{
-    const user = new User(...[, , , , , , req.body.id]);
-
+    const user = new User(...[, , , , , , req.body.id,]);
     const profile = await user.getProfile();
 
     res.status(200).json({
