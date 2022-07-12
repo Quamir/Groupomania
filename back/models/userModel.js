@@ -29,15 +29,15 @@ class User{
         const exist = 'SELECT EXISTS(SELECT email FROM user_account WHERE email = $1)';
         const existValue = [this.email];
         const existsQuery = await pool.query(exist, existValue);
-        
-        this.password = await bcrypt.hash(this.password, 12);
+        console.log(this.password);
+        const hashedPassword = await bcrypt.hash(this.password, 12);
         
 
         if(existsQuery.rows[0].exists === true){
             return {message: 'an account with this email adddresss has already been made'}
         }else{
-            const sql =  'INSERT INTO user_account(first_name, last_name,email, user_password, profile_picture) VALUES($1,$2,$3,$4,$5) RETURNING*';
-            const values = [this.firstName, this.lastName, this.email, this.password, this.profilePicture];
+            const sql =  'INSERT INTO user_account(first_name, last_name, email, user_password, profile_picture) VALUES($1,$2,$3,$4,$5) RETURNING*';
+            const values = [this.firstName, this.lastName, this.email, hashedPassword, this.profilePicture];
             const newAccount = await pool.query(sql, values);
             const token = signToken(newAccount.rows[0].id);
             return [newAccount.rows[0],token]; 
@@ -54,6 +54,8 @@ class User{
 
         // compare password to hash
         const compare = await bcrypt.compare(this.password,userPassword);
+        console.log(this.password,userPassword);
+        console.log(compare);
         if(compare === true){
             return {token}
         }else{

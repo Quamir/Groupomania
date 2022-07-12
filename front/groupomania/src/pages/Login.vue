@@ -226,19 +226,19 @@ export default {
         },
 
         async submitForm(){
-            const formData = {
+            const data = JSON.stringify({
                 email: this.email.val,
                 password: this.password.val
-            }
+            });
 
             this.signInValidation();
 
             const response = await fetch('http://localhost:3000/api/user/login',{
                 method: 'POST',
-                body: JSON.stringify(formData),
+                body: data,
                 headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
                     'Content-Type': 'application/json',
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
                 }
             });
 
@@ -272,19 +272,18 @@ export default {
             fd.append('firstName', this.firstName.val);
             fd.append('lastName', this.lastName.val);
             fd.append('email', this.signUpEmail.val);
-            fd.append('password', this.signUpPassword);
+            fd.append('password', this.signUpPassword.val);
             fd.append('image', this.selectedFile,this.selectedFile.name);
 
             console.log(fd);
-            console.log(this.selectedFile.name);
-
+            console.log(this.signUpPassword);
             this.uploadImage = this.selectedFile;
              
             const response = await fetch('http://localhost:3000/api/user/signup',{
                 method: 'POST',
                 body: fd,
                 headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
                 }
     
             });
@@ -329,7 +328,7 @@ export default {
 }
 
 .landing{
-    height: 92.5%;
+    height: 93vh;
     width: 100%;
     display: flex;
 
@@ -342,7 +341,7 @@ export default {
 
 .left-landing{
     width: 65%;
-    height: 93vh;
+    height: 100%;
     overflow: hidden;
 
         &__text{
@@ -397,6 +396,7 @@ export default {
 
     @include breakpoint-down(mobile){
         width: 100vw;
+        height: 50%;
         align-items: center;
         position: absolute;
         top: 70px;
@@ -563,6 +563,7 @@ input[type="file"]:hover{
 .logo{
     position: relative;
     align-self: center;
+    width: 140px;
 
     @include breakpoint-down(mobile){
         display: none;

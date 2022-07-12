@@ -89,7 +89,7 @@ export default {
                 body: data,
                 headers:{
                     Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 }
             });
 

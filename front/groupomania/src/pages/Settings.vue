@@ -84,21 +84,20 @@
                 <base-button class="module__btn">Update Email</base-button>
             </template>
         </base-module>
-
-          <base-module v-if="checkPath('/changename')">
-            <template #form-content>
-                <p>Change Name</p>
-                <label for="firstname">First Name</label>
-                <input type="text" id="firstname"/>
-                <label for="lastname">Last Name</label>
-                <input type="text" id="lastname">
-                <label for="password">Password</label>
-                <input type="password" id="password"/>
-            </template>
-            <template #buttons>
-                <base-button class="module__btn">Update Name</base-button>
-            </template>
-        </base-module>
+            <form @submit.prevent="changeName">
+                <base-module v-if="checkPath('/changename')">
+                    <template #form-content>
+                        <p>Change Name</p>
+                        <label for="firstname">First Name</label>
+                        <input type="text" id="firstname" v-model.trim ="changeNameName.val"/>
+                        <label for="lastname">Last Name</label>
+                        <input type="text" id="lastname" v-model.trim="changeNameLast.val">
+                    </template>
+                    <template #buttons>
+                        <base-button class="module__btn">Update Name</base-button>
+                    </template>
+                </base-module>
+            </form>
 
           <base-module v-if="checkPath('/updateprofilepicture')">
             <template #form-content>
@@ -121,7 +120,15 @@ export default {
             profilePicture: null,
             firstName: null,
             lastName: null,
-            email: null
+            email: null,
+            changeNameName:{
+                val: '',
+                isValid: true
+            },
+            changeNameLast:{
+                val: '',
+                isValid: true
+            }
         }
     },
     components:{
@@ -158,7 +165,7 @@ export default {
         async getUserData(){
             const response = await fetch('http://localhost:3000/api/user/user',{
                 headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
                 }
             });
             const responseData = await response.json();
@@ -167,6 +174,24 @@ export default {
             this.firstName = responseData.message.first_name,
             this.lastName = responseData.message.last_name,
             this.email = responseData.message.email
+        },
+
+        async changeName(){
+            const data = JSON.stringify({
+                firstName: this.changeNameName.val,
+                lastName: this.changeNameLast.val
+            })
+            const response = await fetch('http://localhost:3000/api/user/changename',{
+                method: 'PATCH',
+                body: data,
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const responseData = await response.json();
+            console.log(responseData);
         }
     },
 }
