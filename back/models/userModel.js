@@ -143,17 +143,17 @@ class User{
     }
 
     async changeEmail(){
-        const sql = 'UPDATE user_account SET email = $1 WHERE email = $2 AND user_password = $3';
-        const values = [this.newEmail, this.email, this.password];
+        const sql = 'UPDATE user_account SET email = $1 WHERE email = $2 RETURNING email';
+        const values = [this.newEmail, this.email];
         const changeUserEmail = await  pool.query(sql,values);
-        return changeUserEmail;
+        return changeUserEmail.rows;
     }
 
     async changeName(){
-        const sql = 'UPDATE user_account SET first_name = $1, last_name = $2 WHERE id = $3';
+        const sql = 'UPDATE user_account SET first_name = $1, last_name = $2 WHERE id = $3 RETURNING id, first_name, last_name';
         const values = [this.firstName, this.lastName, this.id];
         const changeUserName = await pool.query(sql,values);
-        return changeUserName;
+        return changeUserName.rows;
     }
 
 

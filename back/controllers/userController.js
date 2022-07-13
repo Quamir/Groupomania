@@ -102,7 +102,7 @@ exports.changePassword = catchAsync(async (req,res,next) =>{
 
 // change email
 exports.changeEmail = catchAsync(async (req,res,nest) => {
-    const user = new User(...[, ,req.body.email, req.body.password, ,req.body.newEmail]);
+    const user = new User(...[, ,req.body.email, , ,req.body.newEmail]);
     const changeUserEmail = await user.changeEmail();
     
     res.status(200).json({

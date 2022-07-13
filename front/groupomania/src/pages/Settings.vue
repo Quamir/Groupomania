@@ -11,17 +11,23 @@
                 <div class="user-info__row">
                     <p>Name</p>
                     <p>{{firstName}} {{lastName}}</p>
-                    <base-button class="change-btn">change</base-button>
+                    <router-link to="/changename">
+                        <base-button class="change-btn">change</base-button>
+                    </router-link>
                 </div>
                 <div class="user-info__row">
                     <p>Email</p>
                     <p>{{email}}</p>
-                    <base-button class="change-btn">change</base-button>
+                    <router-link to="/changeemail">
+                        <base-button class="change-btn">change</base-button>
+                    </router-link>
                 </div>
                 <div class="user-info__row">
                     <p>password</p>
                     <p>*******</p>
-                    <base-button class="change-btn">change</base-button>
+                    <router-link to="/changepassword">
+                        <base-button class="change-btn">change</base-button>
+                    </router-link>
                 </div>
                 <div class="delete-account">
                     <p>DELETE ACCOUNT</p>
@@ -67,37 +73,36 @@
                 <base-button class="module__btn">Update Password</base-button>
             </template>
         </base-module>
-
-        <base-module v-if="checkPath('/changeemail')">
-            <template #form-content>
-                <p>Change Email</p>
-                <label for="password">Password</label>
-                <input type="password" id="password"/>
-                <label for="email">Email</label>
-                <input type="email" id="email"/>
-                <label for="new email">New Email</label>
-                <input type="email" id="new email"/>
-                <label for="confirm email">Confrim Email</label>
-                <input type="email" id="confirm email"/>
-            </template>
-            <template #buttons>
-                <base-button class="module__btn">Update Email</base-button>
-            </template>
-        </base-module>
-            <form @submit.prevent="changeName">
-                <base-module v-if="checkPath('/changename')">
-                    <template #form-content>
-                        <p>Change Name</p>
-                        <label for="firstname">First Name</label>
-                        <input type="text" id="firstname" v-model.trim ="changeNameName.val"/>
-                        <label for="lastname">Last Name</label>
-                        <input type="text" id="lastname" v-model.trim="changeNameLast.val">
-                    </template>
-                    <template #buttons>
-                        <base-button class="module__btn">Update Name</base-button>
-                    </template>
-                </base-module>
-            </form>
+        <form @submit.prevent="changeEmail">
+            <base-module v-if="checkPath('/changeemail')">
+                <template #form-content>
+                    <p>Change Email</p>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" v-model.trim="changeEmailPassword.val"/>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" v-model.trim="changeEmailEmail.val"/>
+                    <label for="new email">New Email</label>
+                    <input type="email" id="new email" v-model.trim="changeEmailNewEmail.val"/>
+                </template>
+                <template #buttons>
+                    <base-button class="module__btn" type="submit">Update Email</base-button>
+                </template>
+            </base-module>
+        </form>
+        <form @submit.prevent="changeName">
+            <base-module v-if="checkPath('/changename')">
+                <template #form-content>
+                    <p>Change Name</p>
+                    <label for="firstname">First Name</label>
+                    <input type="text" id="firstname" v-model.trim ="changeNameName.val"/>
+                    <label for="lastname">Last Name</label>
+                    <input type="text" id="lastname" v-model.trim="changeNameLast.val">
+                </template>
+                <template #buttons>
+                <base-button class="module__btn" type="submit">Update Name</base-button>
+                </template>
+            </base-module>
+        </form>
 
           <base-module v-if="checkPath('/updateprofilepicture')">
             <template #form-content>
@@ -113,10 +118,13 @@
 
 <script>
 import {useRoute} from 'vue-router';
+import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
 export default {
     data(){
+        changename: false;
         return{
+            id: null,
             profilePicture: null,
             firstName: null,
             lastName: null,
@@ -126,6 +134,18 @@ export default {
                 isValid: true
             },
             changeNameLast:{
+                val: '',
+                isValid: true
+            },
+            changeEmailPassword:{
+                val: '',
+                isValid: true
+            },
+            changeEmailEmail:{
+                val: '',
+                isValid: true
+            },
+            changeEmailNewEmail:{
                 val: '',
                 isValid: true
             }
@@ -170,17 +190,19 @@ export default {
             });
             const responseData = await response.json();
             console.log(responseData.message);
+            this.id = responseData.message.id;
             this.profilePicture = responseData.message.profile_picture;
-            this.firstName = responseData.message.first_name,
-            this.lastName = responseData.message.last_name,
-            this.email = responseData.message.email
+            this.firstName = responseData.message.first_name;
+            this.lastName = responseData.message.last_name;
+            this.email = responseData.message.email;
         },
 
         async changeName(){
             const data = JSON.stringify({
+                id: this.id,
                 firstName: this.changeNameName.val,
                 lastName: this.changeNameLast.val
-            })
+            });
             const response = await fetch('http://localhost:3000/api/user/changename',{
                 method: 'PATCH',
                 body: data,
@@ -192,6 +214,35 @@ export default {
 
             const responseData = await response.json();
             console.log(responseData);
+            router.replace({path:'/settings'});
+            this.getUserData();
+        },
+
+        async changeEmail(){
+            const data = JSON.stringify({
+                email: this.changeEmailEmail.val,
+                password: this.changeEmailPassword.val,
+                newEmail: this.changeEmailNewEmail.val
+            });
+
+            const response = await fetch('http://localhost:3000/api/user/changeemail',{
+                method: 'PATCH',
+                body: data,
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            const responseData = await response.json();
+            console.log(responseData);
+            router.replace({path:'/settings'});
+            router.replace
+            this.getUserData();
+        },
+
+        async changePassword(){
+
         }
     },
 }
@@ -383,7 +434,6 @@ footer{
     }
 
     &__btn{
-        width: 50%;
         height: 40px;
         margin-top: 30px;
         font-size: rem(20);
@@ -393,6 +443,7 @@ footer{
 .profile-picture{
     width: 200px;
 }
+
 
 </style>
 
