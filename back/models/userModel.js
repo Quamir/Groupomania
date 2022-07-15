@@ -136,10 +136,17 @@ class User{
     }
 
     async changePassword(){
-        const sql = 'UPDATE user_account SET user_password = $1 WHERE email = $2 AND user_password = $3';
-        const values = [this.newPassword, this.email, this.password];
+        const getUserPassword = 'SELECT user_password FROM user_account WHERE email = $1';
+        const passwordValue  = [this.email];
+        const userPassword = await pool.query(getUserPassword, passwordValue);
+        const password = userPassword.rows[0].user_password;
+
+        const hashedPassword = await bcrypt.hash(this.newPassword, 12);
+
+        const sql = 'UPDATE user_account SET user_password = $1 WHERE email = $2 AND user_password = $3 RETURNING*';
+        const values = [hashedPassword, this.email, password];
         const changeUserPassword = await pool.query(sql,values);
-        return changeUserPassword;
+        return changeUserPassword.rows;
     }
 
     async changeEmail(){
@@ -155,8 +162,6 @@ class User{
         const changeUserName = await pool.query(sql,values);
         return changeUserName.rows;
     }
-
-
 }
 
 module.exports = User;

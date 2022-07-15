@@ -56,25 +56,26 @@
                 <base-button class="module__btn">Delete Account</base-button>
             </template>
         </base-module>
-
-        <base-module v-if="checkPath('/changepassword')">
-            <template #form-content>
-                <p>Change Password</p>
-                <label for="password">Password</label>
-                <input type="password" id="password"/>
-                <label for="email">Email</label>
-                <input type="email" id="email"/>
-                <label for="new password">New Password</label>
-                <input type="password" id="new password"/>
-                <label for="confrimpassword">Confrim Password</label>
-                <input type="password" id="Confrim Password"/>
-            </template>
-            <template #buttons>
-                <base-button class="module__btn">Update Password</base-button>
-            </template>
-        </base-module>
-        <form @submit.prevent="changeEmail">
-            <base-module v-if="checkPath('/changeemail')">
+        <form @submit.prevent="changePassword"  v-if="checkPath('/changepassword')">
+            <base-module>
+                <template #form-content>
+                    <p>Change Password</p>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" v-model.trim="changePasswordPasswrod.val"/>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" v-model.trim="changePasswordEmail.val"/>
+                    <label for="new password">New Password</label>
+                    <input type="password" id="new password" v-model.trim="changePasswordNewPassword.val"/>
+                    <label for="confrimpassword">Confrim Password</label>
+                    <input type="password" id="Confrim Password"/>
+                </template>
+                <template #buttons>
+                    <base-button class="module__btn">Update Password</base-button>
+                </template>
+            </base-module>
+        </form>
+        <form @submit.prevent="changeEmail" v-if="checkPath('/changeemail')">
+            <base-module>
                 <template #form-content>
                     <p>Change Email</p>
                     <label for="password">Password</label>
@@ -89,8 +90,8 @@
                 </template>
             </base-module>
         </form>
-        <form @submit.prevent="changeName">
-            <base-module v-if="checkPath('/changename')">
+        <form @submit.prevent="changeName" v-if="checkPath('/changename')">
+            <base-module>
                 <template #form-content>
                     <p>Change Name</p>
                     <label for="firstname">First Name</label>
@@ -148,6 +149,18 @@ export default {
             changeEmailNewEmail:{
                 val: '',
                 isValid: true
+            },
+            changePasswordPasswrod:{
+                val: '',
+                isValid: true
+            },
+            changePasswordEmail:{
+                val: '',
+                isValid: true
+            },
+            changePasswordNewPassword:{
+                val: '',
+                isValid: true 
             }
         }
     },
@@ -237,12 +250,29 @@ export default {
             const responseData = await response.json();
             console.log(responseData);
             router.replace({path:'/settings'});
-            router.replace
             this.getUserData();
         },
 
         async changePassword(){
+            const data =  JSON.stringify({
+                email: this.changePasswordEmail.val,
+                newPassword: this.changePasswordPasswrod.val,
+               newPassword: this.changePasswordNewPassword.val, 
+            });
 
+            const response = await fetch('http://localhost:3000/api/user/changepassword',{
+                method: 'PATCH',
+                body: data, 
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const responseData = await response.json();
+            console.log(responseData);
+            router.replace({path:'/settings'});
+            this.getUserData();
         }
     },
 }
