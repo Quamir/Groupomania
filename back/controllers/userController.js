@@ -7,8 +7,8 @@ const {promisify} = require('util');
 
 const media = new Media('./public/images/profile_pictures');
 const upload = media.upload();
-exports.uploadProfilePicture = upload.single('image');
 
+exports.uploadProfilePicture = upload.single('image');
 
 // create an account
 exports.createAccount = catchAsync(async (req,res,next) => {
@@ -114,13 +114,32 @@ exports.changeEmail = catchAsync(async (req,res,nest) => {
 exports.changeName = catchAsync(async (req,res,next) => {
     const user = new User(...[req.body.firstName, req.body.lastName, , , , ,req.body.id]);
     const changeUserName =  await user.changeName();
-    console.log(req.body);
     res.status(200).json({
         message: changeUserName
     });
 
 });
 
-// updae profile picture 
+// change profile picture
+
+exports.changeProfilePicture = catchAsync(async (req,res,next) =>{
+    const user  = new User(...[
+        ,
+        ,
+        , 
+        , 
+        , 
+        ,
+        req.body.id,
+        `${req.protocol}://${req.get('host')}/images/profile_pictures/${req.file.filename}`
+    ]);
+
+    console.log(req.file.filename);
+    const changePicture = await user.changeProfilePicture();
+
+    res.status(200).json({
+        message: changePicture
+    });
+});
 
 

@@ -29,7 +29,6 @@ class User{
         const exist = 'SELECT EXISTS(SELECT email FROM user_account WHERE email = $1)';
         const existValue = [this.email];
         const existsQuery = await pool.query(exist, existValue);
-        console.log(this.password);
         const hashedPassword = await bcrypt.hash(this.password, 12);
         
 
@@ -54,8 +53,6 @@ class User{
 
         // compare password to hash
         const compare = await bcrypt.compare(this.password,userPassword);
-        console.log(this.password,userPassword);
-        console.log(compare);
         if(compare === true){
             return {token}
         }else{
@@ -85,7 +82,6 @@ class User{
         const values = [this.id];
         const query = await pool.query(sql, values);
         
-        console.log(query);
         if(query.rowCount === 0){
             return  (new AppError('can\'t find user ',404));
         }else{
@@ -109,7 +105,6 @@ class User{
             const hashPassword = await pool.query(hashPassWordQuery, hashPassWordValues);
             const compare = await bcrypt.compare(this.password,hashPassword.rows[0].user_password);
 
-
             if(profilePictureQuery.rows[0].exists === true){
                 // find file location of profile picture
                 const findProfilePicture = 'SELECT profile_picture FROM user_account WHERE email = $1';
@@ -127,11 +122,9 @@ class User{
                 const deleteUserAccount = await pool.query(sql,value);
             }
 
-
         } else{
             return {notice: 'user account does not exist'}
         }
-
         return {notice: 'user profile has delted'}
     }
 
@@ -161,6 +154,25 @@ class User{
         const values = [this.firstName, this.lastName, this.id];
         const changeUserName = await pool.query(sql,values);
         return changeUserName.rows;
+    }
+
+    async changeProfilePicture(){
+        // get file location of profile picture 
+        const getPictureLocation = 'SELECT profile_picture FROM user_account WHERE id = $1';
+        const pictureValue = [this.id];
+        const getPicture = await pool.query(getPictureLocation, pictureValue);
+
+        // unlink said picture'
+        const media =  new Media(getPicture.rows[0].profile_picture);
+        const fileStatus = media.unLink('public/images/profile_pictures');
+        const message = 'new profile picture uploaded';
+
+        // insert new picture into database 
+        const sql = 'UPDATE user_account SET profile_picture = $1 WHERE id = $2 RETURNING profile_picture';
+        const values = [this.profilePicture, this.id];
+        const query = await pool.query(sql, values);
+
+        return {response: 'profile pictue updated', query: query.rows};
     }
 }
 

@@ -13,5 +13,11 @@ router.delete('/deleteaccount',  authController.protect, userController.deleteAc
 router.patch('/changepassword', authController.protect, userController.changePassword);
 router.patch('/changeemail', authController.protect, userController.changeEmail);
 router.patch('/changename', authController.protect, userController.changeName);
+router.patch(
+    '/changeprofilepicture', 
+    authController.protect,
+    userController.uploadProfilePicture, 
+    userController.changeProfilePicture
+);
 
 module.exports = router;

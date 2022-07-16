@@ -5,7 +5,9 @@
             <div class="user-info__profile-picture">
                 <h3 class="title">{{firstName}} {{lastName}}</h3>
                 <img :src="profilePicture" class="profile-picture" alt="">
-                <base-button class="base-btn">Change Picture</base-button>
+                <router-link to="/updateprofilepicture">
+                    <base-button class="base-btn">Change Picture</base-button>
+                </router-link>
             </div>
             <div class="user-info__text">
                 <div class="user-info__row">
@@ -41,7 +43,7 @@
             <img src="../assets/images/footer/group_3.jpg" class="footer__img" alt="group of professionals">
         </footer>
 
-        <div class="tint" v-if="renderFilter()"></div>
+        <div class="tint" v-if="renderFilter()" @click="tintReRoute"></div>
 
         <base-module v-if="checkPath('/deleteaccount')">
             <template #form-content>
@@ -104,16 +106,18 @@
                 </template>
             </base-module>
         </form>
-
-          <base-module v-if="checkPath('/updateprofilepicture')">
-            <template #form-content>
-                <p>Update Picture</p>
-                <img src="../assets/images/profile_img.svg" alt="profile picture" class="profile-picture">
-            </template>
-            <template #buttons>
-                <base-button class="module__btn">Update Picture</base-button>
-            </template>
-        </base-module>    
+        <form @submit.prevent="changeProfilePicture">
+            <base-module v-if="checkPath('/updateprofilepicture')">
+                <template #form-content>
+                    <p>Update Picture</p>
+                    <img src="../assets/images/profile_img.svg" alt="profile picture" class="profile-picture">
+                    <input type="file" id="file" name="file"  @change="onFileSelected"/>
+                </template>
+                <template #buttons>
+                    <base-button type="submit" class="module__btn">Update Picture</base-button>
+                </template>
+            </base-module>  
+        </form> 
     </section>
 </template>
 
@@ -161,7 +165,8 @@ export default {
             changePasswordNewPassword:{
                 val: '',
                 isValid: true 
-            }
+            }, 
+            selectedFile: null
         }
     },
     components:{
@@ -273,6 +278,35 @@ export default {
             console.log(responseData);
             router.replace({path:'/settings'});
             this.getUserData();
+        },
+
+
+        async changeProfilePicture(){
+            const fd = new FormData();
+            fd.append('id', this.id);
+            fd.append('image', this.selectedFile,this.selectedFile.name);
+
+            const response = await fetch('http://localhost:3000/api/user/changeprofilepicture', {
+                method: 'PATCH',
+                body: fd,
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                }
+            });
+
+            const responseData = await response.json();
+            console.log(responseData);
+            router.replace({path:'/settings'});
+            this.getUserData();
+        },
+
+         onFileSelected(event){
+            this.selectedFile = event.target.files[0]
+        },
+
+        tintReRoute(){
+            router.replace({path:'/settings'});
+            this.getUserData();
         }
     },
 }
@@ -315,6 +349,7 @@ export default {
             width: 200px;
             height: 200px;
             border-radius: 50%;
+            margin-bottom: 15%;
 
             @include breakpoint-down(mobile){
                 margin-bottom: 20px;
@@ -322,10 +357,14 @@ export default {
         }
 
         & .base-btn{
-            width: 80%;
+            width: 100%;
             height: 40px;
             font-size: rem(18);
             margin: auto;
+        }
+
+        & a{
+            width: 100%;
         }
     }
 

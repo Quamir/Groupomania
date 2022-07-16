@@ -18,8 +18,8 @@ class Media{
             const name = file.originalname.split('.')[0];
             const extension = file.mimetype.split('/')[1];
             cb(null, name + Date.now() + '.' + extension);
-           
-          }
+            
+          },
         });
 
         const multerFilter = (req,file,cb) =>{
@@ -41,12 +41,12 @@ class Media{
     unLink(folder){
         if(this.des !== null){
             const imageLocation = this.des;
-            console.log(this.des);
-            const imageName = imageLocation.split('/')[6];
+            // console.log(this.des);
+            const imageName = imageLocation.split('/')[5];
             const path = folder + `/${imageName}`
 
-            console.log(imageName);
-            console.log(path);
+            // console.log(imageName);
+            // console.log(path);
             fs.unlink(path, error =>{
                 if(error){
                     return 'file deleted';

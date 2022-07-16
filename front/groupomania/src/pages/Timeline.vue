@@ -155,8 +155,6 @@ export default {
             })
 
             console.log(this.profileArray);
-
-
         }
     },
 
