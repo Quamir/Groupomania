@@ -32,7 +32,9 @@
                     </router-link>
                 </div>
                 <div class="delete-account">
-                    <p>DELETE ACCOUNT</p>
+                    <router-link to="/deleteaccount">
+                        <p>DELETE ACCOUNT</p>
+                    </router-link>
                 </div>
             </div>
         </div>
@@ -44,20 +46,21 @@
         </footer>
 
         <div class="tint" v-if="renderFilter()" @click="tintReRoute"></div>
-
-        <base-module v-if="checkPath('/deleteaccount')">
-            <template #form-content>
-                <p>Are you sure you want to</p>
-                <p>permanently delete your account?</p>
-                <label for="password">Password</label>
-                <input type="password" id="password"/>
-                <label for="confrimpassword">Confrim Password</label>
-                <input type="password" id="Confrim Password">
-            </template>
-            <template #buttons>
-                <base-button class="module__btn">Delete Account</base-button>
-            </template>
-        </base-module>
+        <form @submit.prevent="deleteAccount">
+            <base-module v-if="checkPath('/deleteaccount')">
+                <template #form-content>
+                    <p>Are you sure you want to</p>
+                    <p>permanently delete your account?</p>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" v-model.trim="deleteAccountPassword.val"/>
+                    <label for="confrimpassword">Confrim Password</label>
+                    <input type="password" id="Confrim Password">
+                </template>
+                <template #buttons>
+                    <base-button class="module__btn">Delete Account</base-button>
+                </template>
+            </base-module>
+        </form>
         <form @submit.prevent="changePassword"  v-if="checkPath('/changepassword')">
             <base-module>
                 <template #form-content>
@@ -165,7 +168,11 @@ export default {
             changePasswordNewPassword:{
                 val: '',
                 isValid: true 
-            }, 
+            },
+            deleteAccountPassword:{
+                val: '',
+                isValid: true
+            },
             selectedFile: null
         }
     },
@@ -300,6 +307,26 @@ export default {
             this.getUserData();
         },
 
+        async deleteAccount(){
+            const data = JSON.stringify({
+                password: this.deleteAccountPassword.val,
+                email: this.email
+            });
+
+            const response = await fetch('http://localhost:3000/api/user/deleteaccount',{
+                method: 'DELETE',
+                body: data,
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const responseData = await response.json();
+            console.log(responseData);
+            router.replace({path:'/login'});
+        },
+
          onFileSelected(event){
             this.selectedFile = event.target.files[0]
         },
@@ -397,6 +424,10 @@ export default {
 
                 @include breakpoint-down(mobile){
                     font-size: rem(16);
+                }
+
+                &:hover{
+                    cursor: pointer;
                 }
             }
 
