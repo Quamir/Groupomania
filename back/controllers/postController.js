@@ -9,10 +9,10 @@ exports.uploadPostMedia = upload.single('image');
 // show All post 
 exports.showAllPost = catchAsync(async (req,res,next) =>{
     const post = new Post(...[,]);
-    const showPost = await post.showAllPost();
+    const showPost = await post.showAllPost(req.body.offset);
 
     res.status(200).json({
-        message: showPost
+        message: showPost.rows
     });
 });
 
@@ -25,6 +25,16 @@ exports.showSinglePost = catchAsync(async (req,res,next) =>{
         message: showPost
     });
 });
+
+// show most liked post
+exports.mostLikePost = catchAsync(async (req,res,next) =>{
+    const posts = new Post()
+    const mostLike = await posts.mostLikes();
+
+    res.status(200).json({
+        message: mostLike
+    })
+})
 
 // create post 
 exports.createPost = catchAsync(async (req,res,next) =>{

@@ -10,10 +10,57 @@ class Post{
         this.media = media;
     }
 
-    async showAllPost(){
-        const sql = 'SELECT * FROM user_post';
-        const showAllUserPost = await pool.query(sql);
+    async showAllPost(offset){
+        const sql = `
+            SELECT 
+                up.media,
+                up.description_text,
+                up.time_stamp,
+                up.title_text,
+                ua.first_name,
+                ua.last_name,
+                ua.profile_picture
+            FROM user_post AS up
+            INNER JOIN user_account AS ua 
+            ON up.user_id = ua.id
+            ORDER BY up.time_stamp DESC
+            LIMIT 15
+            OFFSET $1
+        `;
+        const values = [offset];
+        const showAllUserPost = await pool.query(sql,values);
         return showAllUserPost;
+    }
+
+    async mostLikes(){
+        const sql = `
+            WITH most_likes (post_id) as
+            (
+                SELECT post_id, COUNT(post_id) as rep 
+                FROM post_like 
+                GROUP BY post_id 
+                ORDER BY rep DESC
+                LIMIT 10
+            )
+            SELECT 
+                up.media,
+                up.description_text,
+                up.time_stamp,
+                up.title_text,
+                ua.first_name,
+                ua.last_name,
+                ua.profile_picture,
+                ml.post_id
+            FROM user_post AS up
+            INNER JOIN most_likes AS ml
+            ON up.id = ml.post_id
+            INNER JOIN user_account AS ua
+            ON up.user_id = ua.id 
+            ORDER BY ml.rep DESC 
+        `;
+
+        const query = await pool.query(sql);
+        return query;
     }
 
     async showSinglePost(){

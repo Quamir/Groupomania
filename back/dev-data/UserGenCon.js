@@ -4,13 +4,15 @@ const pool = require('../database');
 const factory = require('../controllers/handlerFactory');
 const bcrypt = require('bcrypt');
 const { query } = require('express');
+const dateFns = require('date-fns');
 
 class UserGenContent{
-    constructor(id,media,des,title){
+    constructor(id,media,des,title,timestamp){
         this.id = id,
         this.des = des,
         this.title = title,
         this.media = media
+        this.timestamp = timestamp
     }
 
     async generateAccounts(){
@@ -115,14 +117,15 @@ class UserGenContent{
     }
 
     async generateUserPosts(){
-        for(let i = 0; i < 50; i++){
-            this.id = getRandomIntInclusive(1,23);
+        for(let i = 0; i < 300; i++){
+            this.id = getRandomIntInclusive(277,299);
             this.title = ranTitle();
             this.des = ranDescription();
             this.media = getRanImg();
+            this.timestamp = genRandomTimestamp();
 
-            const sql = 'INSERT INTO user_post(user_id, title_text, description_text, media) VALUES($1,$2,$3,$4) RETURNING*';
-            const values = [this.id, this.title, this.des, this.media];
+            const sql = 'INSERT INTO user_post(user_id, title_text, description_text, media, time_stamp) VALUES($1,$2,$3,$4,$5) RETURNING*';
+            const values = [this.id, this.title, this.des, this.media, this.timestamp];
             const genPost = await pool.query(sql, values);
             console.log(genPost.rows);
         }
@@ -130,17 +133,20 @@ class UserGenContent{
 
     async generateUserComments(){
 
-        for(let i = 0; i < 150; i++){
+        for(let i = 0; i < 400; i++){
             const sql = 'SELECT * FROM user_post';
             const allPost = await pool.query(sql);
             const postCount = allPost.rowCount;
     
             this.postId = allPost.rows[getRandomIntInclusive(0 , postCount - 1)];
-            this.userId = getRandomIntInclusive(1,23);
+            this.userId = getRandomIntInclusive(277,299);
             this.text = genRanComment();
+            this.timestamp = genRandomTimestamp();
 
-            const insert = 'INSERT INTO post_comment(post_id,user_id,comment_text) VALUES($1,$2,$3) RETURNING*';
-            const values = [this.postId.id,this.userId,this.text];
+            // note that timestamps form comments can be before or after the post was made 
+
+            const insert = 'INSERT INTO post_comment(post_id,user_id,comment_text, time_stamp) VALUES($1,$2,$3,$4) RETURNING*';
+            const values = [this.postId.id,this.userId,this.text, this.timestamp];
             const query = await pool.query(insert, values);
             
             console.log(query);
@@ -167,14 +173,14 @@ class UserGenContent{
         const addSmileEmoji = 'INSERT INTO smile_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
         
 
-        for(let i = 0; i < 160; i++){
+        for(let i = 0; i < 400; i++){
 
             // check amount of post 
             const sql = 'SELECT * FROM user_post';
             const allPost = await pool.query(sql);
             const postCount = allPost.rowCount;
 
-            this.userId = getRandomIntInclusive(1,23);
+            this.userId = getRandomIntInclusive(277,299);
             this.postId = allPost.rows[getRandomIntInclusive(0 , postCount - 1)];
 
             console.log(this.postId.id);
@@ -306,6 +312,20 @@ function genRanComment(){
     return commentArray[getRandomIntInclusive(0, commentArray.length)];
 }
 
+// random timestamp 
+
+function genRandomTimestamp(){
+    const results = dateFns.eachDayOfInterval({
+        start: new Date(2022, 1, 1,),
+        end: new Date(2022, 7, 22,)
+    });
+
+    const randomDateBetween = results[getRandomIntInclusive(0,103)];
+    const sqlFormat = dateFns.formatISO9075(randomDateBetween);
+
+    return sqlFormat;
+}
+
 
 async function genUser(firstName, lastName){
     const name = firstName;
@@ -347,8 +367,7 @@ async function genUser(firstName, lastName){
 
 const userContent = new UserGenContent
 
-userContent.generateAccounts();
-
+// userContent.generateAccounts();
 // generate user post first 
 // userContent.generateUserPosts();
 // than user reactions 
@@ -366,6 +385,3 @@ userContent.generateAccounts();
 // SELECT * FROM shock_emoji
 // SELECT * FROM shock_emoji
 // SELECT * FROM smile_emoji
-
-
-

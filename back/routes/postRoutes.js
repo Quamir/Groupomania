@@ -9,7 +9,8 @@ router.post('/create', authController.protect, postController.uploadPostMedia,po
 router.patch('/update', authController.protect, postController.editPost);
 router.delete('/delete', authController.protect, postController.deletePost);
 // display routes 
-router.get('/allpost', authController.protect, postController.showAllPost);
+router.post('/allpost', authController.protect, postController.showAllPost);
 router.get('/singlepost', authController.protect, postController.showSinglePost);
+router.get('/mostlikes', authController.protect, postController.mostLikePost);
 
 module.exports = router;

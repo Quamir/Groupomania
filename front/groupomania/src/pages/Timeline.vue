@@ -59,7 +59,17 @@
                     <span>Make A Post</span>
                 </base-button>
 
-                <post-element></post-element>
+                <div v-for="post in postArray" :post="post" :key="post.index" class="post-wrapper__post">
+                    <post-element 
+                        :timestamp="post.time_stamp.split('T')[0]"
+                        :media="post.media"
+                        :title="post.title_text"
+                        :description="post.description_text"
+                        :name="post.first_name"
+                        :profilePicture="post.profile_picture"
+                    >
+                    </post-element>
+                </div>
 
             </div>
 
@@ -101,24 +111,21 @@ export default {
             auth: false,
             user: null,
             profilePicture: null,
-            profileArray:[]
-
+            profileArray:[],
+            postArray:[],
+            offset: 0
         }
     },
     
     async created(){
-    //   console.log(localStorage.getItem('token'));
       const response = await fetch('http://localhost:3000/api/user/user',{
         headers:{
             Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
         }
       });
-
       const responseData = await response.json();
-    //   console.log(responseData.message);
 
       this.profilePicture = responseData.message.profile_picture;
-    //   console.log(this.profilePicture);
 
       if(responseData.status === 'fail' || responseData.status === 'error'){
         router.replace({path: '/login'});
@@ -126,7 +133,9 @@ export default {
         this.auth = true;
       }
 
+     this.getPage();
      this.getProfiles();
+     this.getPost();
 
     },
     methods:{
@@ -155,7 +164,60 @@ export default {
             })
 
             console.log(this.profileArray);
+        },
+
+        getPage(){
+            const route = this.$route.path.split('.');
+            const splitRoute = route[0].split('/');
+            console.log(splitRoute[2]);
+
+            if(splitRoute[2] == 2){
+                this.offset = 30;
+            }else if(splitRoute[2] == 3){
+                this.offset = 45;
+            }else if(splitRoute[2] == 4){
+                this.offset = 60;
+            }else if(splitRoute[2] == 5){
+                this.offset = 75;
+            }else if(splitRoute[2] == 6){
+                this.offset = 90;
+            }else if(splitRoute[2] == 7){
+                this.offset = 105;
+            }else if(splitRoute[2] == 8){
+                this.offset = 120;
+            }else if(splitRoute[2] == 9){
+                this.offset = 135;
+            }else if(splitRoute[2] == 10){
+                this.offset = 150;
+            }else if(splitRoute[2] == 11){
+                this.offset = 165;
+            }else if(splitRoute[2] == 12){
+                this.offset = 180;
+            }
+        },
+
+        async getPost(){
+            const data = { offset : this.offset}
+            
+            const response = await fetch('http://localhost:3000/api/post/allpost',{
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers:{
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+
+            const responseData = await response.json();
+            const array = responseData.message;
+
+            array.forEach(post =>{
+                this.postArray.push(post);
+            });
+
+            console.log(this.postArray);
         }
+
     },
 
 }
@@ -181,6 +243,10 @@ html{
     & h2{
         padding-bottom: 20px;
         padding-top: 20px;
+    }
+
+    &__post{
+        margin-bottom: 50px;
     }
 
 }

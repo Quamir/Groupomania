@@ -2,25 +2,20 @@
     <div class="post__folder-wrapper">
         <div class="post__info-wrapper">
             <div class="post__user-info">
-                <img src="../../assets/images/people/Lora_Gertie.jpg" alt="profile picture" class="post__profile-picture">
+                <img :src="profilePicture" alt="profile picture" class="post__profile-picture">
                 <div class="post__info-text">
                     <p>posted by</p>
-                    <span>Lora Gertie</span>
+                    <span>{{name}}</span>
                 </div>
-                 <p class="post__timestamp">June 2 at 11:30 AM</p>
+                 <p class="post__timestamp">{{timestamp}}</p>
             </div>
             <div class="post__title">
-                <p></p>
+                <p>{{title}}</p>
             </div>
             <div class="post__img-wrapper">
-                <img src="http://localhost:3000/images/post_pictures/BEIMG22.jpg" alt="img relating to post" class="post__img">
+                <img :src="media" alt="img relating to post" class="post__img">
                 <div class="post__text">
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        Sit amet consectetur adipiscing elit pellentesque. Nisi lacus sed viverra tellus. Ornare suspendisse sed nisi lacus sed. Egestas 
-                        egestas fringilla phasellus faucibus. Pellentesque eu tincidunt tortor aliquam nulla facilisi. Ornare massa eget egestas purus viverra 
-                        accumsan in nisl nisi. Quis eleifend
-                    </p>
+                    <p>{{description}}</p>
                 </div>
             </div>
             <div class="reaction-panel">
@@ -49,6 +44,7 @@
 <script>
 
 export default {
+  props:['name','timestamp','media','title', 'description','name', 'profilePicture'],
   data(){
     return{
         modelVisable: false
@@ -137,11 +133,16 @@ export default {
         }
     }
 
+    &__timestamp{
+        font-size: rem(13);
+    }
+
     &__img{
 
         @include breakpoint-down(mobile){
             width: 99vw;
             height: 270px;
+            object-fit: cover;
         }
 
         &-wrapper{

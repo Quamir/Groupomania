@@ -121,7 +121,6 @@ exports.changeName = catchAsync(async (req,res,next) => {
 });
 
 // change profile picture
-
 exports.changeProfilePicture = catchAsync(async (req,res,next) =>{
     const user  = new User(...[
         ,

@@ -16,7 +16,10 @@ const router = createRouter({
     ]},
     { path: '/timeline', component: Timeline,
       children:[
-        { path: '/makeapost',component: Timeline }
+        { path: '/makeapost',component: Timeline },
+        { path: '/timeline/:page', component: Timeline },
+        { path: '/timeline/mostlikes', component: Timeline },
+        { path: '/mostcommented', component: Timeline}
       ]},
     { path: '/post/', component: Post },
     { path: '/settings', component: Settings,
