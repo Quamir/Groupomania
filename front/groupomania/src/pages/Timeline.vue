@@ -19,38 +19,22 @@
             <div class="post-wrapper">
                 <h2>Top Post</h2>
                 <div class="top-post">
-                    <div class="top-post__wrapper">
-                        <img src="../assets/images/dev-data-imgs/img1.jpg" alt="image of top post" class="top-post__picture">
+                    <div class="top-post__wrapper" v-for="post in TopPostArray" :post="post" :key="post.index">
+                        <img :src="post.media" alt="image of top post" class="top-post__picture">
                         <div class="top-post__text">
-                            <h3>Title</h3>
-                        </div>
-                    </div>
-                    <div class="top-post__wrapper">
-                        <div class="top-post__picture">
-                            <img src="../assets/images/dev-data-imgs/img2.jpg" alt="image of top post">
-                        </div>
-                        <div class="top-post__text">
-                            <h3>Title</h3>
-                        </div>
-                    </div>
-                    <div class="top-post__wrapper">
-                        <div class="top=post__picture">
-                            <img src="../assets/images/dev-data-imgs/img3.jpg" alt="image of top post">
-                        </div>
-                        <div class="top-post__text">
-                            <h3>Title</h3>
+                            <h3>{{post.title_text}}</h3>
                         </div>
                     </div>
                 </div>
 
                 <div class="sorter">
-                    <base-button class="sorter__btn">
+                    <base-button class="sorter__btn" @click="mostLikes">
                         <span>Most likes</span>
                     </base-button>
-                    <base-button class="sorter__btn">
+                    <base-button class="sorter__btn" @click="mostCommented">
                         <span>Most commented</span>
                     </base-button>
-                    <base-button class="sorter__btn">
+                    <base-button class="sorter__btn" @click="mostRecent">
                         <span>Most recent</span>
                     </base-button>
                 </div>
@@ -59,8 +43,44 @@
                     <span>Make A Post</span>
                 </base-button>
 
-                <div v-for="post in postArray" :post="post" :key="post.index" class="post-wrapper__post">
-                    <post-element 
+                <div v-if="mostRecentPost">
+                    <post-element
+                        class="post-wrapper__post"
+                        v-for="post in postArray" 
+                        :post="post" 
+                        :key="post.index"
+                        :timestamp="post.time_stamp.split('T')[0]"
+                        :media="post.media"
+                        :title="post.title_text"
+                        :description="post.description_text"
+                        :name="post.first_name"
+                        :profilePicture="post.profile_picture"
+                    >
+                    </post-element>
+                </div>
+
+                 <div v-if="mostLikedPosts">
+                    <post-element
+                        class="post-wrapper__post"
+                        v-for="post in mostLikesArray" 
+                        :post="post" 
+                        :key="post.index"
+                        :timestamp="post.time_stamp.split('T')[0]"
+                        :media="post.media"
+                        :title="post.title_text"
+                        :description="post.description_text"
+                        :name="post.first_name"
+                        :profilePicture="post.profile_picture"
+                    >
+                    </post-element>
+                </div>
+
+                  <div v-if="mostCommentedPost">
+                    <post-element
+                        class="post-wrapper__post"
+                        v-for="post in mostCommentedArray" 
+                        :post="post" 
+                        :key="post.index"
                         :timestamp="post.time_stamp.split('T')[0]"
                         :media="post.media"
                         :title="post.title_text"
@@ -99,7 +119,6 @@
 </template>
 
 <script>
-import { useRoute } from 'vue-router';
 import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
 export default {
@@ -113,7 +132,14 @@ export default {
             profilePicture: null,
             profileArray:[],
             postArray:[],
-            offset: 0
+            TopPostArray:[],
+            offset: 0,
+            sortByLikes: false,
+            mostRecentPost: true,
+            mostLikedPosts: null,
+            mostCommentedPost: null,
+            mostLikesArray: [],
+            mostCommentedArray:[]
         }
     },
     
@@ -132,19 +158,34 @@ export default {
       }else{
         this.auth = true;
       }
-
+     this.checkPath();
+     this.getTopPost();
      this.getPage();
      this.getProfiles();
      this.getPost();
-
+   
     },
     methods:{
         render(){
-            if(useRoute().path === '/makeapost'){
-                document.body.style.overflow = 'hidden';
-                return true;
-            }else{
-                return false;
+            // if(useRoute().path === '/makeapost'){
+            //     document.body.style.overflow = 'hidden';
+            //     return true;
+            // }else{
+            //     return false;
+            // }
+        },
+
+        checkPath(){
+            if(this.$route.path.split('/')[1] === 'mostlikes'){
+                this.mostLikedPosts = true;
+                this.mostRecentPost = false;
+                this.mostCommentedPost = false;
+                this.mostLikes();
+            }else if(this.$route.path.split('/')[1] === 'mostcommented'){
+                this.mostLikedPosts = false;
+                this.mostRecentPost = false;
+                this.mostCommentedPost = true;
+                this.mostCommented();
             }
         },
 
@@ -161,16 +202,13 @@ export default {
 
             array.forEach(person =>{
                 this.profileArray.push(person);
-            })
-
-            console.log(this.profileArray);
+            });
         },
 
         getPage(){
             const route = this.$route.path.split('.');
             const splitRoute = route[0].split('/');
-            console.log(splitRoute[2]);
-
+        
             if(splitRoute[2] == 2){
                 this.offset = 30;
             }else if(splitRoute[2] == 3){
@@ -196,6 +234,24 @@ export default {
             }
         },
 
+        async getTopPost(){
+            const response = await fetch('http://localhost:3000/api/post/mostinteractions',{
+                  headers:{
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+
+            const responseData = await response.json();
+            const array = responseData.message;
+
+            array.forEach(post =>{
+                this.TopPostArray.push(post);
+            });
+
+            console.log(this.TopPostArray);
+        },
+
         async getPost(){
             const data = { offset : this.offset}
             
@@ -214,12 +270,59 @@ export default {
             array.forEach(post =>{
                 this.postArray.push(post);
             });
+        },
 
-            console.log(this.postArray);
+        async mostLikes(){
+            const response = await fetch('http://localhost:3000/api/post/mostlikes',{
+                 headers:{
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+
+            const responseData = await response.json();
+            const array = responseData.message;
+
+            array.forEach(post =>{
+                this.mostLikesArray.push(post);
+            });
+
+            router.replace({path:'/mostlikes'});
+            this.mostLikedPosts = true;
+            this.mostRecentPost = false;
+            this.mostCommentedPost = false;
+           
+        },
+
+        async mostCommented(){
+            const response = await fetch('http://localhost:3000/api/post/mostcommented',{
+                headers:{
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+
+            const responseData = await response.json();
+            const array = responseData.message;
+
+            array.forEach(post =>{
+                this.mostCommentedArray.push(post);
+            });
+            
+            router.replace({path:'/mostcommented'});
+            this.mostLikedPosts = false;
+            this.mostRecentPost = false;
+            this.mostCommentedPost = true;
+        },
+
+        mostRecent(){
+            router.replace({path:'/timeline'});
+            this.mostLikedPosts = false;
+            this.mostRecentPost = true;
+            this.mostCommentedPost = false;
         }
 
     },
-
 }
 </script>
 
@@ -262,7 +365,7 @@ html{
     }
 
     &__wrapper{
-        margin-right: 50px;
+        width: 200px;
 
         @include breakpoint-down(mobile){
             width: 100px;
@@ -273,7 +376,7 @@ html{
 
     & img {
         width: 150px;
-        height: 150px;
+        height: 200px;
         object-fit: fill;
         margin-bottom: -4px;
 
@@ -284,10 +387,16 @@ html{
         }
     }
 
+
     &__text{
         display: flex;
         justify-content: center;
         border: 1.2px solid grey;
+        width: 75%;
+        height: 20%;
+        overflow: hidden;
+        font-size: rem(12);
+
     }
 }
 

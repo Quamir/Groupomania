@@ -28,12 +28,42 @@ exports.showSinglePost = catchAsync(async (req,res,next) =>{
 
 // show most liked post
 exports.mostLikePost = catchAsync(async (req,res,next) =>{
-    const posts = new Post()
+    const posts = new Post();
     const mostLike = await posts.mostLikes();
 
     res.status(200).json({
         message: mostLike
     })
+});
+
+// show most commented post 
+exports.mostCommentedPost = catchAsync(async(req,res,next) =>{
+    const posts = new Post();
+    const mostedCommented = await posts.mostCommented();
+
+    res.status(200).json({
+        message: mostedCommented
+    });
+});
+
+// get the top post 
+exports.mostInteractions = catchAsync(async (req,res,next) =>{
+    const posts = new Post();
+    const mostInteracts = await posts.mostInteractions();
+
+    res.status(200).json({
+        message: mostInteracts
+    });
+});
+
+// get profile post 
+exports.profilePost = catchAsync(async (req,res,next) =>{
+    const posts = new Post(req.body.id);
+    const profilePost = await posts.profilePost();
+
+    res.status(200).json({
+        message: profilePost
+    });
 })
 
 // create post 

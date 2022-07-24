@@ -18,7 +18,7 @@ const router = createRouter({
       children:[
         { path: '/makeapost',component: Timeline },
         { path: '/timeline/:page', component: Timeline },
-        { path: '/timeline/mostlikes', component: Timeline },
+        { path: '/mostlikes', component: Timeline },
         { path: '/mostcommented', component: Timeline}
       ]},
     { path: '/post/', component: Post },

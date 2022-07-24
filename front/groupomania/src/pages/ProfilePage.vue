@@ -17,14 +17,25 @@
         
 
         
-<!-- 
+
         <div class="title">
             <h1>Post By {{firstName}} {{lastName}}</h1>
         </div>
 
-        <div class="posts">
-            <post-element></post-element>
-        </div> -->
+        <div class="post-wrapper">
+            <div class="posts" v-for="post in profilePostArray" :post="post" :key="post.index">
+            <post-element
+                :timestamp="post.time_stamp.split('T')[0]"
+                :media="post.media"
+                :title="post.title_text"
+                :description="post.description_text"
+                :name="post.first_name"
+                :profilePicture="post.profile_picture"
+            >    
+            </post-element>
+        </div>
+        </div>
+
 
     </section>
 </template>
@@ -42,18 +53,18 @@ export default {
             lastName: null,
             userProfilePicture: null,
             profilePicture: null,
+            profileId: null,
             paramsEqual: null,
-            findUser: null
+            findUser: null,
+            profilePostArray: []
         }
     },
     created(){
         this.CheckUserAccount();
         this.vistProfilePage();
-        console.log(this.profilePicture);
     },
     methods:{
         async CheckUserAccount(){
-            // console.log(localStorage.getItem('token'));
             const response = await fetch('http://localhost:3000/api/user/user',{
                 headers:{
                     Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
@@ -82,6 +93,7 @@ export default {
         async vistProfilePage(){
             const route = this.$route.path.split('.');
             const splitRoute = route[0].split('/');
+            this.profileId = splitRoute[2];
             const data = JSON.stringify({ id: parseInt(splitRoute[2])});
 
             const response = await fetch('http://localhost:3000/api/user/profile',{
@@ -94,7 +106,7 @@ export default {
             });
 
             const responseData = await response.json();
-            console.log(responseData);
+            console.log(this.profileId);
 
             if(responseData.message.status === 'fail'){
                 console.log('can\t find user');
@@ -106,9 +118,31 @@ export default {
               this.firstName = responseData.message.first_name;
               this.lastName = responseData.message.last_name;
               this.profilePicture = responseData.message.profile_picture;
+              this.profilePost();
 
             }
             
+        },
+
+        async profilePost(){
+            const data = JSON.stringify({ id: this.profileId});
+            const response = await fetch('http://localhost:3000/api/post/profilepost',{
+                method: 'POST',
+                body: data,
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const responseData = await response.json();
+            const array = responseData.message
+
+            array.forEach(post =>{
+                this.profilePostArray.push(post);
+            });
+
+            console.log(this.profilePostArray);
         }
     },
 }
@@ -207,6 +241,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 50px;
+
 }
 
 .page-error{
