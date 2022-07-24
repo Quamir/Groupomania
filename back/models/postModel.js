@@ -164,7 +164,20 @@ class Post{
     }
 
     async showSinglePost(){
-        const sql = 'SELECT * FROM user_post WHERE id = $1';
+        const sql = `
+            SELECT 
+                up.media,
+                up.description_text,
+                up.time_stamp,
+                up.title_text,
+                ua.first_name,
+                ua.last_name,
+                ua.profile_picture
+            FROM user_post AS up
+            INNER JOIN user_account AS ua 
+            ON up.user_id = ua.id
+            WHERE up.id = $1
+        `;
         const values = [this.id];
         const showSingleUserPost = await pool.query(sql,values);
         return showSingleUserPost.rows;

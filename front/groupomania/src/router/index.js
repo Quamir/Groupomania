@@ -21,7 +21,7 @@ const router = createRouter({
         { path: '/mostlikes', component: Timeline },
         { path: '/mostcommented', component: Timeline}
       ]},
-    { path: '/post/', component: Post },
+    { path: '/post/:id', component: Post },
     { path: '/settings', component: Settings,
       children:[
         { path: '/deleteaccount', component: Settings },

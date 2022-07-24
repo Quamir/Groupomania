@@ -3,6 +3,16 @@ const pool = require('../database');
 const catchAsync = require('../utils/catchAsync');
 const Comment = require('../models/commentModel');
 
+// display all comments for a post 
+exports.getAllComments = catchAsync(async (req,res,next) =>{
+    const comment = new Comment(...[, , ,req.body.id]);
+    const allComments = await comment.getAllComments();
+
+    res.status(200).json({
+        message: allComments
+    })
+});
+
 // write comment
 exports.createComment = catchAsync(async (req,res,next) =>{
     const comment = new Comment(

@@ -1,15 +1,23 @@
 <template>
   <section >
       <div class="post-img__wrapper"  @click="exitOnClick()">
-        <img src="../assets/images/x_icon.svg" alt="exit button" class="post-img__exit-btn">
-        <img src="../assets/images/dev-data-imgs/img1.jpg" alt="post image" class="post-img__img">
+        <img 
+            src="../assets/images/x_icon.svg" 
+            alt="exit button" 
+            class="post-img__exit-btn" 
+            @click="$router.go(-1)"
+            >
+        <img :src="media" alt="post image" class="post-img__img">
     </div>
     <div class="comments" >
         <div class="comments__poster-info"  @click="exitOnClick()">
-            <img src="../assets/images/people/Lora_Gertie.jpg" alt="profile picture" class="comments__profile-picture">
             <div class="comments-info__text">
-                <p>Lora Gertie</p>
-                <p>June 2 at 11:38 AM</p>
+                <img :src="profilePicture" alt="profile picture" class="comments__profile-picture">
+                <p>{{firstNmae}} {{lastName}}</p>
+                <p>{{timestamp}}</p>
+            </div>
+            <div>
+                <p class="comments-info__des">{{descriptionText}}</p>
             </div>
         </div>
         <div class="comments__likes">
@@ -38,84 +46,22 @@
             <p>1</p>
         </div>
         <div class="commenter" @click="exitOnClick()">
-            <div class="commenter__wrapper">
+            <div class="commenter__wrapper" v-for="comment in commentsArray" :comment="comment" :key="comment.index">
                 <div class="commenter__info">
-                    <p class="commenter__name">Tisha Lorri</p>
-                    <img src="../assets/images/people/Tisha_Lorri.jpg" alt="commenter's picture" class="commenter__img">
+                    <p class="commenter__name">{{comment.first_name}} {{comment.last_name}}</p>
+                    <img :src="comment.profile_picture"  alt="commenter's picture" class="commenter__img">
                 </div>
                 <div class="commenter__text-wrapper">
                     <div class="commenter__text">
-                        <p>June 2 at 11:38</p>
-                        <p>orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-                            tempor incididunt ut labore et dolore magna aliqua. 
-                            Egestas egestas fringilla phasellus faucibus scelerisque eleifend.
-                        </p>
+                        <p>{{commentTimestamp}}</p>
+                        <p>{{comment.comment_text}}</p>
                     </div>
                     <div class="commenter__response">
                         <p>like</p>
                         <p>Reply</p>
                     </div>
                 </div>
-                
-            </div>
-            <div class="commenter__wrapper"  @click="exitOnClick()">
-                <div class="commenter__info">
-                    <p class="commenter__name">Rex Benton</p>
-                    <img src="../assets/images/people/Rex_Benton.jpg" alt="commenter's picture" class="commenter__img">
-                </div>
-                <div class="commenter__text-wrapper">
-                    <div class="commenter__text">
-                        <p>June 2 at 11:45</p>
-                        <p>orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-                            tempor incididunt ut labore et dolore magna aliqua. 
-                            Egestas egestas fringilla phasellus faucibus scelerisque eleifend.
-                        </p>
-                    </div>
-                    <div class="commenter__response">
-                        <p>like</p>
-                        <p>Reply</p>
-                    </div>
-                </div>
-            </div>
-            <div class="commenter__wrapper">
-                <div class="commenter__info">
-                    <p class="commenter__name">Daxton Indiana</p>
-                    <img src="../assets/images/people/Daxton_Indiana.jpg" alt="commenter's picture" class="commenter__img">
-                </div>
-                <div class="commenter__text-wrapper">
-                    <div class="commenter__text">
-                        <p>June 2 at 11:38</p>
-                        <p>orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-                            tempor incididunt ut labore et dolore magna aliqua. 
-                            Egestas egestas fringilla phasellus faucibus scelerisque eleifend.
-                        </p>
-                    </div>
-                    <div class="commenter__response">
-                        <p>like</p>
-                        <p>Reply</p>
-                    </div>
-                </div>
-            </div>
-            <div class="commenter__wrapper">
-                <div class="commenter__info">
-                    <p class="commenter__name">Tisha Lorri</p>
-                    <img src="../assets/images/people/Tisha_Lorri.jpg" alt="commenter's picture" class="commenter__img">
-                </div>
-                <div class="commenter__text-wrapper">
-                    <div class="commenter__text">
-                        <p>June 2 at 11:38</p>
-                        <p>orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-                            tempor incididunt ut labore et dolore magna aliqua. 
-                            Egestas egestas fringilla phasellus faucibus scelerisque eleifend.
-                        </p>
-                    </div>
-                    <div class="commenter__response">
-                        <p>like</p>
-                        <p>Reply</p>
-                    </div>
-                </div>
-            </div>
-            
+            </div>  
         </div>
         
         <emoji-pop-up v-if="modelVisable" class="emoji-pop"></emoji-pop-up>
@@ -127,13 +73,73 @@
 export default {
    data(){
     return{
-        modelVisable: false
+        postId: this.$route.path.split('/')[2],
+        descriptionText: null,
+        firstNmae: null,
+        lastName: null,
+        media: null,
+        profilePicture: null,
+        timestamp: null,
+        titleText: null,
+        modelVisable: false,
+        commentsArray:[],
+        commentTimestamp: null
     }
+  },
+  created(){
+    this.getPost();
+    this.getComments();
   },
   methods:{
     toggleModel(){
         this.modelVisable = !this.modelVisable;
         console.log(this.modelVisable);
+    },
+
+    async getPost(){
+        const data = {id: this.postId}
+        const response = await fetch('http://localhost:3000/api/post/singlepost',{
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+            }
+        });
+
+        const responseData = await response.json();
+        const array = responseData.message;
+
+        console.log(array[0].last_name);
+
+        this.media = array[0].media;
+        this.descriptionText = array[0].description_text;
+        this.firstNmae = array[0].first_name;
+        this.lastName = array[0].last_name;
+        this.profilePicture = array[0].profile_picture;
+        this.timestamp = array[0].time_stamp.split('T')[0];
+        this.titleText = array[0].title_text;
+    },
+
+    async getComments(){
+        const data = {id: this.postId}
+        const response = await fetch('http://localhost:3000/api/comment/allcomments',{
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+            }
+        });
+
+        const responseData = await response.json();
+        const array = responseData.message;
+        
+        array.forEach(comment =>{
+            this.commentsArray.push(comment);
+        });
+
+        this.commentTimestamp = this.commentsArray[0].time_stamp.split('T')[0];
     },
 
     exitOnClick(){
@@ -158,7 +164,7 @@ section{
 .post-img{
     &__wrapper{
         width: 50vw;
-        height: 93vh;
+        height: 100vh;
         overflow: hidden;
 
         @include breakpoint-down(mobile){
@@ -182,7 +188,7 @@ section{
     &__img{
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: fill;
 
         @include breakpoint-down(mobile){
             width: 100%;
@@ -194,6 +200,8 @@ section{
 .comments{
     width: 50vw;
     height: 93vh;
+    display: flex;
+    flex-direction: column;
 
     @include breakpoint-down(mobile){
         width: 100%;
@@ -203,31 +211,37 @@ section{
     &__poster-info{
         display: flex;
         align-items: center;
-        padding-left: 30px;
         margin-top: 20px;
+        margin-left: 40px;
         margin-bottom: 20px;
+    
     }
 
     &__profile-picture{
+        align-self: flex-start;
         width: 100px;
         height: 100px;
         border-radius: 50px;
         margin-right: 20px;
-        
+        margin-bottom: 15px;
     }
 
     &-info__text{
+        align-self: flex-start;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
 
         & p{
             padding-bottom: 15px;
-            font-size: rem(20);
+            font-size: rem(15);
             font-weight: 500;
         }
     }
 
+    &-info__des{
+        margin-left: 50px;
+    }
     &__likes{
         display: flex;
         align-items: center;
@@ -297,8 +311,7 @@ section{
 }
 
 .commenter{
-    // background-color: gold;
-    height: 61vh;
+    height: 100%;
     overflow-y: scroll;
     padding-left: 15px;
     padding-top: 30px;

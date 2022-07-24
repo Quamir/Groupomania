@@ -20,10 +20,12 @@
                 <h2>Top Post</h2>
                 <div class="top-post">
                     <div class="top-post__wrapper" v-for="post in TopPostArray" :post="post" :key="post.index">
-                        <img :src="post.media" alt="image of top post" class="top-post__picture">
-                        <div class="top-post__text">
-                            <h3>{{post.title_text}}</h3>
-                        </div>
+                        <router-link :to="'/post/'+post.post_id">
+                            <img :src="post.media" alt="image of top post" class="top-post__picture">
+                            <div class="top-post__text">
+                                <h3>{{post.title_text}}</h3>
+                            </div>
+                        </router-link>
                     </div>
                 </div>
 
@@ -166,6 +168,7 @@ export default {
     },
     
     created(){
+        console.log(this.TopPostArray);
         this.getUserInfo();
         this.checkPath();
         this.getTopPost();
@@ -374,7 +377,7 @@ export default {
                     Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
                 }
             });
-            
+
             document.body.style.overflow = 'visible';
             router.replace({path: '/timeline'});
         },
