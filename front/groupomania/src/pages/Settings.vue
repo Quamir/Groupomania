@@ -332,6 +332,7 @@ export default {
         },
 
         tintReRoute(){
+            document.body.style.overflow = 'visible';
             router.replace({path:'/settings'});
             this.getUserData();
         }

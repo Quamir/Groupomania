@@ -39,9 +39,11 @@
                     </base-button>
                 </div>
 
-                <base-button class="post-btn">
-                    <span>Make A Post</span>
-                </base-button>
+                <router-link to="/makeapost">
+                    <base-button class="post-btn">
+                        <span>Make A Post</span>
+                    </base-button>
+                </router-link>
 
                 <div v-if="mostRecentPost">
                     <post-element
@@ -93,32 +95,42 @@
 
             </div>
 
-            <div class="tint" v-if="render()"></div>
-            <base-module class="make-post" v-if="render()">
-                <template #title>
-                Make A Post
-                </template>
-                <template #form-content>
-                    <label for="title">Title</label>
-                    <input type="text" id="title">
-                    <label for="description">Description</label>
-                    <textarea name="description" id="description" cols="70" rows="10"></textarea>
-                </template>
-                <template #buttons>
-                    <div class="make-post__btn-wrapper">
-                        <img src="../assets/images/image_icon.svg" alt="image icon" class="make-post__icon">
-                        <div class="make-post__btns-wrapper">
-                            <base-button class="make-post__btn">Upload Picture</base-button>
-                            <base-button class="make-post__btn">Post</base-button>
+            <div class="tint" v-if="renderFilter()" @click="tintReRoute"></div>'
+            <form @submit.prevent="makePost" v-if="render()">
+                <base-module class="make-post">
+                    <template #title>
+                    Make A Post
+                    </template>
+                    <template #form-content>
+                        <label for="title">Title</label>
+                        <input type="text" id="title" v-model.trim="title.val">
+                        <label for="description">Description</label>
+                        <textarea 
+                            name="description" 
+                            id="description" 
+                            cols="70" rows="10" 
+                            v-model.trim="description.val"
+                        >
+                        </textarea>
+                    </template>
+                    <template #buttons>
+                        <div class="make-post__btn-wrapper">
+                            <img src="../assets/images/image_icon.svg" alt="image icon" class="make-post__icon">
+                            <div class="make-post__btns-wrapper">
+                                <label for="file">upload Picture</label>
+                                <input type="file" if="file" name="file" class="make-post__btn" @change="onFileSelected"/>
+                                <base-button type="submit" class="make-post__btn">Post</base-button>
+                            </div>
                         </div>
-                    </div>
-                </template>
-            </base-module>
+                    </template>
+                </base-module>
+            </form>
         </div>
     </section>
 </template>
 
 <script>
+import {useRoute} from 'vue-router';
 import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
 export default {
@@ -127,6 +139,7 @@ export default {
     },
     data(){
         return{
+            id: null,
             auth: false,
             user: null,
             profilePicture: null,
@@ -139,40 +152,61 @@ export default {
             mostLikedPosts: null,
             mostCommentedPost: null,
             mostLikesArray: [],
-            mostCommentedArray:[]
+            mostCommentedArray:[],
+            selectedFile: null,
+            title:{
+                val: '',
+                isValid: true
+            },
+            description:{
+                val: '',
+                isValid: true
+            }
         }
     },
     
-    async created(){
-      const response = await fetch('http://localhost:3000/api/user/user',{
-        headers:{
-            Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-        }
-      });
-      const responseData = await response.json();
-
-      this.profilePicture = responseData.message.profile_picture;
-
-      if(responseData.status === 'fail' || responseData.status === 'error'){
-        router.replace({path: '/login'});
-      }else{
-        this.auth = true;
-      }
-     this.checkPath();
-     this.getTopPost();
-     this.getPage();
-     this.getProfiles();
-     this.getPost();
-   
+    created(){
+        this.getUserInfo();
+        this.checkPath();
+        this.getTopPost();
+        this.getPage();
+        this.getProfiles();
+        this.getPost();
     },
     methods:{
+        async getUserInfo(){
+            const response = await fetch('http://localhost:3000/api/user/user',{
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+                }
+            });
+            const responseData = await response.json();
+            this.id = responseData.message.id
+            this.profilePicture = responseData.message.profile_picture;
+        
+            if(responseData.status === 'fail' || responseData.status === 'error'){
+                router.replace({path: '/login'});
+            }else{
+                this.auth = true;
+            }
+        },
+
         render(){
-            // if(useRoute().path === '/makeapost'){
-            //     document.body.style.overflow = 'hidden';
-            //     return true;
-            // }else{
-            //     return false;
-            // }
+            if(useRoute().path === '/makeapost'){
+                document.body.style.overflow = 'hidden';
+                return true;
+            }else{
+                return false;
+            }
+        },
+
+        renderFilter(){
+            if(useRoute().path === '/makeapost'){
+                document.body.style.overflow = 'hidden';
+                return true;
+            }else{
+                return false;
+            }
         },
 
         checkPath(){
@@ -320,8 +354,36 @@ export default {
             this.mostLikedPosts = false;
             this.mostRecentPost = true;
             this.mostCommentedPost = false;
-        }
+        },
 
+        onFileSelected(event){
+            this.selectedFile = event.target.files[0];
+        },
+
+        async makePost(){
+            const fd = new FormData();
+            fd.append('image', this.selectedFile, this.selectedFile.name);
+            fd.append('titleText', this.title.val);
+            fd.append('descriptionText',this.description.val);
+            fd.append('userId', this.id);
+
+            const response = await fetch('http://localhost:3000/api/post/create',{
+                method: 'POST',
+                body: fd,
+                headers:{
+                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+                }
+            });
+            
+            document.body.style.overflow = 'visible';
+            router.replace({path: '/timeline'});
+        },
+
+        tintReRoute(){
+            document.body.style.overflow = 'visible';
+            router.replace({path:'/timeline'});
+            this.getUserData();
+        },
     },
 }
 </script>

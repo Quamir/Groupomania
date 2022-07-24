@@ -75,7 +75,7 @@ exports.createPost = catchAsync(async (req,res,next) =>{
             req.body.userId,
             req.body.titleText,
             req.body.descriptionText,
-            `${req.protocol}://${req.get('host')}/public/images/post_pictures/${req.file.filename}`
+            `${req.protocol}://${req.get('host')}/images/post_pictures/${req.file.filename}`
         ]
       
     );

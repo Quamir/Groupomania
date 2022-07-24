@@ -77,6 +77,7 @@ class Post{
             INNER JOIN user_account AS ua 
             ON up.user_id = ua.id 
             WHERE user_id = $1
+            ORDER BY time_stamp DESC
         `;
         const values = [this.id];
         const query = await pool.query(sql,values);
