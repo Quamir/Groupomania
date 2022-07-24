@@ -48,19 +48,23 @@
                 </router-link>
 
                 <div v-if="mostRecentPost">
-                    <post-element
+                    
+                        <post-element
                         class="post-wrapper__post"
                         v-for="post in postArray" 
                         :post="post" 
                         :key="post.index"
+                        :link="post.id"
                         :timestamp="post.time_stamp.split('T')[0]"
                         :media="post.media"
                         :title="post.title_text"
                         :description="post.description_text"
                         :name="post.first_name"
                         :profilePicture="post.profile_picture"
-                    >
-                    </post-element>
+                        >
+                        <router-link :to="'/post/'+post.id"></router-link>
+                        </post-element>
+                   
                 </div>
 
                  <div v-if="mostLikedPosts">
@@ -79,7 +83,7 @@
                     </post-element>
                 </div>
 
-                  <div v-if="mostCommentedPost">
+                <div v-if="mostCommentedPost">
                     <post-element
                         class="post-wrapper__post"
                         v-for="post in mostCommentedArray" 
@@ -168,7 +172,7 @@ export default {
     },
     
     created(){
-        console.log(this.TopPostArray);
+        console.log(this.postArray);
         this.getUserInfo();
         this.checkPath();
         this.getTopPost();

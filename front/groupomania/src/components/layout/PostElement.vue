@@ -1,5 +1,6 @@
 <template>
     <div class="post__folder-wrapper">
+        <router-link :to="'/post/' + link">
         <div class="post__info-wrapper">
             <div class="post__user-info">
                 <img :src="profilePicture" alt="profile picture" class="post__profile-picture">
@@ -37,6 +38,8 @@
                 </div>
             </div>
         </div>
+        </router-link>
+
         <emoji-pop-up v-if="modelVisable"></emoji-pop-up>
     </div>
 </template>
@@ -44,7 +47,7 @@
 <script>
 
 export default {
-  props:['name','timestamp','media','title', 'description','name', 'profilePicture'],
+  props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link'],
   data(){
     return{
         modelVisable: false

@@ -13,6 +13,7 @@ class Post{
     async showAllPost(offset){
         const sql = `
             SELECT 
+                up.id,
                 up.media,
                 up.description_text,
                 up.time_stamp,
@@ -66,6 +67,7 @@ class Post{
     async profilePost(){
         const sql = `
             SELECT 
+                up.id,
                 up.media,
                 up.description_text,
                 up.time_stamp,

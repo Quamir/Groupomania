@@ -25,6 +25,7 @@
         <div class="post-wrapper">
             <div class="posts" v-for="post in profilePostArray" :post="post" :key="post.index">
             <post-element
+                :link="post.id"
                 :timestamp="post.time_stamp.split('T')[0]"
                 :media="post.media"
                 :title="post.title_text"
@@ -60,6 +61,7 @@ export default {
         }
     },
     created(){
+        console.log(this.profilePostArray)
         this.CheckUserAccount();
         this.vistProfilePage();
     },
