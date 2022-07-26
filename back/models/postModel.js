@@ -44,6 +44,7 @@ class Post{
                 LIMIT 10
             )
             SELECT 
+                up.id,
                 up.media,
                 up.description_text,
                 up.time_stamp,
@@ -98,6 +99,7 @@ class Post{
                 LIMIT 15
             )
             SELECT 
+                up.id,
                 up.media,
                 up.description_text,
                 up.time_stamp,

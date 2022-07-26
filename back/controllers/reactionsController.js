@@ -3,7 +3,8 @@ const factory = require('./handlerFactory');
 
 // likes
 const insertLike = 'INSERT INTO post_like(post_id, user_id) VALUES($1,$2) RETURNING*';
-const deleteLike = 'DELETE FROM post_like WHERE id = $1 RETURNING*';
+const checkLikes = 'SELECT * FROM post_like WHERE user_id = $1';
+const deleteLike = 'DELETE FROM post_like WHERE user_id = $1 RETURNING*';
 // angry emojis 
 const addAngryEmoji = 'INSERT INTO angry_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
 const removeAngryEmoji = 'DELETE FROM angry_emoji WHERE id = $1 RETURNING*';
@@ -24,7 +25,7 @@ const addSmileEmoji = 'INSERT INTO smile_emoji(post_id, user_id) VALUES($1,$2) R
 const removeSmileEmoji = 'DELETE FROM smile_emoji WHERE id = $1 RETURNING*';
 
 
-exports.likePost = factory.reaction(insertLike,deleteLike);
+exports.likePost = factory.reaction(checkLikes,insertLike,deleteLike);
 exports.angryEmoji = factory.reaction(addAngryEmoji,removeAngryEmoji);
 exports.cryEmoji = factory.reaction(addCryEmoji,removeCryEmoji);
 exports.heartEyeEmoji = factory.reaction(addHeartEyeEmoji,removeHeartEyeEmoji);

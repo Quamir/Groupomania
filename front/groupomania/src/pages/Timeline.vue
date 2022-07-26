@@ -49,7 +49,7 @@
 
                 <div v-if="mostRecentPost">
                     
-                        <post-element
+                    <post-element
                         class="post-wrapper__post"
                         v-for="post in postArray" 
                         :post="post" 
@@ -63,7 +63,7 @@
                         :profilePicture="post.profile_picture"
                         >
                         <router-link :to="'/post/'+post.id"></router-link>
-                        </post-element>
+                    </post-element>
                    
                 </div>
 
@@ -73,6 +73,7 @@
                         v-for="post in mostLikesArray" 
                         :post="post" 
                         :key="post.index"
+                        :link="post.id"
                         :timestamp="post.time_stamp.split('T')[0]"
                         :media="post.media"
                         :title="post.title_text"
@@ -89,6 +90,7 @@
                         v-for="post in mostCommentedArray" 
                         :post="post" 
                         :key="post.index"
+                        :link="post.id"
                         :timestamp="post.time_stamp.split('T')[0]"
                         :media="post.media"
                         :title="post.title_text"

@@ -4,28 +4,36 @@ const catchAsync = require("../utils/catchAsync");
 
 // if liking a post have id null 
 // if unliking a post provide a id 
-exports.reaction = (insertSql,deleteSql) => catchAsync(async(req,res,next) =>{
+exports.reaction = (check,insertSql,deleteSql) => catchAsync(async(req,res,next) =>{
     const react = {
-        id: req.body.id,
-        reactOrunReact: req.body.reactOrunReact,
         postId: req.body.postId,
         userId: req.body.userId
     }
 
     let sql
+    let message;
+    let values;
+    let reactToPost;
+    const dbCheck = check;
+    const dbCheckValues = [req.body.userId];
+    const dbCheckQuery = await pool.query(dbCheck, dbCheckValues);
 
-    if(react.reactOrunReact === 1){
+    console.log(dbCheckQuery.rowCount);
+
+    if(dbCheckQuery.rowCount >= 1){
+        sql = deleteSql;
+        values = [react.userId];
+        reactToPost = await pool.query(sql,values);
+        message = 'user removes thier reaction to this post'
+    }else{
         sql = insertSql;
         values = [react.postId,react.userId];
-    }else{
-        sql = deleteSql;
-        values = [react.id];
+        reactToPost = await pool.query(sql,values);
+        message = 'user reacts to this post '
     }
 
-    const reactToPost = await pool.query(sql,values);
-
     res.status(200).json({
-        message: reactToPost.rows
+        message: message
     });
 });
 
@@ -48,3 +56,5 @@ exports.userGenReact = async (check ,insertSql ,userId ,postId ) => {
     }
 
 };
+
+
