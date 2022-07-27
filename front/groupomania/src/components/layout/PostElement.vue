@@ -1,24 +1,26 @@
 <template>
     <div class="post__folder-wrapper">
-        <router-link :to="'/post/' + link">
+
         <div class="post__info-wrapper">
-            <div class="post__user-info">
-                <img :src="profilePicture" alt="profile picture" class="post__profile-picture">
-                <div class="post__info-text">
-                    <p>posted by</p>
-                    <span>{{name}}</span>
+            <router-link :to="'/post/' + link">
+                <div class="post__user-info">
+                    <img :src="profilePicture" alt="profile picture" class="post__profile-picture">
+                    <div class="post__info-text">
+                        <p>posted by</p>
+                        <span>{{name}}</span>
+                    </div>
+                    <p class="post__timestamp">{{timestamp}}</p>
                 </div>
-                 <p class="post__timestamp">{{timestamp}}</p>
-            </div>
-            <div class="post__title">
-                <p>{{title}}</p>
-            </div>
-            <div class="post__img-wrapper">
-                <img :src="media" alt="img relating to post" class="post__img">
-                <div class="post__text">
-                    <p>{{description}}</p>
+                <div class="post__title">
+                    <p>{{title}}</p>
                 </div>
-            </div>
+                <div class="post__img-wrapper">
+                    <img :src="media" alt="img relating to post" class="post__img">
+                    <div class="post__text">
+                        <p>{{description}}</p>
+                    </div>
+                </div>
+            </router-link>
             <div class="reaction-panel">
                 <div class="reaction-panel__comment">
                     <img src="../../assets/images/reactions/comment.png" alt="comment button" class="reaction-panel__like-btn">
@@ -32,32 +34,52 @@
                         <img src="../../assets/images/reactions/smile.svg" alt="smiling emoji" class="reaction-panel__emoji">
                         <img src="../../assets/images/reactions/smile.svg" alt="smiling emoji" class="reaction-panel__emoji">
                         <img src="../../assets/images/reactions/cry.svg" alt="crying emoji" class="reaction-panel__emoji">
-                        <img src="../../assets/images/reactions/like.svg" alt="like button" class="reaction-panel__emoji" @click="toggleModel()">
+                        <img src="../../assets/images/reactions/like.svg" alt="like button" class="reaction-panel__emoji" @click="reaction(link,userId,'like')">
                         <span>6</span>
                     </div>
                 </div>
             </div>
         </div>
-        </router-link>
 
-        <emoji-pop-up v-if="modelVisable"></emoji-pop-up>
+        <!-- <emoji-pop-up v-if="modelVisable"></emoji-pop-up> -->
     </div>
 </template>
 
 <script>
 
 export default {
-  props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link'],
+  props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link','userId'],
   data(){
     return{
-        modelVisable: false
+        modelVisable: false,
     }
+  },
+  created(){
+
   },
   methods:{
-    toggleModel(){
-        this.modelVisable = !this.modelVisable;
-    }
+    // toggleModel(){
+    //     this.modelVisable = !this.modelVisable;
+    // },
+
+    async reaction(link,userId,route){
+        const data = {postId: link, userId: userId};
+
+        console.log(data);
+        const response = await fetch(`http://localhost:3000/api/reaction/${route}`,{
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
+            }
+        });
+
+        const responseData = await response.json();
+        console.log(responseData);
+    },
   },
+
 }
 </script>
 <style lang="scss" scoped>

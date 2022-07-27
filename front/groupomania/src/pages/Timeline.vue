@@ -61,6 +61,7 @@
                         :description="post.description_text"
                         :name="post.first_name"
                         :profilePicture="post.profile_picture"
+                        :userId="post.user_id"
                         >
                         <router-link :to="'/post/'+post.id"></router-link>
                     </post-element>

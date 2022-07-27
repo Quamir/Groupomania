@@ -14,6 +14,7 @@ class Post{
         const sql = `
             SELECT 
                 up.id,
+                up.user_id,
                 up.media,
                 up.description_text,
                 up.time_stamp,

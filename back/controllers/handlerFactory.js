@@ -45,7 +45,6 @@ exports.userGenReact = async (check ,insertSql ,userId ,postId ) => {
 
     console.log(dbCheck.rowCount);
 
-
     if(dbCheck.rowCount === 0){
         const sql = insertSql;
         const insertValues = [postId.id, userId];
