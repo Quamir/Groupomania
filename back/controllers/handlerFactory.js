@@ -39,19 +39,18 @@ exports.reaction = (check,insertSql,deleteSql) => catchAsync(async(req,res,next)
 
 
 exports.userGenReact = async (check ,insertSql ,userId ,postId ) => {
-
-    const values = [userId, postId.id];
+    const values = [userId, postId];
     const dbCheck = await pool.query(check, values);
 
-    console.log(dbCheck.rowCount);
 
     if(dbCheck.rowCount === 0){
         const sql = insertSql;
-        const insertValues = [postId.id, userId];
+        const insertValues = [postId, userId];
         const userReact = await pool.query(sql,insertValues);
+        console.log(postId);
         console.log(userReact.rows);
     }else{
-        console.log('there is a problem');
+        console.log('user already reacted');
     }
 
 };

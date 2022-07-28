@@ -62,6 +62,8 @@
                         :name="post.first_name"
                         :profilePicture="post.profile_picture"
                         :userId="post.user_id"
+                        :pl="post.pl"
+                        :pc="post.pc"
                         >
                         <router-link :to="'/post/'+post.id"></router-link>
                     </post-element>
@@ -81,6 +83,8 @@
                         :description="post.description_text"
                         :name="post.first_name"
                         :profilePicture="post.profile_picture"
+                        :pl="post.pl"
+                        :pc="post.pc"
                     >
                     </post-element>
                 </div>
@@ -98,6 +102,8 @@
                         :description="post.description_text"
                         :name="post.first_name"
                         :profilePicture="post.profile_picture"
+                        :pl="post.pl"
+                        :pc="post.pc"
                     >
                     </post-element>
                 </div>
@@ -154,6 +160,7 @@ export default {
             profilePicture: null,
             profileArray:[],
             postArray:[],
+            reactArray:[],
             TopPostArray:[],
             offset: 0,
             sortByLikes: false,
@@ -388,6 +395,28 @@ export default {
             document.body.style.overflow = 'visible';
             router.replace({path: '/timeline'});
         },
+
+        async getReacts(link){
+        const data = {id: link}
+        const response = await fetch('http://localhost:3000/api/reaction/getreacts',{
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+            }
+        });
+
+        const responseData = await response.json();
+        const array = responseData.message;
+        // console.log(responseData.message[0].pl);
+
+        array.forEach(react =>{
+            this.reactArray.push(react);
+        });
+
+        console.log(array[0]);
+    },
 
         tintReRoute(){
             document.body.style.overflow = 'visible';

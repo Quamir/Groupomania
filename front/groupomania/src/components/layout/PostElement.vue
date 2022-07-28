@@ -24,18 +24,17 @@
             <div class="reaction-panel">
                 <div class="reaction-panel__comment">
                     <img src="../../assets/images/reactions/comment.png" alt="comment button" class="reaction-panel__like-btn">
-                    <span>5</span>
+                    <span>{{pc}}</span>
                 </div>
                 <div class="reaction-panel__reactions">
                     <div class="reaction-panel__emojis">
-                        <img src="../../assets/images/reactions/heart_eyes.svg" alt="heart eye emoji" class="reaction-panel__emoji">
-                        <img src="../../assets/images/reactions/laugh.svg" alt="laughing emoji" class="reaction-panel__emoji">
-                        <img src="../../assets/images/reactions/angry.svg" alt="angry emoji" class="reaction-panel__emoji">
-                        <img src="../../assets/images/reactions/smile.svg" alt="smiling emoji" class="reaction-panel__emoji">
-                        <img src="../../assets/images/reactions/smile.svg" alt="smiling emoji" class="reaction-panel__emoji">
-                        <img src="../../assets/images/reactions/cry.svg" alt="crying emoji" class="reaction-panel__emoji">
+                        <img src="../../assets/images/reactions/heart_eyes.svg" alt="heart eye emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'heartreact')">
+                        <img src="../../assets/images/reactions/laugh.svg" alt="laughing emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'laughreact')">
+                        <img src="../../assets/images/reactions/angry.svg" alt="angry emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'angryreact')">
+                        <img src="../../assets/images/reactions/smile.svg" alt="smiling emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'smilereact')">
+                        <img src="../../assets/images/reactions/cry.svg" alt="crying emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'cryreact')">
                         <img src="../../assets/images/reactions/like.svg" alt="like button" class="reaction-panel__emoji" @click="reaction(link,userId,'like')">
-                        <span>6</span>
+                        <span>{{pl}}</span>
                     </div>
                 </div>
             </div>
@@ -48,20 +47,17 @@
 <script>
 
 export default {
-  props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link','userId'],
+  props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link','userId', 'pl', 'pc'],
   data(){
     return{
         modelVisable: false,
+        reactArray:[]
     }
   },
   created(){
-
+    
   },
   methods:{
-    // toggleModel(){
-    //     this.modelVisable = !this.modelVisable;
-    // },
-
     async reaction(link,userId,route){
         const data = {postId: link, userId: userId};
 
@@ -77,6 +73,29 @@ export default {
 
         const responseData = await response.json();
         console.log(responseData);
+    },
+
+    
+    async getReacts(link){
+        const data = {id: link}
+        const response = await fetch('http://localhost:3000/api/reaction/getreacts',{
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
+            }
+        });
+
+        const responseData = await response.json();
+        const array = responseData.message;
+        // console.log(responseData.message[0].pl);
+
+        array.forEach(react =>{
+            this.reactArray.push(react);
+        });
+
+        console.log(array[0]);
     },
   },
 

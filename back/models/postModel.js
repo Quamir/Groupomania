@@ -21,11 +21,22 @@ class Post{
                 up.title_text,
                 ua.first_name,
                 ua.last_name,
-                ua.profile_picture
+                ua.profile_picture,
+                COUNT(pl.post_id) AS pl,
+                COUNT(pc.post_id) AS pc
             FROM user_post AS up
             INNER JOIN user_account AS ua 
-            ON up.user_id = ua.id
-            ORDER BY up.time_stamp DESC
+            ON up.user_id = ua.id 
+            FULL JOIN post_like AS pl
+            ON up.id = pl.post_id
+            FULL JOIN post_comment AS pc
+            ON up.id = pc.post_id
+            GROUP BY 
+                up.id,
+                ua.first_name,
+                ua.last_name,
+                ua.profile_picture
+            ORDER BY up.time_Stamp DESC
             LIMIT 15
             OFFSET $1
         `;

@@ -173,7 +173,7 @@ class UserGenContent{
         const addSmileEmoji = 'INSERT INTO smile_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
         
 
-        for(let i = 0; i < 400; i++){
+        for(let i = 0; i < 1000; i++){
 
             // check amount of post 
             const sql = 'SELECT * FROM user_post';
@@ -181,12 +181,8 @@ class UserGenContent{
             const postCount = allPost.rowCount;
 
             this.userId = getRandomIntInclusive(277,299);
-            this.postId = allPost.rows[getRandomIntInclusive(0 , postCount - 1)];
-
-            console.log(this.postId.id);
-            console.log(this.userId);
-
-
+            this.postId = allPost.rows[getRandomIntInclusive(0, postCount - 1)].id;
+        
             const reactArray = [
                 'like',
                 'angry',
@@ -197,9 +193,8 @@ class UserGenContent{
                 'smile'
             ]
     
-            const ranReact = reactArray[getRandomIntInclusive(0,reactArray.length - 1)];
+            const ranReact = reactArray[0];
             console.log(ranReact);
-
             switch(ranReact){
                 case 'like':
                     factory.userGenReact(like, insertLike, this.userId, this.postId);
@@ -365,23 +360,12 @@ async function genUser(firstName, lastName){
     console.log(query.rows[0]);
 }   
 
-const userContent = new UserGenContent
+const userContent = new UserGenContent;
 
 // userContent.generateAccounts();
 // generate user post first 
 // userContent.generateUserPosts();
 // than user reactions 
-// userContent.generateUserReactions();
+userContent.generateUserReactions();
 // than user comments 
 // userContent.generateUserComments();
-
-
-// reactions SELECT statments
-// SELECT * FROM post_like
-// SELECT * FROM angry_emoji
-// SELECT * FROM cry_emoji
-// SELECT * FROM heart_eye_emoji
-// SELECT * FROM laugh_emoji
-// SELECT * FROM shock_emoji
-// SELECT * FROM shock_emoji
-// SELECT * FROM smile_emoji
