@@ -27,6 +27,11 @@ body {
   background: rgba(1, 1, 1, 0);
 }
 
+a{
+  color: inherit;
+  text-decoration: none;
+}
+
 ::-webkit-scrollbar{
   width: 0.5em;
 }

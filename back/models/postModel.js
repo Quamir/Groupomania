@@ -22,8 +22,8 @@ class Post{
                 ua.first_name,
                 ua.last_name,
                 ua.profile_picture,
-                COUNT(pl.post_id) AS pl,
-                COUNT(pc.post_id) AS pc
+                (SELECT COUNT(*) FROM post_like WHERE post_id = up.id) AS pl,
+                (SELECT COUNT(*) FROM post_comment WHERE post_id = up.id) AS pc
             FROM user_post AS up
             INNER JOIN user_account AS ua 
             ON up.user_id = ua.id 
@@ -181,18 +181,51 @@ class Post{
 
     async showSinglePost(){
         const sql = `
-            SELECT 
+           SELECT 
                 up.media,
                 up.description_text,
                 up.time_stamp,
                 up.title_text,
                 ua.first_name,
                 ua.last_name,
-                ua.profile_picture
+                ua.profile_picture,
+                (SELECT COUNT(*) FROM post_like WHERE post_id = up.id) AS pl,
+                (SELECT COUNT(*) FROM angry_emoji WHERE post_id = up.id) AS ae,
+                (SELECT COUNT(*) FROM cry_emoji WHERE post_id = up.id) AS ce,
+                (SELECT COUNT(*) FROM heart_eye_emoji WHERE post_id = up.id) AS he,
+                (SELECT COUNT(*) FROM laugh_emoji WHERE post_id = up.id) AS le,
+                (SELECT COUNT(*) FROM shock_emoji WHERE post_id = up.id) AS she,
+                (SELECT COUNT(*) FROM smile_emoji WHERE post_id = up.id) AS sme,
+                (SELECT COUNT(*) FROM post_comment WHERE post_id = up.id) AS pc
             FROM user_post AS up
-            INNER JOIN user_account AS ua 
-            ON up.user_id = ua.id
+            INNER JOIN user_account AS ua
+            ON up.user_id = ua.id 
+            FULL JOIN post_like AS pl 
+            ON up.id = pl.post_id
+            FULL JOIN angry_emoji AS ae 
+            ON up.id = ae.post_id
+            FULL JOIN cry_emoji AS ce
+            ON up.id = ce.post_id
+            FULL JOIN heart_eye_emoji AS he
+            ON up.id = he.post_id 
+            FULL JOIN laugh_emoji AS le 
+            ON up.id = le.post_id 
+            FULL JOIN shock_emoji AS she
+            ON up.id = le.post_Id
+            FULL JOIN smile_emoji AS sme
+            ON up.id = sme.post_id
+            FULL JOIN post_comment AS pc
+            ON up.id = pc.post_id
             WHERE up.id = $1
+            GROUP BY 
+                up.media,
+                up.id,
+                up.description_text,
+                up.time_stamp,
+                up.title_text,
+                ua.first_name,
+                ua.last_name,
+                ua.profile_picture
         `;
         const values = [this.id];
         const showSingleUserPost = await pool.query(sql,values);

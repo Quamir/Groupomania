@@ -19,7 +19,9 @@
 
 <script>
 import {useRoute} from 'vue-router';
+import http from '../../mixins/http';
 export default {
+    mixins:[http],
     props:['picture'],
     data(){
         return{
@@ -39,15 +41,10 @@ export default {
             }
         },
         async goToProfile(){
-            const response = await fetch('http://localhost:3000/api/user/user',{
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
-
-            const responseData = await response.json();
-            this.id = responseData.message.id;
-            this.name = `${responseData.message.first_name}_${responseData.message.last_name}`;
+            const data = await this.fetchGet('http://localhost:3000/api/user/user');
+            
+            this.id = data.message.id;
+            this.name = `${data.message.first_name}_${data.message.last_name}`;
         }
     },
 }

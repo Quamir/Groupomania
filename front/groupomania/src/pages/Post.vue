@@ -21,29 +21,24 @@
             </div>
         </div>
         <div class="comments__likes">
-            <p>likes</p>
-            <img src="../assets/images/reactions/like.svg" alt="like button"  class="like-desktop">
+            <span>likes</span>
+            <img src="../assets/images/reactions/like.svg" alt="like button"  class="like-desktospan">
              <img src="../assets/images/reactions/like.svg" alt="like button" @click="toggleModel()" class="like-mobile">
-            <p>10</p>
+            <span>{{like}}</span>
             <img src="../assets/images/reactions/comment.png" alt="comment button">
-            <p>5</p>
-            <p>comment</p>
+            <span>{{comments}}</span>
         </div>
         <div class="comments__reactions">
             <img src="../assets/images/reactions/heart_eyes.svg" alt="heart eye emoji" class="comments__emoji">
-            <p>0</p>
+            <span>{{heartEyeEmoji}}</span>
             <img src="../assets/images/reactions/laugh.svg" alt="laughing emoji" class="comments__emoji">
-            <p>7</p>
+            <span>{{laughEmoji}}</span>
             <img src="../assets/images/reactions/angry.svg" alt="angry emoji" class="comments__emoji">
-            <p>0</p>
+            <span>{{angryEmoji}}</span>
             <img src="../assets/images/reactions/smile.svg" alt="smiling emoji" class="comments__emoji">
-            <p>2</p>
-            <img src="../assets/images/reactions/smile.svg" alt="smiling emoji" class="comments__emoji">
-            <p>0</p>
+            <span>{{smileEmoji}}</span>
             <img src="../assets/images/reactions/cry.svg" alt="crying emoji" class="comments__emoji">
-            <p>0</p>
-            <img src="../assets/images/reactions/like.svg" alt="like button" class="comments__emoji">
-            <p>1</p>
+            <span>{{cryEmoji}}</span>
         </div>
         <div class="commenter" @click="exitOnClick()">
             <div class="commenter__wrapper" v-for="comment in commentsArray" :comment="comment" :key="comment.index">
@@ -61,7 +56,10 @@
                         <p>Reply</p>
                     </div>
                 </div>
-            </div>  
+            </div>
+            <form>
+                <input type="textarea" placeholder="write a comment....">
+            </form>
         </div>
         
         <emoji-pop-up v-if="modelVisable" class="emoji-pop"></emoji-pop-up>
@@ -70,7 +68,9 @@
 </template>
 
 <script>
+import http from '../mixins/http';
 export default {
+   mixins:[http],
    data(){
     return{
         postId: this.$route.path.split('/')[2],
@@ -83,7 +83,15 @@ export default {
         titleText: null,
         modelVisable: false,
         commentsArray:[],
-        commentTimestamp: null
+        commentTimestamp: null,
+        like: null,
+        angryEmoji: null,
+        cryEmoji: null,
+        heartEyeEmoji: null,
+        laughEmoji: null,
+        shockEmoji: null,
+        smileEmoji: null,
+        comments: null
     }
   },
   created(){
@@ -93,24 +101,14 @@ export default {
   methods:{
     toggleModel(){
         this.modelVisable = !this.modelVisable;
-        console.log(this.modelVisable);
     },
 
     async getPost(){
-        const data = {id: this.postId}
-        const response = await fetch('http://localhost:3000/api/post/singlepost',{
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-            }
-        });
+        const body = {id: this.postId}
+        const data = await this.fetchWithBody('http://localhost:3000/api/post/singlepost', body,'POST');
+        const array = data.message;
 
-        const responseData = await response.json();
-        const array = responseData.message;
-
-        console.log(array[0].last_name);
+        console.log(data);
 
         this.media = array[0].media;
         this.descriptionText = array[0].description_text;
@@ -119,26 +117,20 @@ export default {
         this.profilePicture = array[0].profile_picture;
         this.timestamp = array[0].time_stamp.split('T')[0];
         this.titleText = array[0].title_text;
+        this.like = array[0].pl;
+        this.angryEmoji = array[0].ae;
+        this.cryEmoji = array[0].ce;
+        this.heartEyeEmoji = array[0].he;
+        this.laughEmoji = array[0].le;
+        this.smileEmoji = array[0].sme;
+        this.comments = array[0].pc;
     },
 
     async getComments(){
-        const data = {id: this.postId}
-        const response = await fetch('http://localhost:3000/api/comment/allcomments',{
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-            }
-        });
-
-        const responseData = await response.json();
-        const array = responseData.message;
-        
-        array.forEach(comment =>{
-            this.commentsArray.push(comment);
-        });
-
+        const body = {id: this.postId}
+        const data = await this.fetchWithBody('http://localhost:3000/api/comment/allcomments',body,'POST');
+    
+        this.extractPromise(data, this.commentsArray);
         this.commentTimestamp = this.commentsArray[0].time_stamp.split('T')[0];
     },
 
@@ -259,7 +251,7 @@ section{
             }
         }
 
-        & p{
+        & span{
             font-size: rem(20);
             font-weight: 500;
             padding-right: 15px;
@@ -287,7 +279,7 @@ section{
         padding-left: 50px;
         border-bottom: 2px solid $secondary-color;
 
-        & p{
+        & span{
             padding-right: 10px;
             font-size: rem(20);
             font-weight: 500;
@@ -366,7 +358,18 @@ section{
             font-weight: 600;
         }
     }
+ 
 }
+
+form{
+    & input{
+        width: 95%;
+        height: 30px;
+        border-radius: 25px;
+        text-indent: 20px;
+        background-color: rgba(107,104,104,0.3);
+    }
+}  
 
 .emoji-pop{
         display: none;

@@ -45,7 +45,7 @@
             <img src="../assets/images/footer/group_3.jpg" class="footer__img" alt="group of professionals">
         </footer>
 
-        <div class="tint" v-if="renderFilter()" @click="tintReRoute"></div>
+        <div class="tint" v-if="renderFilter()" @click="tintReRoute('/settings')"></div>
         <form @submit.prevent="deleteAccount">
             <base-module v-if="checkPath('/deleteaccount')">
                 <template #form-content>
@@ -128,7 +128,10 @@
 import {useRoute} from 'vue-router';
 import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
+import tintReRoute from '../mixins/tintReRoute';
+import http from '../mixins/http';
 export default {
+    mixins:[tintReRoute,http],
     data(){
         changename: false;
         return{
@@ -208,134 +211,82 @@ export default {
         },
 
         async getUserData(){
-            const response = await fetch('http://localhost:3000/api/user/user',{
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                }
-            });
-            const responseData = await response.json();
-            console.log(responseData.message);
-            this.id = responseData.message.id;
-            this.profilePicture = responseData.message.profile_picture;
-            this.firstName = responseData.message.first_name;
-            this.lastName = responseData.message.last_name;
-            this.email = responseData.message.email;
+            const data = await this.fetchGet('http://localhost:3000/api/user/user');
+         
+            console.log(data.message);
+            this.id = data.message.id;
+            this.profilePicture = data.message.profile_picture;
+            this.firstName = data.message.first_name;
+            this.lastName = data.message.last_name;
+            this.email = data.message.email;
         },
 
         async changeName(){
-            const data = JSON.stringify({
+            const body = {
                 id: this.id,
                 firstName: this.changeNameName.val,
                 lastName: this.changeNameLast.val
-            });
-            const response = await fetch('http://localhost:3000/api/user/changename',{
-                method: 'PATCH',
-                body: data,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
+            };
+            const data = await this.fetchWithBody('http://localhost:3000/api/user/changename', body, 'PATCH');
 
-            const responseData = await response.json();
-            console.log(responseData);
+            console.log(data);
             router.replace({path:'/settings'});
             this.getUserData();
         },
 
         async changeEmail(){
-            const data = JSON.stringify({
+            const body = {
                 email: this.changeEmailEmail.val,
                 password: this.changeEmailPassword.val,
                 newEmail: this.changeEmailNewEmail.val
-            });
+            };
+            const data = await this.fetchWithBody('http://localhost:3000/api/user/changeemail',body, 'PATCH');
 
-            const response = await fetch('http://localhost:3000/api/user/changeemail',{
-                method: 'PATCH',
-                body: data,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            const responseData = await response.json();
-            console.log(responseData);
+            console.log(data);
             router.replace({path:'/settings'});
             this.getUserData();
         },
 
         async changePassword(){
-            const data =  JSON.stringify({
+            const body =  JSON.stringify({
                 email: this.changePasswordEmail.val,
                 newPassword: this.changePasswordPasswrod.val,
                newPassword: this.changePasswordNewPassword.val, 
             });
 
-            const response = await fetch('http://localhost:3000/api/user/changepassword',{
-                method: 'PATCH',
-                body: data, 
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
+            const data = await this.fetchWithBody('http://localhost:3000/api/user/changepassword',body,'PATCH');
 
-            const responseData = await response.json();
-            console.log(responseData);
+            console.log(data);
             router.replace({path:'/settings'});
             this.getUserData();
         },
-
 
         async changeProfilePicture(){
             const fd = new FormData();
             fd.append('id', this.id);
             fd.append('image', this.selectedFile,this.selectedFile.name);
 
-            const response = await fetch('http://localhost:3000/api/user/changeprofilepicture', {
-                method: 'PATCH',
-                body: fd,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                }
-            });
+            const data = await fecthWithFd('http://localhost:3000/api/user/changeprofilepicture', fd, 'PATCH');
 
-            const responseData = await response.json();
-            console.log(responseData);
+            console.log(data);
             router.replace({path:'/settings'});
             this.getUserData();
         },
 
         async deleteAccount(){
-            const data = JSON.stringify({
+            const body = {
                 password: this.deleteAccountPassword.val,
                 email: this.email
-            });
+            };
+            const data = await this.fetchWithBody('http://localhost:3000/api/user/deleteaccount', body, 'DELETE');
 
-            const response = await fetch('http://localhost:3000/api/user/deleteaccount',{
-                method: 'DELETE',
-                body: data,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const responseData = await response.json();
-            console.log(responseData);
+            console.log(data);
             router.replace({path:'/login'});
         },
 
          onFileSelected(event){
             this.selectedFile = event.target.files[0]
         },
-
-        tintReRoute(){
-            document.body.style.overflow = 'visible';
-            router.replace({path:'/settings'});
-            this.getUserData();
-        }
     },
 }
 </script>

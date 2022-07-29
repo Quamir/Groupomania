@@ -30,8 +30,7 @@ exports.createAccount = catchAsync(async (req,res,next) => {
    const createUser =  await user.createAccount();
 
     res.status(200).json({
-        message: createUser[0],
-        token: createUser[1]
+        message: createUser
     });
 });
 

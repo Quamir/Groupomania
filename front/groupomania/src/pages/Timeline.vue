@@ -110,8 +110,8 @@
 
             </div>
 
-            <div class="tint" v-if="renderFilter()" @click="tintReRoute"></div>'
-            <form @submit.prevent="makePost" v-if="render()">
+            <div class="tint" v-if="render('/makeapost')" @click="tintReRoute('/timeline')"></div>'
+            <form @submit.prevent="makePost" v-if="render('/makeapost')">
                 <base-module class="make-post">
                     <template #title>
                     Make A Post
@@ -145,9 +145,12 @@
 </template>
 
 <script>
-import {useRoute} from 'vue-router';
 import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
+import tintReRoute from '../mixins/tintReRoute';
+import getUserInfo from '../mixins/getUserInfo';
+import http from '../mixins/http';
+import render from '../mixins/render';
 export default {
     components:{
         TheHeader
@@ -180,9 +183,8 @@ export default {
             }
         }
     },
-    
+    mixins:[tintReRoute, getUserInfo,http,render],
     created(){
-        console.log(this.postArray);
         this.getUserInfo();
         this.checkPath();
         this.getTopPost();
@@ -190,42 +192,11 @@ export default {
         this.getProfiles();
         this.getPost();
     },
+    mounted(){
+       
+    },
     methods:{
-        async getUserInfo(){
-            const response = await fetch('http://localhost:3000/api/user/user',{
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
-            const responseData = await response.json();
-            this.id = responseData.message.id
-            this.profilePicture = responseData.message.profile_picture;
-        
-            if(responseData.status === 'fail' || responseData.status === 'error'){
-                router.replace({path: '/login'});
-            }else{
-                this.auth = true;
-            }
-        },
-
-        render(){
-            if(useRoute().path === '/makeapost'){
-                document.body.style.overflow = 'hidden';
-                return true;
-            }else{
-                return false;
-            }
-        },
-
-        renderFilter(){
-            if(useRoute().path === '/makeapost'){
-                document.body.style.overflow = 'hidden';
-                return true;
-            }else{
-                return false;
-            }
-        },
-
+    
         checkPath(){
             if(this.$route.path.split('/')[1] === 'mostlikes'){
                 this.mostLikedPosts = true;
@@ -238,22 +209,6 @@ export default {
                 this.mostCommentedPost = true;
                 this.mostCommented();
             }
-        },
-
-        async getProfiles(){
-            const response = await fetch('http://localhost:3000/api/user/profiles',{
-                headers:{
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
-
-            const responseData = await response.json();
-            const array = responseData.message;
-
-            array.forEach(person =>{
-                this.profileArray.push(person);
-            });
         },
 
         getPage(){
@@ -285,80 +240,36 @@ export default {
             }
         },
 
+        async getProfiles(){
+        const data = await this.fetchGet('http://localhost:3000/api/user/profiles');
+        this.extractPromise(data,this.profileArray);
+        },
+
         async getTopPost(){
-            const response = await fetch('http://localhost:3000/api/post/mostinteractions',{
-                  headers:{
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
-
-            const responseData = await response.json();
-            const array = responseData.message;
-
-            array.forEach(post =>{
-                this.TopPostArray.push(post);
-            });
-
-            console.log(this.TopPostArray);
+            const data = await this.fetchGet('http://localhost:3000/api/post/mostinteractions');
+            this.extractPromise(data, this.TopPostArray);
         },
 
         async getPost(){
-            const data = { offset : this.offset}
-            
-            const response = await fetch('http://localhost:3000/api/post/allpost',{
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers:{
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
+            const body = { offset : this.offset}
+            const data = await this.fetchWithBody('http://localhost:3000/api/post/allpost', body, 'POST');
+            this.extractPromise(data, this.postArray);
 
-            const responseData = await response.json();
-            const array = responseData.message;
-
-            array.forEach(post =>{
-                this.postArray.push(post);
-            });
         },
 
         async mostLikes(){
-            const response = await fetch('http://localhost:3000/api/post/mostlikes',{
-                 headers:{
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
-
-            const responseData = await response.json();
-            const array = responseData.message;
-
-            array.forEach(post =>{
-                this.mostLikesArray.push(post);
-            });
+            const data = await this.fetchGet('http://localhost:3000/api/post/mostlikes');
+            this.extractPromise(data, this.mostLikesArray);
 
             router.replace({path:'/mostlikes'});
             this.mostLikedPosts = true;
             this.mostRecentPost = false;
             this.mostCommentedPost = false;
-           
         },
 
         async mostCommented(){
-            const response = await fetch('http://localhost:3000/api/post/mostcommented',{
-                headers:{
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
-
-            const responseData = await response.json();
-            const array = responseData.message;
-
-            array.forEach(post =>{
-                this.mostCommentedArray.push(post);
-            });
+            const data = await this.fetchGet('http://localhost:3000/api/post/mostcommented');
+            this.extractPromise(data, this.mostCommentedArray);
             
             router.replace({path:'/mostcommented'});
             this.mostLikedPosts = false;
@@ -384,45 +295,12 @@ export default {
             fd.append('descriptionText',this.description.val);
             fd.append('userId', this.id);
 
-            const response = await fetch('http://localhost:3000/api/post/create',{
-                method: 'POST',
-                body: fd,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                }
-            });
+            this.fetchWithFd('http://localhost:3000/api/post/create', fd, 'POST');
 
             document.body.style.overflow = 'visible';
             router.replace({path: '/timeline'});
         },
 
-        async getReacts(link){
-        const data = {id: link}
-        const response = await fetch('http://localhost:3000/api/reaction/getreacts',{
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-            }
-        });
-
-        const responseData = await response.json();
-        const array = responseData.message;
-        // console.log(responseData.message[0].pl);
-
-        array.forEach(react =>{
-            this.reactArray.push(react);
-        });
-
-        console.log(array[0]);
-    },
-
-        tintReRoute(){
-            document.body.style.overflow = 'visible';
-            router.replace({path:'/timeline'});
-            this.getUserData();
-        },
     },
 }
 </script>

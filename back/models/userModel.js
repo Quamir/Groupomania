@@ -30,17 +30,21 @@ class User{
         const existValue = [this.email];
         const existsQuery = await pool.query(exist, existValue);
         const hashedPassword = await bcrypt.hash(this.password, 12);
-        
+
+        let response;
+        console.log(existsQuery.rows[0].exists);
 
         if(existsQuery.rows[0].exists === true){
-            return {message: 'an account with this email adddresss has already been made'}
+            response =  {message: 'an account with this email adddresss has already been made', status: 'fail'}
         }else{
             const sql =  'INSERT INTO user_account(first_name, last_name, email, user_password, profile_picture) VALUES($1,$2,$3,$4,$5) RETURNING*';
             const values = [this.firstName, this.lastName, this.email, hashedPassword, this.profilePicture];
             const newAccount = await pool.query(sql, values);
             const token = signToken(newAccount.rows[0].id);
-            return [newAccount.rows[0],token]; 
+            response =  [newAccount.rows[0],token]; 
         }
+
+        return response;
     }
 
     async login(){

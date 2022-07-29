@@ -45,8 +45,9 @@
 </template>
 
 <script>
-
+import http from '../../mixins/http'
 export default {
+  mixins:[http],
   props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link','userId', 'pl', 'pc'],
   data(){
     return{
@@ -54,48 +55,12 @@ export default {
         reactArray:[]
     }
   },
-  created(){
-    
-  },
   methods:{
     async reaction(link,userId,route){
-        const data = {postId: link, userId: userId};
+        const body = {postId: link, userId: userId};
+        const data = await this.fetchWithBody(`http://localhost:3000/api/reaction/${route}`,body,'POST');
 
         console.log(data);
-        const response = await fetch(`http://localhost:3000/api/reaction/${route}`,{
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-            }
-        });
-
-        const responseData = await response.json();
-        console.log(responseData);
-    },
-
-    
-    async getReacts(link){
-        const data = {id: link}
-        const response = await fetch('http://localhost:3000/api/reaction/getreacts',{
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-            }
-        });
-
-        const responseData = await response.json();
-        const array = responseData.message;
-        // console.log(responseData.message[0].pl);
-
-        array.forEach(react =>{
-            this.reactArray.push(react);
-        });
-
-        console.log(array[0]);
     },
   },
 

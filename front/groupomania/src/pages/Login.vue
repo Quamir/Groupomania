@@ -2,10 +2,10 @@
     <section>
         <the-header></the-header>
         <div class="landing">
-            <div class="left-landing" v-if="!loginRender()">
+            <div class="left-landing" v-if="!render('/signup')">
                 <div class="left-landing__text">
                     <div class="left-landing__text-box">
-                        <p>Connect with collegues</p>
+                        <p>Connect with colleagues</p>
                     </div>
                     <div class="left-landing__text-box">
                         <p>Share innovative ideas</p>
@@ -14,9 +14,9 @@
                 <img src="../assets/images/homepage.jpg" alt="" class="homepage">
             </div>
 
-            <img src="../assets/images/homepage.jpg" alt="" class="mobile-backdrop" v-if="loginRender()">
+            <img src="../assets/images/homepage.jpg" alt="" class="mobile-backdrop" v-if="render('/signup')">
 
-            <aside  class="log-in" v-if="!loginRender()">
+            <aside  class="log-in" v-if="!render('/signup')">
                 <form @submit.prevent="submitForm">
                     <base-module class="module">
                     <template #form-content>
@@ -52,7 +52,7 @@
                 <img src="../assets/images/logos/logo_white.svg" alt="Groupomania logo" class="mobile-logo">
             </aside>
 
-            <div class="sign-up" v-if="loginRender()">
+            <div class="sign-up" v-if="render('/signup')">
 
                 <form @submit.prevent="createUser">
                     <base-module class="module">
@@ -126,8 +126,12 @@
 import {useRoute} from 'vue-router';
 import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
+import render from '../mixins/render';
+import http from '../mixins/http';
+import utilmixins from '../mixins/utilmixins';
 
 export default {
+    mixins: [render,http, utilmixins],
     components:{
         TheHeader
     },
@@ -168,14 +172,6 @@ export default {
         }
     },
     methods:{
-        loginRender(){
-            if(useRoute().path === '/signup'){
-                return true;
-            }else{
-                return false;
-            }
-        },
-
         clearValidity(input){
             this[input].isValid = true;
         },
@@ -226,43 +222,22 @@ export default {
         },
 
         async submitForm(){
-            const data = JSON.stringify({
+            const body = {
                 email: this.email.val,
                 password: this.password.val
-            });
+            };
 
             this.signInValidation();
+            const data = await this.fetchWithBody('http://localhost:3000/api/user/login', body, 'POST');
 
-            const response = await fetch('http://localhost:3000/api/user/login',{
-                method: 'POST',
-                body: data,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            const responseData = await response.json();
-
-            console.log(responseData.message.token);
+            console.log(data);
            
-            if(!response.ok){
-                const error = new Error(responseData.status.message || 'Failed to send request.');
-                this.formIsValid = false;
-                throw error;
-            }
-
-
-            if(responseData.message.status === 'fail'){
-                return 'error'
-            }
-
-            localStorage.setItem('token', responseData.message.token);
+            localStorage.setItem('token', data.message.token);
             router.replace({path: '/timeline'});
         },
 
         onFileSelected(event){
-            this.selectedFile = event.target.files[0]
+            this.selectedFile = event.target.files[0];
         },
 
         async createUser(){
@@ -275,36 +250,15 @@ export default {
             fd.append('password', this.signUpPassword.val);
             fd.append('image', this.selectedFile,this.selectedFile.name);
 
-            console.log(fd);
-            console.log(this.signUpPassword);
             this.uploadImage = this.selectedFile;
-             
-            const response = await fetch('http://localhost:3000/api/user/signup',{
-                method: 'POST',
-                body: fd,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                }
-    
-            });
-
-            const responseData = await response.json();
-
-            if(!response.ok){
-                const error = new Error(responseData.status.message || 'Failed to send request.');
-                this.formIsValid = false;
-                throw error;
-            }
-
-            console.log(responseData);
-
-            if(responseData.message.status === 'fail'){
+            const data = await this.fetchWithFd('http://localhost:3000/api/user/signup', fd, 'POST');
+        
+            if(data.message.status === 'fail'){
                 return 'error'
             }
 
-            localStorage.setItem('token', responseData.token);
+            localStorage.setItem('token', data.token);
             router.replace({path: '/timeline'});
-
         }
     },
 }

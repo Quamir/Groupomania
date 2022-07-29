@@ -43,7 +43,9 @@
 
 <script>
 import TheHeader from '../components/layout/TheHeader.vue';
+import http from '../mixins/http';
 export default {
+    mixins:[http],
     components:{
         TheHeader
     },
@@ -67,17 +69,12 @@ export default {
     },
     methods:{
         async CheckUserAccount(){
-            const response = await fetch('http://localhost:3000/api/user/user',{
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token')
-                }
-            });
+            const data = await this.fetchGet('http://localhost:3000/api/user/user');
             
-            const responseData = await response.json();
-            console.log(responseData.message)
-            this.userProfilePicture = responseData.message.profile_picture;
-            const id = responseData.message.id;
-            const name = `${responseData.message.first_name}_${responseData.message.last_name}`;
+            console.log(data.message)
+            this.userProfilePicture = data.message.profile_picture;
+            const id = data.message.id;
+            const name = `${data.message.first_name}_${data.message.last_name}`;
 
             const param = `/profile/${id}.${name}`;
             const params = param;
@@ -85,8 +82,8 @@ export default {
             if(this.$route.path === params){
                 console.log(true);
                 this.paramsEqual = true;
-                this.firstName = responseData.message.first_name;
-                this.lastName = responseData.message.last_name;
+                this.firstName = data.message.first_name;
+                this.lastName = data.message.last_name;
             }else{
                 console.log(false);
                 this.paramsEqual = false;
@@ -96,30 +93,21 @@ export default {
             const route = this.$route.path.split('.');
             const splitRoute = route[0].split('/');
             this.profileId = splitRoute[2];
-            const data = JSON.stringify({ id: parseInt(splitRoute[2])});
+            const body = { id: parseInt(splitRoute[2])};
+            const data = await this.fetchWithBody('http://localhost:3000/api/user/profile',body,'POST');
 
-            const response = await fetch('http://localhost:3000/api/user/profile',{
-                method: 'POST',
-                body: data,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const responseData = await response.json();
             console.log(this.profileId);
 
-            if(responseData.message.status === 'fail'){
+            if(data.message.status === 'fail'){
                 console.log('can\t find user');
                 this.findUser = false;
                 console.log(this.findUser);
                 console.log(this.paramsEqual);
             }else{
               this.findUser = true;
-              this.firstName = responseData.message.first_name;
-              this.lastName = responseData.message.last_name;
-              this.profilePicture = responseData.message.profile_picture;
+              this.firstName = data.message.first_name;
+              this.lastName = data.message.last_name;
+              this.profilePicture = data.message.profile_picture;
               this.profilePost();
 
             }
@@ -127,22 +115,10 @@ export default {
         },
 
         async profilePost(){
-            const data = JSON.stringify({ id: this.profileId});
-            const response = await fetch('http://localhost:3000/api/post/profilepost',{
-                method: 'POST',
-                body: data,
-                headers:{
-                    Authorization: 'Bearer' + ' ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
+            const body = { id: this.profileId };
+            const data = await this.fetchWithBody('http://localhost:3000/api/post/profilepost',body,'POST');
 
-            const responseData = await response.json();
-            const array = responseData.message
-
-            array.forEach(post =>{
-                this.profilePostArray.push(post);
-            });
+            this.extractPromise(data, this.profilePostArray);
 
             console.log(this.profilePostArray);
         }
