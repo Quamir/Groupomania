@@ -56,7 +56,16 @@ exports.userData = catchAsync(async(req,res,next) =>{
     res.status(200).json({
         message: getUserData
     });
-})
+});
+
+exports.getUerId = catchAsync(async(req,res,next) =>{
+    const user = new User(...[, , , , , ,req.body.id]);
+    const getUserId = await user.getUserId();
+
+    res.status(200).json({
+        message: getUserId
+    });
+});
 
 // get people for people pannel
 exports.getProfiles = catchAsync(async(req,res,next) =>{

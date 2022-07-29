@@ -69,8 +69,12 @@ class User{
         const value = [this.id];
         const query = await pool.query(sql, value);
 
-     
         return query.rows[0];
+    }
+
+    async getUserId(){
+        const decoded = await promisify(jwt.verify)(this.id, `${process.env.JWT_SECRET}`);
+        return decoded.id;
     }
 
     async getProfiles(limit){

@@ -48,7 +48,6 @@
                 </router-link>
 
                 <div v-if="mostRecentPost">
-                    
                     <post-element
                         class="post-wrapper__post"
                         v-for="post in postArray" 
@@ -65,7 +64,6 @@
                         :pl="post.pl"
                         :pc="post.pc"
                         >
-                        <router-link :to="'/post/'+post.id"></router-link>
                     </post-element>
                    
                 </div>
@@ -83,6 +81,7 @@
                         :description="post.description_text"
                         :name="post.first_name"
                         :profilePicture="post.profile_picture"
+                        :userId="post.user_id"
                         :pl="post.pl"
                         :pc="post.pc"
                     >
@@ -102,6 +101,7 @@
                         :description="post.description_text"
                         :name="post.first_name"
                         :profilePicture="post.profile_picture"
+                        :userId="post.user_id"
                         :pl="post.pl"
                         :pc="post.pc"
                     >

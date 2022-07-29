@@ -13,6 +13,7 @@ class Comment{
             SELECT 
                 pc.comment_text,
                 pc.time_stamp,
+                pc.id,
                 ua.first_name,
                 ua.last_name,
                 ua.profile_picture
@@ -20,6 +21,7 @@ class Comment{
             INNER JOIN user_account AS ua 
             ON pc.user_id = ua.id 
             WHERE post_id = $1
+            ORDER BY time_stamp
         `;
         const value = [this.id];
         const allComments = await pool.query(sql, value);

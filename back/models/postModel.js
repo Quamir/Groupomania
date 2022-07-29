@@ -47,30 +47,32 @@ class Post{
 
     async mostLikes(){
         const sql = `
-            WITH most_likes (post_id) as
-            (
-                SELECT post_id, COUNT(post_id) as rep 
-                FROM post_like 
-                GROUP BY post_id 
-                ORDER BY rep DESC
-                LIMIT 10
-            )
-            SELECT 
-                up.id,
-                up.media,
-                up.description_text,
-                up.time_stamp,
-                up.title_text,
-                ua.first_name,
-                ua.last_name,
-                ua.profile_picture,
-                ml.post_id
-            FROM user_post AS up
-            INNER JOIN most_likes AS ml
-            ON up.id = ml.post_id
-            INNER JOIN user_account AS ua
-            ON up.user_id = ua.id 
-            ORDER BY ml.rep DESC 
+        SELECT 
+            up.id,
+            up.user_id,
+            up.media,
+            up.description_text,
+            up.time_stamp,
+            up.title_text,
+            ua.first_name,
+            ua.last_name,
+            ua.profile_picture,
+            (SELECT COUNT(*) FROM post_like WHERE post_id = up.id) AS pl,
+            (SELECT COUNT(*) FROM post_comment WHERE post_id = up.id) AS pc
+        FROM user_post AS up
+        INNER JOIN user_account AS ua 
+        ON up.user_id = ua.id 
+        FULL JOIN post_like AS pl
+        ON up.id = pl.post_id
+        FULL JOIN post_comment AS pc
+        ON up.id = pc.post_id
+        GROUP BY 
+            up.id,
+            ua.first_name,
+            ua.last_name,
+            ua.profile_picture
+        ORDER BY pl DESC
+        LIMIT 10
         `;
 
         const query = await pool.query(sql);
@@ -102,30 +104,32 @@ class Post{
 
     async mostCommented(){
         const sql = `
-            WITH most_comments (post_id) as
-            (
-                SELECT post_id, COUNT(post_id) as rep
-                FROM post_comment 
-                GROUP BY post_id 
-                ORDER BY rep DESC 
-                LIMIT 15
-            )
-            SELECT 
-                up.id,
-                up.media,
-                up.description_text,
-                up.time_stamp,
-                up.title_text,
-                ua.first_name,
-                ua.last_name,
-                ua.profile_picture,
-                mc.post_id
-            FROM user_post AS up
-            INNER JOIN most_comments AS mc 
-            ON up.id = mc.post_id
-            INNER JOIN user_account AS ua 
-            ON up.user_id = ua.id
-            ORDER BY mc.rep DESC 
+        SELECT 
+            up.id,
+            up.user_id,
+            up.media,
+            up.description_text,
+            up.time_stamp,
+            up.title_text,
+            ua.first_name,
+            ua.last_name,
+            ua.profile_picture,
+            (SELECT COUNT(*) FROM post_like WHERE post_id = up.id) AS pl,
+            (SELECT COUNT(*) FROM post_comment WHERE post_id = up.id) AS pc
+        FROM user_post AS up
+        INNER JOIN user_account AS ua 
+        ON up.user_id = ua.id 
+        FULL JOIN post_like AS pl
+        ON up.id = pl.post_id
+        FULL JOIN post_comment AS pc
+        ON up.id = pc.post_id
+        GROUP BY 
+            up.id,
+            ua.first_name,
+            ua.last_name,
+            ua.profile_picture
+        ORDER BY pc DESC
+        LIMIT 10
         `;
 
         const query = await pool.query(sql);
@@ -186,6 +190,7 @@ class Post{
                 up.description_text,
                 up.time_stamp,
                 up.title_text,
+                up.user_id,
                 ua.first_name,
                 ua.last_name,
                 ua.profile_picture,

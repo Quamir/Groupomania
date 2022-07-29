@@ -45,9 +45,10 @@
 </template>
 
 <script>
-import http from '../../mixins/http'
+import http from '../../mixins/http';
+import utils from '../../mixins/utilmixins';
 export default {
-  mixins:[http],
+  mixins:[http,utils],
   props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link','userId', 'pl', 'pc'],
   data(){
     return{
@@ -55,15 +56,6 @@ export default {
         reactArray:[]
     }
   },
-  methods:{
-    async reaction(link,userId,route){
-        const body = {postId: link, userId: userId};
-        const data = await this.fetchWithBody(`http://localhost:3000/api/reaction/${route}`,body,'POST');
-
-        console.log(data);
-    },
-  },
-
 }
 </script>
 <style lang="scss" scoped>
