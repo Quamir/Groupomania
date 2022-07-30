@@ -1,5 +1,5 @@
 <template>
-    <section v-if="auth">
+    <section>
         <the-header :picture="profilePicture"></the-header>
         <div class="wrapper">
             <aside class="people">
@@ -47,7 +47,7 @@
                     </base-button>
                 </router-link>
 
-                <div v-if="mostRecentPost">
+                <div v-if="mostRecentPost" :key="recent">
                     <post-element
                         class="post-wrapper__post"
                         v-for="post in postArray" 
@@ -65,7 +65,6 @@
                         :pc="post.pc"
                         >
                     </post-element>
-                   
                 </div>
 
                  <div v-if="mostLikedPosts">
@@ -141,24 +140,27 @@
                 </base-module>
             </form>
         </div>
+        <page-list v-if="mostRecentPost"></page-list>
     </section>
 </template>
 
 <script>
 import TheHeader from '../components/layout/TheHeader.vue';
+import PageList from '../components/layout/PageList.vue';
 import router from '../router/index.js';
 import tintReRoute from '../mixins/tintReRoute';
 import getUserInfo from '../mixins/getUserInfo';
 import http from '../mixins/http';
 import render from '../mixins/render';
 export default {
+    mixins:[tintReRoute,getUserInfo,http,render],
     components:{
-        TheHeader
+        TheHeader,
+        PageList
     },
     data(){
         return{
             id: null,
-            auth: false,
             user: null,
             profilePicture: null,
             profileArray:[],
@@ -173,6 +175,7 @@ export default {
             mostLikesArray: [],
             mostCommentedArray:[],
             selectedFile: null,
+            recent: 0,
             title:{
                 val: '',
                 isValid: true
@@ -183,20 +186,33 @@ export default {
             }
         }
     },
-    mixins:[tintReRoute, getUserInfo,http,render],
     created(){
         this.checkToken();
-        this.getUserInfo();
+        this.userInfo();
         this.checkPath();
         this.getTopPost();
         this.getPage();
         this.getProfiles();
         this.getPost();
     },
-    mounted(){
-       
+    watch:{
+       '$route' (to, from){
+            console.log(this.$route.path);
+            this.postArray = [];
+            this.getPage();
+            this.getPost();
+            window.scrollTo(0,0);
+       }
     },
     methods:{
+
+        async userInfo(){
+            const info =  await this.getUserInfo();
+            console.log(info);
+
+            this.id = info.message.id;
+            this.profilePicture = info.message.profile_picture;
+        },
     
         checkPath(){
             if(this.$route.path.split('/')[1] === 'mostlikes'){
@@ -215,7 +231,10 @@ export default {
         getPage(){
             const route = this.$route.path.split('.');
             const splitRoute = route[0].split('/');
-        
+
+            if(splitRoute[2] === undefined){
+                this.offset = 0;
+            }
             if(splitRoute[2] == 2){
                 this.offset = 30;
             }else if(splitRoute[2] == 3){
@@ -255,7 +274,6 @@ export default {
             const body = { offset : this.offset}
             const data = await this.fetchWithBody('http://localhost:3000/api/post/allpost', body, 'POST');
             this.extractPromise(data, this.postArray);
-
         },
 
         async mostLikes(){
@@ -290,6 +308,7 @@ export default {
         },
 
         async makePost(){
+            document.body.style.overflow = 'hidden';
             const fd = new FormData();
             fd.append('image', this.selectedFile, this.selectedFile.name);
             fd.append('titleText', this.title.val);
