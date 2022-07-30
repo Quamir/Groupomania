@@ -6,10 +6,10 @@
         </router-link>
 
         <nav v-if="!loginRender()">
-             <base-button class="base-btn">Logout</base-button>
-             <button class="theme-btn">
-             <img src="../../assets/images/buttons/sun.svg" alt="change theme">
-            </button>
+             <base-button class="base-btn" @click="logOut">Logout</base-button>
+             <router-link to="/settings" v-if="renderSettingsBtn(route)">
+                <base-button class="base-btn">settings</base-button>
+             </router-link>
             <router-link :to="'/profile/'+id+'.'+name">
                 <img :src="picture" alt="profile picture" class="profile-picture">
             </router-link>
@@ -18,11 +18,12 @@
 </template>
 
 <script>
+import router from '../../router/index';
 import {useRoute} from 'vue-router';
 import http from '../../mixins/http';
 export default {
     mixins:[http],
-    props:['picture'],
+    props:['picture', 'route'],
     data(){
         return{
             id: null,
@@ -40,11 +41,23 @@ export default {
                 return false;
             }
         },
+        renderSettingsBtn(path){
+            if(useRoute().path === path){
+                return true;
+            }else{
+                return false;
+            }
+        },
         async goToProfile(){
             const data = await this.fetchGet('http://localhost:3000/api/user/user');
             
             this.id = data.message.id;
             this.name = `${data.message.first_name}_${data.message.last_name}`;
+        },
+
+        logOut(){
+            localStorage.removeItem('token');
+            router.replace({path: '/login'});
         }
     },
 }

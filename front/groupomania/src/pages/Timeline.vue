@@ -145,8 +145,8 @@
 </template>
 
 <script>
-import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
+import router from '../router/index.js';
 import tintReRoute from '../mixins/tintReRoute';
 import getUserInfo from '../mixins/getUserInfo';
 import http from '../mixins/http';
@@ -185,6 +185,7 @@ export default {
     },
     mixins:[tintReRoute, getUserInfo,http,render],
     created(){
+        this.checkToken();
         this.getUserInfo();
         this.checkPath();
         this.getTopPost();

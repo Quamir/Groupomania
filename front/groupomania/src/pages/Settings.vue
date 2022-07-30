@@ -52,9 +52,14 @@
                     <p>Are you sure you want to</p>
                     <p>permanently delete your account?</p>
                     <label for="password">Password</label>
-                    <input type="password" id="password" v-model.trim="deleteAccountPassword.val"/>
-                    <label for="confrimpassword">Confrim Password</label>
-                    <input type="password" id="Confrim Password">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        :class="{invalid: !deleteAccountPassword.isValid}"
+                        v-model.trim="deleteAccountPassword.val"
+                        @blur="clearValidity('deleteAccountPassword')"
+                    />
+                    <p class="validation-text" v-if="!deleteAccountPassword.isValid">incorrect password</p>
                 </template>
                 <template #buttons>
                     <base-button class="module__btn">Delete Account</base-button>
@@ -66,13 +71,38 @@
                 <template #form-content>
                     <p>Change Password</p>
                     <label for="password">Password</label>
-                    <input type="password" id="password" v-model.trim="changePasswordPasswrod.val"/>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        :class="{invalid: !changePasswordPasswrod.isValid}"
+                        v-model.trim="changePasswordPasswrod.val"
+                        @blur="clearValidity('changePasswordPasswrod')"
+                    />
                     <label for="email">Email</label>
-                    <input type="email" id="email" v-model.trim="changePasswordEmail.val"/>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        :class="{invalid: !changePasswordEmail.isValid}"
+                        v-model.trim="changePasswordEmail.val"
+                        @blur="clearValidity('changePasswordEmail')"
+                    />
                     <label for="new password">New Password</label>
-                    <input type="password" id="new password" v-model.trim="changePasswordNewPassword.val"/>
+                    <input 
+                        type="password" 
+                        id="new password" 
+                        :class="{invalid: !changePasswordNewPassword.isValid}"
+                        v-model.trim="changePasswordNewPassword.val"
+                         @blur="clearValidity('changePasswordNewPassword')"
+                    />
                     <label for="confrimpassword">Confrim Password</label>
-                    <input type="password" id="Confrim Password"/>
+                    <input 
+                        type="password" 
+                        id="Confrim Password"
+                        :class="{invalid: !changePasswordConfrim.isValid}"
+                        v-model.trim="changePasswordConfrim.val"
+                         @blur="clearValidity('changePasswordConfrim')"
+                    />
+                    <p class="validation-text" v-if="!passwordMatch">passwords do not match</p>
                 </template>
                 <template #buttons>
                     <base-button class="module__btn">Update Password</base-button>
@@ -84,11 +114,30 @@
                 <template #form-content>
                     <p>Change Email</p>
                     <label for="password">Password</label>
-                    <input type="password" id="password" v-model.trim="changeEmailPassword.val"/>
+                    <input 
+                        type="password" 
+                        id="password"
+                        :class="{invalid: !changeEmailPassword.isValid}"  
+                        v-model.trim="changeEmailPassword.val"
+                        @blur="clearValidity('changeEmailPassword')"
+                    />
                     <label for="email">Email</label>
-                    <input type="email" id="email" v-model.trim="changeEmailEmail.val"/>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        :class="{invalid: !changeEmailEmail.isValid}" 
+                        v-model.trim="changeEmailEmail.val"
+                        @blur="clearValidity('changeEmailEmail')"
+                    />
                     <label for="new email">New Email</label>
-                    <input type="email" id="new email" v-model.trim="changeEmailNewEmail.val"/>
+                    <input 
+                        type="email" 
+                        id="new email" 
+                        :class="{invalid: !changeEmailNewEmail.isValid}" 
+                        v-model.trim="changeEmailNewEmail.val"
+                        @blur="clearValidity('changeEmailNewEmail')"
+                    />
+                    <p class="validation-text" v-if="!emailMatch">email accounts do not match</p>
                 </template>
                 <template #buttons>
                     <base-button class="module__btn" type="submit">Update Email</base-button>
@@ -100,9 +149,21 @@
                 <template #form-content>
                     <p>Change Name</p>
                     <label for="firstname">First Name</label>
-                    <input type="text" id="firstname" v-model.trim ="changeNameName.val"/>
+                    <input 
+                        type="text" 
+                        id="firstname" 
+                        :class="{invalid: !changeNameName.isValid}" 
+                        v-model.trim ="changeNameName.val"
+                        @blur="clearValidity('changeNameName')"
+                    />
                     <label for="lastname">Last Name</label>
-                    <input type="text" id="lastname" v-model.trim="changeNameLast.val">
+                    <input 
+                        type="text" 
+                        id="lastname" 
+                        :class="{invalid: !changeNameLast.isValid}"
+                        v-model.trim="changeNameLast.val"
+                        @blur="clearValidity('changeNameLast')"
+                    />
                 </template>
                 <template #buttons>
                 <base-button class="module__btn" type="submit">Update Name</base-button>
@@ -129,9 +190,11 @@ import {useRoute} from 'vue-router';
 import router from '../router/index.js';
 import TheHeader from '../components/layout/TheHeader.vue';
 import tintReRoute from '../mixins/tintReRoute';
+import getUserInfo from '../mixins/getUserInfo';
+import validation from '../mixins/validation';
 import http from '../mixins/http';
 export default {
-    mixins:[tintReRoute,http],
+    mixins:[tintReRoute,http,getUserInfo,validation],
     data(){
         changename: false;
         return{
@@ -172,10 +235,16 @@ export default {
                 val: '',
                 isValid: true 
             },
+            changePasswordConfrim:{
+                val: '',
+                isValid: true
+            },
             deleteAccountPassword:{
                 val: '',
                 isValid: true
             },
+            emailMatch: true,
+            passwordMatch: true,
             selectedFile: null
         }
     },
@@ -183,6 +252,7 @@ export default {
         TheHeader
     },
     created(){
+        this.checkToken();
         this.getUserData();
     },
     methods:{
@@ -227,6 +297,10 @@ export default {
                 firstName: this.changeNameName.val,
                 lastName: this.changeNameLast.val
             };
+
+            this.changeNameName.isValid = this.validate(this.changeNameName.val);
+            this.changeNameLast.isValid = this.validate(this.changeNameLast.val);
+        
             const data = await this.fetchWithBody('http://localhost:3000/api/user/changename', body, 'PATCH');
 
             console.log(data);
@@ -240,9 +314,14 @@ export default {
                 password: this.changeEmailPassword.val,
                 newEmail: this.changeEmailNewEmail.val
             };
+
+            this.changeEmailEmail.isValid = this.validate(this.changeEmailEmail.val);
+            this.changeEmailPassword.isValid = this.validate(this.changeEmailPassword.val);
+            this.changeEmailNewEmail.isValid = this.validate(this.changeEmailNewEmail.val);
+            this.emailMatch = this.matchString(this.changeEmailEmail.val, this.changeEmailNewEmail.val);
+
             const data = await this.fetchWithBody('http://localhost:3000/api/user/changeemail',body, 'PATCH');
 
-            console.log(data);
             router.replace({path:'/settings'});
             this.getUserData();
         },
@@ -251,8 +330,16 @@ export default {
             const body =  JSON.stringify({
                 email: this.changePasswordEmail.val,
                 newPassword: this.changePasswordPasswrod.val,
-               newPassword: this.changePasswordNewPassword.val, 
+                newPassword: this.changePasswordNewPassword.val, 
             });
+
+            this.changePasswordEmail.isValid = this.validate(this.changePasswordEmail.val);
+            this.changePasswordPasswrod.isValid = this.validate(this.changePasswordPasswrod.val);
+            this.changePasswordNewPassword.isValid = this.validate(this.changePasswordNewPassword.val);
+            this.changePasswordConfrim.isValid = this.validate(this.changePasswordConfrim.val);
+
+            this.passwordMatch = this.matchString(this.changePasswordNewPassword.val, this.changePasswordConfrim.val);
+
 
             const data = await this.fetchWithBody('http://localhost:3000/api/user/changepassword',body,'PATCH');
 
@@ -266,7 +353,7 @@ export default {
             fd.append('id', this.id);
             fd.append('image', this.selectedFile,this.selectedFile.name);
 
-            const data = await fecthWithFd('http://localhost:3000/api/user/changeprofilepicture', fd, 'PATCH');
+            const data = await this.fetchWithFd('http://localhost:3000/api/user/changeprofilepicture', fd, 'PATCH');
 
             console.log(data);
             router.replace({path:'/settings'});
@@ -278,10 +365,19 @@ export default {
                 password: this.deleteAccountPassword.val,
                 email: this.email
             };
+
+            this.deleteAccountPassword.isValid = this.validate(this.deleteAccountPassword.val);
+
             const data = await this.fetchWithBody('http://localhost:3000/api/user/deleteaccount', body, 'DELETE');
 
-            console.log(data);
-            router.replace({path:'/login'});
+            console.log(data.message.notice);
+            if(data.message.notice === "incorrect password"){
+                this.deleteAccountPassword.isValid = false;
+                console.log(this.deleteAccountPassword.isValid);
+                
+            }else{
+                router.replace({path:'/login'});
+            }
         },
 
          onFileSelected(event){
@@ -496,6 +592,14 @@ footer{
     width: 200px;
 }
 
+.invalid{
+    box-shadow: 0px 0px 2px 4px red;
+}
 
+.validation-text{
+    color: red;
+    font-size: rem(10);
+    margin-bottom: -50px !important;
+}   
 </style>
 

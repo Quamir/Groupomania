@@ -8,15 +8,18 @@ export default{
                 }
             });
             const responseData = await response.json();
-            this.id = responseData.message.id
-            this.profilePicture = responseData.message.profile_picture;
-            
-
+         
             if(responseData.status === 'fail' || responseData.status === 'error'){
                 router.replace({path: '/login'});
             }else{
-                this.auth = true;
+               return responseData;
             }
         },
+
+        checkToken(){
+            if(localStorage.getItem('token') === null){
+               router.replace({path: '/login'});
+            }
+        }
     }
 }

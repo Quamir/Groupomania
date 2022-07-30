@@ -113,27 +113,30 @@ class User{
             const hashPassword = await pool.query(hashPassWordQuery, hashPassWordValues);
             const compare = await bcrypt.compare(this.password,hashPassword.rows[0].user_password);
 
-            if(profilePictureQuery.rows[0].exists === true){
-                // find file location of profile picture
-                const findProfilePicture = 'SELECT profile_picture FROM user_account WHERE email = $1';
-                const queryForProfilePicture = await pool.query(findProfilePicture,value);
-                const getProfilePicture = queryForProfilePicture.rows[0].profile_picture
-            
-                // delete profile picture 
-                const media =  new Media(getProfilePicture);
-                const fileStatus = media.unLink('public/images/profile_pictures');
-            }
-
             if(compare === true){
+                if(profilePictureQuery.rows[0].exists === true){
+                    // find file location of profile picture
+                    const findProfilePicture = 'SELECT profile_picture FROM user_account WHERE email = $1';
+                    const queryForProfilePicture = await pool.query(findProfilePicture,value);
+                    const getProfilePicture = queryForProfilePicture.rows[0].profile_picture
+                
+                    // delete profile picture 
+                    const media =  new Media(getProfilePicture);
+                    const fileStatus = media.unLink('public/images/profile_pictures');
+                }
+    
                 //  delete account 
                 const sql = 'DELETE FROM user_account WHERE email = $1';
                 const deleteUserAccount = await pool.query(sql,value);
+
+                return {notice: 'user profile has delted'}
+            }else{
+                return {notice: 'incorrect password'}
             }
 
         } else{
             return {notice: 'user account does not exist'}
         }
-        return {notice: 'user profile has delted'}
     }
 
     async changePassword(){

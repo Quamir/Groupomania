@@ -4,11 +4,11 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+router.get('/user',authController.protect,userController.userData);
+router.get('/profiles', authController.protect, userController.getProfiles);
 router.post('/signup', userController.uploadProfilePicture ,userController.createAccount);
 router.post('/login', userController.login);
-router.get('/user',authController.protect,userController.userData);
 router.post('/id', authController.protect, userController.getUerId);
-router.get('/profiles', authController.protect, userController.getProfiles);
 router.post('/profile', authController.protect, userController.getProfile);
 router.delete('/deleteaccount',  authController.protect, userController.deleteAccount);
 router.patch('/changepassword', authController.protect, userController.changePassword);

@@ -129,9 +129,10 @@ import TheHeader from '../components/layout/TheHeader.vue';
 import render from '../mixins/render';
 import http from '../mixins/http';
 import utilmixins from '../mixins/utilmixins';
+import validation from '../mixins/validation';
 
 export default {
-    mixins: [render,http, utilmixins],
+    mixins: [render,http, utilmixins, validation],
     components:{
         TheHeader
     },
@@ -168,56 +169,29 @@ export default {
             selectedFile: null,
             formIsValid: true,
             equalPasswords: true,
-            uploadImage:''
+            uploadImage:'',
         }
     },
     methods:{
-        clearValidity(input){
-            this[input].isValid = true;
-        },
-
-
-        signInValidation(){
+     
+        signUpValidation(){
             this.formIsValid = true;
-             if(this.email.val === ''){
-                this.email.isValid = false;
-                this.formIsValid = false;
-            }
-            if(this.password.val === ''){
-                this.password.isValid = false;
-                this.formIsValid = false;
-            }
-        },
+            this.signUpEmail.isValid = this.validate(this.signUpEmail.val);
+            this.signUpPassword.isValid = this.validate(this.signUpPassword.val);
+            this.firstName.isValid = this.validate(this.firstName.val);
+            this.lastName.isValid = this.validate(this.lastName.val);
+            this.confrimPassword.isValid = this.validate(this.confrimPassword.val);
 
-        loginValidation(){
-            this.formIsValid = true;
-            if(this.signUpEmail.val === ''){
-                this.signUpEmail.isValid = false;
-                this.formIsValid = false;
-            }
-            if(this.signUpPassword.val === ''){
-                this.signUpPassword.isValid = false;
-                this.formIsValid = false;
-            }
-            if(this.firstName.val === ''){
-                this.firstName.isValid = false;
-                this.formIsValid = false;
-            }
-            if(this.lastName.val === ''){
-                this.lastName.isValid = false;
-                this.formIsValid = false
-            }
-            if(this.confrimPassword.val === ''){
-                this.confrimPassword.isValid = false;
-                this.formIsValid = false;
-            }
-        },
+            this.equalPasswords = this.matchString(this.confrimPassword.val, this.signUpPassword.val);
 
-        passwordMatch(){
-            if(this.confrimPassword.val === this.signUpPassword.val){
-                console.log('equal');
-            }else{
-                this.equalPasswords = false;
+            if(
+                this.signUpEmail.val === false ||
+                this.signUpPassword.val === false ||
+                this.firstName.val === false ||
+                this.lastName.val === false ||
+                this.confrimPassword.val === false
+            ){
+                this.formIsValid = false;
             }
         },
 
@@ -227,11 +201,22 @@ export default {
                 password: this.password.val
             };
 
-            this.signInValidation();
-            const data = await this.fetchWithBody('http://localhost:3000/api/user/login', body, 'POST');
+            this.formIsValid = true;
+            this.email.isValid = this.validate(this.email.val);
+            this.password.isValid = this.validate(this.password.val);
 
-            console.log(data);
-           
+            if(
+                this.email.isValid === false ||
+                this.password === false
+            ){
+                this.formIsValid = false;
+            }
+
+            const data = await this.fetchWithBody('http://localhost:3000/api/user/login', body, 'POST');    
+            if(data.status === 'error' || data.message.status === 'fail'){
+                this.formIsValid = false;
+            }
+
             localStorage.setItem('token', data.message.token);
             router.replace({path: '/timeline'});
         },
@@ -241,8 +226,7 @@ export default {
         },
 
         async createUser(){
-            this.passwordMatch();
-            this.loginValidation();
+            this.signUpValidation();
             const fd = new FormData();
             fd.append('firstName', this.firstName.val);
             fd.append('lastName', this.lastName.val);

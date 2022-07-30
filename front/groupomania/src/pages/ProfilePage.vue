@@ -1,6 +1,6 @@
 <template>
     <section>
-        <the-header :picture="userProfilePicture" class="profile-header"></the-header>
+        <the-header :picture="userProfilePicture" :route="settingsBtn" class="profile-header"></the-header>
         <div class="cover" v-if="paramsEqual || findUser">
             <div class="cover__color-bg">
                 <div class="cover__img-container">
@@ -43,9 +43,10 @@
 
 <script>
 import TheHeader from '../components/layout/TheHeader.vue';
+import getUserInfo from '../mixins/getUserInfo';
 import http from '../mixins/http';
 export default {
-    mixins:[http],
+    mixins:[http, getUserInfo],
     components:{
         TheHeader
     },
@@ -59,13 +60,15 @@ export default {
             profileId: null,
             paramsEqual: null,
             findUser: null,
-            profilePostArray: []
+            profilePostArray: [],
+            settingsBtn: ''
         }
     },
     created(){
-        console.log(this.profilePostArray)
+        console.log(this.checkToken());
         this.CheckUserAccount();
         this.vistProfilePage();
+        console.log(this.settings);
     },
     methods:{
         async CheckUserAccount(){
@@ -88,6 +91,9 @@ export default {
                 console.log(false);
                 this.paramsEqual = false;
             }
+
+            this.settingsBtn = `/profile/${id}.${name}`
+            console.log(this.settingsBtn)
         },
         async vistProfilePage(){
             const route = this.$route.path.split('.');
@@ -121,7 +127,7 @@ export default {
             this.extractPromise(data, this.profilePostArray);
 
             console.log(this.profilePostArray);
-        }
+        },
     },
 }
 </script>

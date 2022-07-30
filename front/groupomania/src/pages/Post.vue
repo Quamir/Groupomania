@@ -136,8 +136,9 @@
 import http from '../mixins/http';
 import utils from '../mixins/utilmixins';
 import router from '../router/index.js';
+import getUserInfo from '../mixins/getUserInfo';
 export default {
-   mixins:[http,utils],
+   mixins:[http,utils,getUserInfo],
    data(){
     return{
         postId: this.$route.path.split('/')[2],
@@ -175,6 +176,7 @@ export default {
     }
   },
   created(){
+    this.checkToken();
     this.getUserId();
     this.getPost();
     this.getComments();
@@ -234,9 +236,10 @@ export default {
     },
 
     async postComment(){
+        const userInfo =  await this.getUserInfo();
         const body = {
             postId: this.postId,
-            userId: this.userId,
+            userId: userInfo.message.id,
             text: this.commentText.val
         }
 
@@ -530,8 +533,8 @@ section{
 }
 
 .comment-text{
+    padding-left: 20px;
     & textarea{
-        margin-bottom: 10px;
         resize: none;
         outline: none;
         border-radius: 10px;
