@@ -5,12 +5,12 @@
             <img src="../../assets/images/logos/logoblack.svg" alt="" class="logo">
         </router-link>
 
-        <nav v-if="!loginRender()">
+        <nav v-if="!loginRender()" :class="{nav__column: renderSettingsBtn(route)}">
              <base-button class="base-btn" @click="logOut">Logout</base-button>
              <router-link to="/settings" v-if="renderSettingsBtn(route)">
                 <base-button class="base-btn">settings</base-button>
              </router-link>
-            <router-link :to="'/profile/'+id+'.'+name">
+            <router-link :to="'/profile/'+id+'.'+name" v-if="!renderSettingsBtn(route)">
                 <img :src="picture" alt="profile picture" class="profile-picture">
             </router-link>
         </nav>
@@ -115,6 +115,15 @@ nav{
 
     & img{
         width: 30px;
+    }
+}
+
+.nav__column{
+
+    @include breakpoint-down(mobile){
+        margin-top: 10px;
+        flex-direction: column;
+        justify-content: space-between;
     }
 }
 </style>

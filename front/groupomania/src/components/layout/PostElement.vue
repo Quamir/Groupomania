@@ -119,7 +119,7 @@ export default {
         @include breakpoint-down(mobile){
             width: 50vw;
             height: 45px;
-            top: -45px;
+            top: -49px;
             left: 195px;
         }
 
@@ -128,8 +128,9 @@ export default {
             padding-left: 10px;
 
             @include breakpoint-down(mobile){
-                padding: unset;
-                padding-left: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
     }

@@ -82,14 +82,14 @@
                 </div>
                 <div class="commenter__text-wrapper">
                     <div class="commenter__text">
-                        <p>{{commentTimestamp}}</p>
+                        <p>{{comment.time_stamp.split('T')[0]}}</p>
                         <p>{{comment.comment_text}}</p>
                     </div>
                     <div class="commenter__response">
                         <p>like</p>
                         <p>Reply</p>
                     </div>
-                    <div class="commenter-opt"  v-if="deleteBtn">
+                    <div class="commenter-opt"  v-if="comment.user_id === tokenId">
                         <form v-if="edit === true" v-on:keydown.enter="editUserComment(comment.id)">
                             <textarea 
                                 class="commenter-opt__text"
@@ -103,9 +103,9 @@
                             </textarea>
                         </form>
                         <div class="commenter-opt__btns">
-                            <button class="commenter-opt__edit" @click="toggleEditComment"> edit Comment</button>
+                            <button class="commenter-opt__edit" @click="toggleEditComment">edit</button>
                             <form @submit.prevent="deleteUserComment(comment.id)" class="commenter-opt__del">
-                                <button type="submit" > DELETE Comment</button>
+                                <button type="submit" > DELETE</button>
                             </form>
                         </div>
                     </div>
@@ -153,7 +153,6 @@ export default {
         titleText: null,
         modelVisable: false,
         commentsArray:[],
-        commentTimestamp: null,
         like: null,
         angryEmoji: null,
         cryEmoji: null,
@@ -230,9 +229,10 @@ export default {
         this.commentsArray = [];
         const body = {id: this.postId}
         const data = await this.fetchWithBody('http://localhost:3000/api/comment/allcomments',body,'POST');
-    
+
+        console.log(data);
+        console.log(this.tokenId);
         this.extractPromise(data, this.commentsArray);
-        this.commentTimestamp = this.commentsArray[0].time_stamp.split('T')[0];
     },
 
     async postComment(){
@@ -344,7 +344,10 @@ section{
         margin-top: 20px;
         margin-left: 40px;
         margin-bottom: 20px;
-    
+
+        @include breakpoint-down(mobile){
+            margin-left: 10px;
+        }
     }
 
     &__profile-picture{
@@ -366,11 +369,16 @@ section{
             padding-bottom: 15px;
             font-size: rem(15);
             font-weight: 500;
+
         }
     }
 
     &-info__des{
         margin-left: 50px;
+
+        @include breakpoint-down(mobile){
+            margin: unset;
+        }
     }
     &__likes{
         display: flex;
@@ -378,6 +386,11 @@ section{
         padding-left: 50px;
         border-top: 2px solid $secondary-color;
         border-bottom: 2px solid $secondary-color;
+
+        @include breakpoint-down(mobile){
+            padding: unset;
+            margin-left: 10px;
+        }
 
         & img{
             width: 40px;
@@ -394,20 +407,6 @@ section{
             font-weight: 500;
             padding-right: 15px;
         }
-
-        & .like-desktop{
-            @include breakpoint-down(mobile){
-                display: none;
-            }
-        }
-
-        & .like-mobile{
-            display: none;
-
-            @include breakpoint-down(mobile){
-                display: unset;
-            }
-        }
     }
 
     &__reactions{
@@ -417,15 +416,15 @@ section{
         padding-left: 50px;
         border-bottom: 2px solid $secondary-color;
 
+        @include breakpoint-down(mobile){
+            padding: unset;
+            margin-left: 7px;
+        }
+
         & span{
             padding-right: 10px;
             font-size: rem(20);
             font-weight: 500;
-        }
-
-        
-        @include breakpoint-down(mobile){
-            display: none;
         }
     }
 
@@ -504,9 +503,24 @@ section{
         flex-direction: column;
         margin-top: 10%;
 
+        @include breakpoint-down(mobile){
+            margin-right: 10px;
+            padding: 5px;
+            margin-top: unset;
+            justify-content: center;
+            align-items: center;
+
+        }
+
         &__btns{
             display: flex;
             flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            @include breakpoint-down(mobile){
+                height: 20px;
+            }
         }
 
         &__text{
@@ -523,7 +537,11 @@ section{
 
         &__del,
         &__edit{
-            margin-left: 2%;
+            margin-left: 20%;
+
+            @include breakpoint-down(mobile){
+                height: 24px;
+            }
             
         }
     }
@@ -542,6 +560,10 @@ section{
         text-indent: 5px;
         padding-top: 2px;
         background-color: rgba(107,104,104,0.3);
+
+        @include breakpoint-down(mobile){
+            width: 95%;
+        }
     }
 }  
 

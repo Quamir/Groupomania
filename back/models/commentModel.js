@@ -14,6 +14,7 @@ class Comment{
                 pc.comment_text,
                 pc.time_stamp,
                 pc.id,
+                pc.user_id,
                 ua.first_name,
                 ua.last_name,
                 ua.profile_picture

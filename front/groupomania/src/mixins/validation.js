@@ -1,5 +1,3 @@
-import { TRUE } from "sass";
-
 export default{
     methods:{
         validate(val){

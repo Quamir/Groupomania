@@ -11,6 +11,4 @@ export default{
             const data = await this.fetchWithBody(`http://localhost:3000/api/reaction/${route}`,body,'POST');
         },
     }
-
-    
 }

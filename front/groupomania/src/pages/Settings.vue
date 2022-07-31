@@ -62,7 +62,8 @@
                     <p class="validation-text" v-if="!deleteAccountPassword.isValid">incorrect password</p>
                 </template>
                 <template #buttons>
-                    <base-button class="module__btn">Delete Account</base-button>
+                    <base-button type="submit" class="module__btn">Delete Account</base-button>
+                    <base-button type="button" class="back-btn" @click="backBtn"> Back</base-button>
                 </template>
             </base-module>
         </form>
@@ -105,7 +106,8 @@
                     <p class="validation-text" v-if="!passwordMatch">passwords do not match</p>
                 </template>
                 <template #buttons>
-                    <base-button class="module__btn">Update Password</base-button>
+                    <base-button type="submit" class="module__btn">Update Password</base-button>
+                    <base-button type="button" class="back-btn" @click="backBtn"> Back</base-button>
                 </template>
             </base-module>
         </form>
@@ -140,7 +142,8 @@
                     <p class="validation-text" v-if="!emailMatch">email accounts do not match</p>
                 </template>
                 <template #buttons>
-                    <base-button class="module__btn" type="submit">Update Email</base-button>
+                    <base-button type="submit" class="module__btn">Update Email</base-button>
+                    <base-button type="button" class="back-btn" @click="backBtn"> Back</base-button>
                 </template>
             </base-module>
         </form>
@@ -166,7 +169,8 @@
                     />
                 </template>
                 <template #buttons>
-                <base-button class="module__btn" type="submit">Update Name</base-button>
+                <base-button  type="submit" class="module__btn">Update Name</base-button>
+                <base-button type="button" class="back-btn" @click="backBtn"> Back</base-button>
                 </template>
             </base-module>
         </form>
@@ -179,6 +183,7 @@
                 </template>
                 <template #buttons>
                     <base-button type="submit" class="module__btn">Update Picture</base-button>
+                    <base-button type="button" class="back-btn" @click="backBtn"> Back</base-button>
                 </template>
             </base-module>  
         </form> 
@@ -266,12 +271,18 @@ export default {
               
             ){
                 document.body.style.overflow = 'hidden';
+                document.body.style.touchAction = 'none';
                 return true;
             }else{
                 return false;
             }
         },
 
+        backBtn(){
+            this.$router.go(-1);
+            document.body.style.overflow = 'visable';
+            document.body.style.touchAction = 'unset';
+        },
         checkPath(path){
             if(useRoute().path === path){
                 return true;
@@ -436,6 +447,11 @@ export default {
             height: 40px;
             font-size: rem(18);
             margin: auto;
+
+            @include breakpoint-down(mobile){
+                width: 80%;
+                margin-left: 10%;
+            }
         }
 
         & a{
@@ -507,6 +523,11 @@ export default {
             & p {
                 font-size: rem(22);
                 margin: auto;
+            }
+
+            & a {
+                width: 100%;
+                margin-left: 25%;
             }
         }
     }
@@ -587,6 +608,18 @@ footer{
         font-size: rem(20);
     }
 } 
+
+.back-btn{
+    display: none;
+
+    @include breakpoint-down(mobile){
+        display: unset;
+        width: 45%;
+        height: 40px;
+        margin-top: 20px;
+        font-size: rem(20);
+    }
+}
 
 .profile-picture{
     width: 200px;

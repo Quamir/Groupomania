@@ -173,7 +173,6 @@ export default {
         }
     },
     methods:{
-     
         signUpValidation(){
             this.formIsValid = true;
             this.signUpEmail.isValid = this.validate(this.signUpEmail.val);
@@ -261,7 +260,6 @@ export default {
         height: 93vh;
         clip-path: unset;
         object-fit: cover;
-        overflow: hidden;
     }
 }
 
@@ -280,8 +278,7 @@ export default {
 .left-landing{
     width: 65%;
     height: 100%;
-    overflow: hidden;
-
+   
         &__text{
         width: 50%;
         position: absolute;

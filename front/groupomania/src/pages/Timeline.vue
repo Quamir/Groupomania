@@ -194,6 +194,7 @@ export default {
         this.getPage();
         this.getProfiles();
         this.getPost();
+        document.body.style.overflow = 'visible';
     },
     watch:{
        '$route' (to, from){
@@ -202,6 +203,7 @@ export default {
             this.getPage();
             this.getPost();
             window.scrollTo(0,0);
+            document.body.style.overflow = 'visible';
        }
     },
     methods:{
@@ -515,7 +517,7 @@ html{
         position: absolute;
         flex-direction: column;
         width: 100vw;
-        height: 100vh;
+        height: 109vh;
         left: 0px;
         top: 0px;
         margin: unset;
