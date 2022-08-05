@@ -82,19 +82,26 @@ class Post{
     async profilePost(){
         const sql = `
             SELECT 
-                up.id,
-                up.media,
-                up.description_text,
-                up.time_stamp,
-                up.title_text,
-                ua.first_name,
-                ua.last_name,
-                ua.profile_picture
-            FROM user_post AS up
-            INNER JOIN user_account AS ua 
-            ON up.user_id = ua.id 
-            WHERE user_id = $1
-            ORDER BY time_stamp DESC
+            up.id,
+            up.media,
+            up.description_text,
+            up.time_stamp,
+            up.title_text,
+            ua.first_name,
+            ua.last_name,
+            ua.profile_picture,
+            (SELECT COUNT(*) FROM post_like WHERE post_id = up.id) AS pl,
+            (SELECT COUNT(*) FROM post_comment WHERE post_id = up.id) AS pc
+        FROM user_post AS up
+        INNER JOIN user_account AS ua 
+        ON up.user_id = ua.id 
+        FULL JOIN post_like AS pl 
+        ON up.id = pl.post_id
+        FULL JOIN post_comment AS pc
+        ON up.id = pc.post_id
+        WHERE up.user_id = $1
+        ORDER BY time_stamp DESC
+        LIMIT 10
         `;
         const values = [this.id];
         const query = await pool.query(sql,values);

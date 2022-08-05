@@ -1,251 +1,293 @@
 <template>
-    <div class="post__folder-wrapper">
-
-        <div class="post__info-wrapper">
-            <router-link :to="'/post/' + link">
-                <div class="post__user-info">
-                    <img :src="profilePicture" alt="profile picture" class="post__profile-picture">
-                    <div class="post__info-text">
-                        <p>posted by</p>
-                        <span>{{name}}</span>
-                    </div>
-                    <p class="post__timestamp">{{timestamp}}</p>
-                </div>
-                <div class="post__title">
-                    <p>{{title}}</p>
-                </div>
-                <div class="post__img-wrapper">
-                    <img :src="media" alt="img relating to post" class="post__img">
-                    <div class="post__text">
-                        <p>{{description}}</p>
-                    </div>
-                </div>
-            </router-link>
-            <div class="reaction-panel">
-                <div class="reaction-panel__comment">
-                    <img src="../../assets/images/reactions/comment.png" alt="comment button" class="reaction-panel__like-btn">
-                    <span>{{pc}}</span>
-                </div>
-                <div class="reaction-panel__reactions">
-                    <div class="reaction-panel__emojis">
-                        <img src="../../assets/images/reactions/heart_eyes.svg" alt="heart eye emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'heartreact')">
-                        <img src="../../assets/images/reactions/laugh.svg" alt="laughing emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'laughreact')">
-                        <img src="../../assets/images/reactions/angry.svg" alt="angry emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'angryreact')">
-                        <img src="../../assets/images/reactions/smile.svg" alt="smiling emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'smilereact')">
-                        <img src="../../assets/images/reactions/cry.svg" alt="crying emoji" class="reaction-panel__emoji" @click="reaction(link,userId,'cryreact')">
-                        <img src="../../assets/images/reactions/like.svg" alt="like button" class="reaction-panel__emoji" @click="reaction(link,userId,'like')">
-                        <span>{{pl}}</span>
-                    </div>
-                </div>
-            </div>
+  <div class="post__folder-wrapper">
+    <div class="post__info-wrapper">
+      <router-link :to="'/post/' + link">
+        <div class="post__user-info">
+          <img
+            :src="profilePicture"
+            alt="profile picture"
+            class="post__profile-picture"
+          />
+          <div class="post__info-text">
+            <p>posted by</p>
+            <span>{{ name }}</span>
+          </div>
+          <p class="post__timestamp">{{ timestamp }}</p>
         </div>
-
-        <!-- <emoji-pop-up v-if="modelVisable"></emoji-pop-up> -->
+        <div class="post__title">
+          <p>{{ title }}</p>
+        </div>
+        <div class="post__img-wrapper">
+          <img :src="media" alt="img relating to post" class="post__img" />
+          <div class="post__text">
+            <p>{{ description }}</p>
+          </div>
+        </div>
+      </router-link>
+      <div class="reaction-panel">
+        <div class="reaction-panel__comment">
+          <img
+            src="../../assets/images/reactions/comment.png"
+            alt="comment button"
+            class="reaction-panel__like-btn"
+          />
+          <span>{{ pc }}</span>
+        </div>
+        <div class="reaction-panel__reactions">
+          <div class="reaction-panel__emojis">
+            <img
+              src="../../assets/images/reactions/heart_eyes.svg"
+              alt="heart eye emoji"
+              class="reaction-panel__emoji"
+              @click="reaction(link, userId, 'heartreact')"
+            />
+            <img
+              src="../../assets/images/reactions/laugh.svg"
+              alt="laughing emoji"
+              class="reaction-panel__emoji"
+              @click="reaction(link, userId, 'laughreact')"
+            />
+            <img
+              src="../../assets/images/reactions/angry.svg"
+              alt="angry emoji"
+              class="reaction-panel__emoji"
+              @click="reaction(link, userId, 'angryreact')"
+            />
+            <img
+              src="../../assets/images/reactions/smile.svg"
+              alt="smiling emoji"
+              class="reaction-panel__emoji"
+              @click="reaction(link, userId, 'smilereact')"
+            />
+            <img
+              src="../../assets/images/reactions/cry.svg"
+              alt="crying emoji"
+              class="reaction-panel__emoji"
+              @click="reaction(link, userId, 'cryreact')"
+            />
+            <img
+              src="../../assets/images/reactions/like.svg"
+              alt="like button"
+              class="reaction-panel__emoji"
+              @click="reaction(link, userId, 'like')"
+            />
+            <span>{{ pl }}</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- <emoji-pop-up v-if="modelVisable"></emoji-pop-up> -->
+  </div>
 </template>
 
 <script>
-import http from '../../mixins/http';
-import utils from '../../mixins/utilmixins';
+import http from "../../mixins/http";
+import utils from "../../mixins/utilmixins";
 export default {
-  mixins:[http,utils],
-  props:['name','timestamp','media','title', 'description','name', 'profilePicture', 'link','userId', 'pl', 'pc'],
-  data(){
-    return{
-        modelVisable: false,
-        reactArray:[]
-    }
+  mixins: [http, utils],
+  props: [
+    "name",
+    "timestamp",
+    "media",
+    "title",
+    "description",
+    "name",
+    "profilePicture",
+    "link",
+    "userId",
+    "pl",
+    "pc",
+  ],
+  data() {
+    return {
+      modelVisable: false,
+      reactArray: [],
+    };
   },
-}
+};
 </script>
 <style lang="scss" scoped>
-.post{
-
-    &__folder-wrapper{
-        width: 600px;
-
-        @include breakpoint-down(mobile){
-            width: 100vw;
-        }
-    }
-
-    &__user-info{
-        display: flex;
-        width: 400px;
-        height: 70px;
-        background-color: #e09e00;
-        border-top: 4px solid $secondary-color;
-        border-left: 4px solid $secondary-color;
-        border-right: 4px solid $secondary-color;
-
-        @include breakpoint-down(mobile){
-            width: 100vw;
-            height: 70px;
-        }
-    }
-
-    &__info-text{
-        display: flex;
-        flex-direction: column;
-        margin-right: 80px;
-        padding-top: 10px;
-       
-        & span{
-            font-weight: bold;
-        }
-    }
-
-    &__profile-picture{
-        width: 50px;
-        height: 50px;
-        margin-left: 10px;
-        margin-top: 5px;
-        margin-right: 20px;
-        border-radius: 50px;
-        border: 2px solid $primary-color;
-    }
-
-    &__title{
-        width: 400px;
-        height: 40px;
-        position: relative;
-        top: -40px;
-        left: 200px;
-        background-color: #ffd96a;
-        border-top: 4px solid $secondary-color;
-        border-left: 4px solid $secondary-color;
-        border-right: 4px solid $secondary-color;
-
-        @include breakpoint-down(mobile){
-            width: 50vw;
-            height: 45px;
-            top: -49px;
-            left: 195px;
-        }
-
-        & p{
-            padding-top: 10px;
-            padding-left: 10px;
-
-            @include breakpoint-down(mobile){
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-    }
-
-    &__timestamp{
-        font-size: rem(13);
-    }
-
-    &__img{
-
-        @include breakpoint-down(mobile){
-            width: 99vw;
-            height: 270px;
-            object-fit: cover;
-        }
-
-        &-wrapper{
-            width: 600px;
-            height: 400px;
-            margin-top: -40px;
-            border: 4px solid $secondary-color;
-
-            @include breakpoint-down(mobile){
-              width: 100vw;
-              height: 270px;
-              margin-top: -50px;
-            }
-        }
-
-        width: 100%;
-        height: 100%;
-        object-fit: fill;
-    }
-
-    &__text{
-        width: 92%;
-        height: 30%;
-        position: relative;
-        top: -150px;
-        left: 20px;
-        background: rgba(238, 238, 238, 0.808);
-        border: 4px solid $secondary-color;
-
-        @include breakpoint-down(mobile){
-            top: -110px;
-        }
-       
-       & p{
-        padding-left: 10px;
-        padding-right: 10px;
-        height: 100%;
-        overflow: hidden;
-        font-weight: 600;
-       }
-    }
-
-}
-
-.reaction-panel{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.post {
+  &__folder-wrapper {
     width: 600px;
-    height: 60px;
-    border: 3px solid $secondary-color;
+
+    @include breakpoint-down(mobile) {
+      width: 100vw;
+    }
+  }
+
+  &__user-info {
+    display: flex;
+    width: 400px;
+    height: 70px;
+    background-color: #e09e00;
+    border-top: 4px solid $secondary-color;
+    border-left: 4px solid $secondary-color;
+    border-right: 4px solid $secondary-color;
+
+    @include breakpoint-down(mobile) {
+      width: 100vw;
+      height: 70px;
+    }
+  }
+
+  &__info-text {
+    display: flex;
+    flex-direction: column;
+    margin-right: 80px;
+    padding-top: 10px;
+
+    & span {
+      font-weight: bold;
+    }
+  }
+
+  &__profile-picture {
+    width: 50px;
+    height: 50px;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-right: 20px;
+    border-radius: 50px;
+    border: 2px solid $primary-color;
+  }
+
+  &__title {
+    width: 400px;
+    height: 40px;
+    position: relative;
+    top: -40px;
+    left: 200px;
     background-color: #ffd96a;
+    border-top: 4px solid $secondary-color;
+    border-left: 4px solid $secondary-color;
+    border-right: 4px solid $secondary-color;
 
-    @include breakpoint-down(mobile){
+    @include breakpoint-down(mobile) {
+      width: 50vw;
+      height: 45px;
+      top: -49px;
+      left: 195px;
+    }
+
+    & p {
+      padding-top: 10px;
+      padding-left: 10px;
+
+      @include breakpoint-down(mobile) {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  &__timestamp {
+    font-size: rem(13);
+  }
+
+  &__img {
+    @include breakpoint-down(mobile) {
+      width: 99vw;
+      height: 270px;
+      object-fit: cover;
+    }
+
+    &-wrapper {
+      width: 600px;
+      height: 400px;
+      margin-top: -40px;
+      border: 4px solid $secondary-color;
+
+      @include breakpoint-down(mobile) {
         width: 100vw;
+        height: 270px;
+        margin-top: -50px;
+      }
     }
 
-    &__comment{
-        display: flex;
-        align-items: center;
-        
-        & img{
-            width: 70px;
-            height: 70px;
-        }
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+
+  &__text {
+    width: 92%;
+    height: 30%;
+    position: relative;
+    top: -150px;
+    left: 20px;
+    background: rgba(238, 238, 238, 0.808);
+    border: 4px solid $secondary-color;
+
+    @include breakpoint-down(mobile) {
+      top: -110px;
     }
 
-    & span{
-        font-size: rem(30);
-        font-weight: bold;
+    & p {
+      padding-left: 10px;
+      padding-right: 10px;
+      height: 100%;
+      overflow: hidden;
+      font-weight: 600;
     }
-
-    &__emojis{
-        display: flex;
-        align-items: center;
-        padding-right: 12px;
-
-        @include breakpoint-down(mobile){
-            & img:nth-child(1),
-            & img:nth-child(2),
-            & img:nth-child(3),
-            & img:nth-child(4),
-            & img:nth-child(5),
-            & img:nth-child(6){
-                display: none;
-            }
-        }
-    }
-
-    &__emoji{
-        width: 45px;
-        height: 45px;
-        margin-right: 12px;
-
-        &:hover{
-            cursor: pointer;
-        }
-    }
-
-   
+  }
 }
 
+.reaction-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 600px;
+  height: 60px;
+  border: 3px solid $secondary-color;
+  background-color: #ffd96a;
+
+  @include breakpoint-down(mobile) {
+    width: 100vw;
+  }
+
+  &__comment {
+    display: flex;
+    align-items: center;
+
+    & img {
+      width: 70px;
+      height: 70px;
+    }
+  }
+
+  & span {
+    font-size: rem(30);
+    font-weight: bold;
+  }
+
+  &__emojis {
+    display: flex;
+    align-items: center;
+    padding-right: 12px;
+
+    @include breakpoint-down(mobile) {
+      & img:nth-child(1),
+      & img:nth-child(2),
+      & img:nth-child(3),
+      & img:nth-child(4),
+      & img:nth-child(5) {
+        display: none;
+      }
+    }
+  }
+
+  &__emoji {
+    width: 45px;
+    height: 45px;
+    margin-right: 12px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
 </style>
 

@@ -15,7 +15,7 @@ exports.reaction = (check,insertSql,deleteSql) => catchAsync(async(req,res,next)
     let values;
     let reactToPost;
     const dbCheck = check;
-    const dbCheckValues = [req.body.userId];
+    const dbCheckValues = [req.body.userId, req.body.postId];
     const dbCheckQuery = await pool.query(dbCheck, dbCheckValues);
 
     console.log(dbCheckQuery.rowCount);
@@ -42,7 +42,7 @@ exports.userGenReact = async (check ,insertSql ,userId ,postId ) => {
     const values = [userId, postId];
     const dbCheck = await pool.query(check, values);
 
-
+    
     if(dbCheck.rowCount === 0){
         const sql = insertSql;
         const insertValues = [postId, userId];
@@ -52,7 +52,6 @@ exports.userGenReact = async (check ,insertSql ,userId ,postId ) => {
     }else{
         console.log('user already reacted');
     }
-
 };
 
 

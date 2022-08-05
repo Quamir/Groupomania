@@ -5,31 +5,31 @@ const catchAsync = require('../utils/catchAsync');
 
 // likes
 const insertLike = 'INSERT INTO post_like(post_id, user_id) VALUES($1,$2) RETURNING*';
-const checkLikes = 'SELECT * FROM post_like WHERE user_id = $1';
+const checkLikes = 'SELECT * FROM post_like WHERE user_id = $1 AND post_id = $2';
 const deleteLike = 'DELETE FROM post_like WHERE user_id = $1 RETURNING*';
 // angry emojis 
 const addAngryEmoji = 'INSERT INTO angry_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
-const checkAngryEmoji = 'SELECT * FROM angry_emoji WHERE user_id = $1';
+const checkAngryEmoji = 'SELECT * FROM angry_emoji WHERE user_id = $1 AND post_id = $2';
 const removeAngryEmoji = 'DELETE FROM angry_emoji WHERE user_id = $1 RETURNING*';
 // cry emoji
 const addCryEmoji = 'INSERT INTO cry_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
-const checkCryEmoji = 'SELECT * FROM cry_emoji WHERE user_id = $1';
+const checkCryEmoji = 'SELECT * FROM cry_emoji WHERE user_id = $1 AND post_id = $2';
 const removeCryEmoji = 'DELETE FROM cry_emoji WHERE user_id = $1 RETURNING*';
 // heart eye emoji
 const addHeartEyeEmoji = 'INSERT INTO heart_eye_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
-const checkHeartEyeEmoji = 'SELECT * FROM heart_eye_emoji WHERE user_id = $1';
+const checkHeartEyeEmoji = 'SELECT * FROM heart_eye_emoji WHERE user_id = $1 AND post_id = $2';
 const removeHeartEyeEmoji = 'DELETE FROM heart_eye_emoji WHERE user_id = $1 RETURNING*';
 // laugh_emoji 
 const addLaughEmoji = 'INSERT INTO laugh_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
-const checkLaughEmoji = 'SELECT * FROM laugh_emoji WHERE user_id = $1';
+const checkLaughEmoji = 'SELECT * FROM laugh_emoji WHERE user_id = $1 AND post_id = $2';
 const removeLaughEmoji = 'DELETE FROM laugh_emoji WHERE user_id = $1 RETURNING*';
 // shock_emoji
 const addShockEmoji = 'INSERT INTO shock_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
-const chcekShockEmoji = 'SELECT * FROM shock_emoji WHERE user_id = $1';
+const chcekShockEmoji = 'SELECT * FROM shock_emoji WHERE user_id = $1 AND post_id = $2';
 const removeShockEmoji = 'DELETE FROM shock_emoji WHERE user_id = $1 RETURNING*';
 // smile_emoji
 const addSmileEmoji = 'INSERT INTO smile_emoji(post_id, user_id) VALUES($1,$2) RETURNING*';
-const checkSmileEmoji = 'SELECT * FROM smile_emoji WHERE user_id = $1';
+const checkSmileEmoji = 'SELECT * FROM smile_emoji WHERE user_id = $1 AND post_id = $2';
 const removeSmileEmoji = 'DELETE FROM smile_emoji WHERE user_id = $1 RETURNING*';
 
 
