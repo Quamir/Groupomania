@@ -5,7 +5,8 @@ This project is a Internal social network for the company Groupomania.
 The goal of the website is to facilitate more interaction between colleagues.
 On this website users can easily signup create post comment like and react to other user's post.
 
-requirements requested By client
+
+requested By client
 
 -The presentation of the features must be simple;
 -Account creation must be simple and possible from a mobile phone;
