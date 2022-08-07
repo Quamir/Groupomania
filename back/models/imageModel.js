@@ -41,12 +41,10 @@ class Media{
     unLink(folder){
         if(this.des !== null){
             const imageLocation = this.des;
-            // console.log(this.des);
             const imageName = imageLocation.split('/')[5];
             const path = folder + `/${imageName}`
 
-            // console.log(imageName);
-            // console.log(path);
+            
             fs.unlink(path, error =>{
                 if(error){
                     return 'file deleted';

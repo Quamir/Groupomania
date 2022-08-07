@@ -239,11 +239,9 @@ export default {
     this.getProfiles();
     this.getPost();
     document.body.style.overflow = "visible";
-    console.log(this.imageSelected);
   },
   watch: {
     $route(to, from) {
-      console.log(this.$route.path);
       this.postArray = [];
       this.getPage();
       this.getPost();
@@ -368,21 +366,22 @@ export default {
     async makePost() {
       document.body.style.overflow = "hidden";
 
-      if(this.selectedFile == null){
-        console.log('no image selected');
+      if (this.selectedFile == null) {
+        console.log("no image selected");
         this.imageSelected = false;
-      }else{
-      this.imageSelected = true;
-      const fd = new FormData();
-      fd.append("image", this.selectedFile, this.selectedFile.name);
-      fd.append("titleText", this.title.val);
-      fd.append("descriptionText", this.description.val);
-      fd.append("userId", this.id);
+      } else {
+        this.imageSelected = true;
+        const fd = new FormData();
+        fd.append("image", this.selectedFile, this.selectedFile.name);
+        fd.append("titleText", this.title.val);
+        fd.append("descriptionText", this.description.val);
+        fd.append("userId", this.id);
 
-      this.fetchWithFd("http://localhost:3000/api/post/create", fd, "POST");
-
-      document.body.style.overflow = "visible";
-      router.replace({ path: "/timeline" });
+        await this.fetchWithFd("http://localhost:3000/api/post/create", fd, "POST");
+        document.body.style.overflow = "visible";
+        this.title.val = "";
+        this.description.val = "";
+        router.replace({ path: "/timeline" });
       }
     },
   },
@@ -571,9 +570,9 @@ html {
       font-size: rem(18);
       font-weight: 600;
 
-    @include breakpoint-down(mobile) {
-    padding-right: 15px;
-    }
+      @include breakpoint-down(mobile) {
+        padding-right: 15px;
+      }
     }
   }
 }
@@ -655,7 +654,7 @@ html {
       font-size: rem(20);
     }
   }
-  .validation{
+  .validation {
     color: red;
   }
 }

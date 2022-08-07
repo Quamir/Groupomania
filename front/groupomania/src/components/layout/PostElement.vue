@@ -107,6 +107,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .post {
   &__folder-wrapper {

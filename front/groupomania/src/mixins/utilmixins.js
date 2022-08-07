@@ -10,6 +10,7 @@ export default{
             const body = {postId: link, userId: userId};
             const data = await this.fetchWithBody(`http://localhost:3000/api/reaction/${route}`,body,'POST');
             console.log(data);
+            this.postDataChange();
         },
     }
 }

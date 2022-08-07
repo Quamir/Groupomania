@@ -1,7 +1,6 @@
 <template>
   <section>
     <div class="post-img__wrapper" @click="exitOnClick()">
-
       <img
         src="../assets/images/x_icon.svg"
         alt="exit button"
@@ -13,15 +12,16 @@
     <div class="comments">
       <div class="comments__poster-info" @click="exitOnClick()">
         <div class="comments-info__text">
-
-        <router-link :to="'/profile/' + userId + '.' + fristName + '.' + lastName"> 
-           <img
-            :src="profilePicture"
-            alt="profile picture"
-            class="comments__profile-picture"
-          />
-        </router-link>
-          <p>{{ firstNmae }} {{ lastName }}</p>
+          <router-link
+            :to="'/profile/' + userId + '.' + firstName + '.' + lastName"
+          >
+            <img
+              :src="profilePicture"
+              alt="profile picture"
+              class="comments__profile-picture"
+            />
+          </router-link>
+          <p>{{ firstName }} {{ lastName }}</p>
           <p>{{ timestamp }}</p>
         </div>
         <div>
@@ -34,7 +34,7 @@
           src="../assets/images/reactions/like.svg"
           alt="like button"
           class="like-desktospan"
-          @click="reaction(postId, userId, 'like')"
+          @click="reaction(postId, tokenId, 'like') && postDataChange()"
         />
         <span>{{ like }}</span>
         <img
@@ -48,35 +48,35 @@
           src="../assets/images/reactions/heart_eyes.svg"
           alt="heart eye emoji"
           class="comments__emoji"
-          @click="reaction(postId, userId, 'heartreact')"
+          @click="reaction(postId, tokenId, 'heartreact')"
         />
         <span>{{ heartEyeEmoji }}</span>
         <img
           src="../assets/images/reactions/laugh.svg"
           alt="laughing emoji"
           class="comments__emoji"
-          @click="reaction(postId, userId, 'laughreact')"
+          @click="reaction(postId, tokenId, 'laughreact')"
         />
         <span>{{ laughEmoji }}</span>
         <img
           src="../assets/images/reactions/angry.svg"
           alt="angry emoji"
           class="comments__emoji"
-          @click="reaction(postId, userId, 'angryreact')"
+          @click="reaction(postId, tokenId, 'angryreact')"
         />
         <span>{{ angryEmoji }}</span>
         <img
           src="../assets/images/reactions/smile.svg"
           alt="smiling emoji"
           class="comments__emoji"
-          @click="reaction(postId, userId, 'smilereact')"
+          @click="reaction(postId, tokenId, 'smilereact')"
         />
         <span>{{ smileEmoji }}</span>
         <img
           src="../assets/images/reactions/cry.svg"
           alt="crying emoji"
           class="comments__emoji"
-          @click="reaction(postId, userId, 'cryreact')"
+          @click="reaction(postId, tokenId, 'cryreact')"
         />
         <span>{{ cryEmoji }}</span>
       </div>
@@ -119,9 +119,8 @@
                   rows="2"
                   v-model.trim="editText.val"
                 >
-                            <input type="submit" hidden>
-                            </textarea
-                >
+                <input type="submit" hidden>
+                </textarea>
               </form>
               <div class="commenter-opt__btns">
                 <button class="commenter-opt__edit" @click="toggleEditComment">
@@ -138,7 +137,10 @@
           </div>
         </div>
       </div>
-      <form v-on:keydown.enter="postComment" class="comment-text">
+      <form
+        v-on:keydown.enter="postComment"
+        class="comment-text"
+      >
         <textarea
           id="post-comment"
           placeholder="write a comment...."
@@ -146,8 +148,8 @@
           rows="2"
           v-model.trim="commentText.val"
         >
-                <input type="submit" hidden>
-                </textarea
+          <input type="submit" hidden>
+          </textarea
         >
       </form>
       <form v-if="deleteBtn" @submit.prevent="deletePost" class="del-btn">
@@ -172,7 +174,7 @@ export default {
       userId: null,
       tokenId: null,
       descriptionText: null,
-      firstNmae: null,
+      firstName: null,
       lastName: null,
       media: null,
       profilePicture: null,
@@ -234,7 +236,7 @@ export default {
       console.log(data);
       this.media = array[0].media;
       this.descriptionText = array[0].description_text;
-      this.firstNmae = array[0].first_name;
+      this.firstName = array[0].first_name;
       this.lastName = array[0].last_name;
       this.profilePicture = array[0].profile_picture;
       this.timestamp = array[0].time_stamp.split("T")[0];
@@ -252,6 +254,25 @@ export default {
         this.deleteBtn = true;
         this.deleteComment = true;
       }
+    },
+
+    async postDataChange() {
+      const body = { id: this.postId };
+      const data = await this.fetchWithBody(
+        "http://localhost:3000/api/post/singlepost",
+        body,
+        "POST"
+      );
+      const array = await data.message;
+      console.log(array);
+
+      this.like = array[0].pl;
+      this.angryEmoji = array[0].ae;
+      this.cryEmoji = array[0].ce;
+      this.heartEyeEmoji = array[0].he;
+      this.laughEmoji = array[0].le;
+      this.smileEmoji = array[0].sme;
+      this.comments = array[0].pc;
     },
 
     async deletePost() {
@@ -293,6 +314,7 @@ export default {
       );
       console.log(data);
       this.getComments();
+      this.postDataChange();
       this.commentText.val = "";
     },
 

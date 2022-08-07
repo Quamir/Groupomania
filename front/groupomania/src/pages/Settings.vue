@@ -167,8 +167,8 @@
             v-model.trim="changeEmailNewEmail.val"
             @blur="clearValidity('changeEmailNewEmail')"
           />
-          <p class="validation-text" v-if="!emailMatch">
-            email accounts do not match
+          <p class="validation-text" v-if="!changeEmailEmail.isValid">
+            invalid input
           </p>
         </template>
         <template #buttons>
@@ -339,7 +339,6 @@ export default {
     async getUserData() {
       const data = await this.fetchGet("http://localhost:3000/api/user/user");
 
-      console.log(data.message);
       this.id = data.message.id;
       this.profilePicture = data.message.profile_picture;
       this.firstName = data.message.first_name;
@@ -382,19 +381,24 @@ export default {
       this.changeEmailNewEmail.isValid = this.validate(
         this.changeEmailNewEmail.val
       );
-      this.emailMatch = this.matchString(
-        this.changeEmailEmail.val,
-        this.changeEmailNewEmail.val
-      );
-
+   
       const data = await this.fetchWithBody(
         "http://localhost:3000/api/user/changeemail",
         body,
         "PATCH"
       );
 
-      router.replace({ path: "/settings" });
-      this.getUserData();
+      console.log(data);
+
+      if(data.message === 'fail'){
+        this.changeEmailEmail.isValid = false;
+      }else{
+        this.changeEmailPassword.val = '';
+        this.changeEmailNewEmail.val = '';
+
+        router.replace({ path: "/settings" });
+        this.getUserData();
+      }
     },
 
     async changePassword() {

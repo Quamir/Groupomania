@@ -147,7 +147,6 @@
 </template>
 
 <script>
-import { useRoute } from "vue-router";
 import router from "../router/index.js";
 import TheHeader from "../components/layout/TheHeader.vue";
 import render from "../mixins/render";
@@ -240,12 +239,13 @@ export default {
         body,
         "POST"
       );
-      if (data.status === "error" || data.message.status === "fail") {
+      console.log(data.message.status);
+      if (data.status === 'error' || data.message.status === 'fail') {
         this.formIsValid = false;
+      }else{
+        localStorage.setItem("token", data.message.token);
+        router.replace({ path: "/timeline" });
       }
-
-      localStorage.setItem("token", data.message.token);
-      router.replace({ path: "/timeline" });
     },
 
     onFileSelected(event) {
@@ -272,7 +272,7 @@ export default {
         return "error";
       }
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.message[1]);
       router.replace({ path: "/timeline" });
     },
   },
@@ -298,6 +298,7 @@ export default {
   height: 93vh;
   width: 100%;
   display: flex;
+  overflow: hidden;
 
   @include breakpoint-down(mobile) {
     display: unset;

@@ -95,10 +95,6 @@ class Post{
         FROM user_post AS up
         INNER JOIN user_account AS ua 
         ON up.user_id = ua.id 
-        FULL JOIN post_like AS pl 
-        ON up.id = pl.post_id
-        FULL JOIN post_comment AS pc
-        ON up.id = pc.post_id
         WHERE up.user_id = $1
         ORDER BY time_stamp DESC
         LIMIT 10
@@ -160,6 +156,8 @@ class Post{
                     SELECT * FROM shock_emoji
                     UNION 
                     SELECT * FROM smile_emoji
+                    UNION 
+                    SELECT post_comment.id, post_id, user_id FROM post_comment
                 ),
             most_interactions (post_id) AS 
                 (

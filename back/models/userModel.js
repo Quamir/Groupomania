@@ -147,17 +147,30 @@ class User{
 
         const hashedPassword = await bcrypt.hash(this.newPassword, 12);
 
-        const sql = 'UPDATE user_account SET user_password = $1 WHERE email = $2 AND user_password = $3 RETURNING*';
+        const sql = 'UPDATE user_account SET user_password = $1 WHERE email = $2 AND user_password = $3 RETURNING';
         const values = [hashedPassword, this.email, password];
         const changeUserPassword = await pool.query(sql,values);
         return changeUserPassword.rows;
     }
 
     async changeEmail(){
-        const sql = 'UPDATE user_account SET email = $1 WHERE email = $2 RETURNING email';
-        const values = [this.newEmail, this.email];
-        const changeUserEmail = await  pool.query(sql,values);
-        return changeUserEmail.rows;
+        const hashPassWordQuery = 'SELECT user_password FROM user_account WHERE email = $1'
+        const hashPassWordValues = [this.email];
+        const hashPassword = await pool.query(hashPassWordQuery, hashPassWordValues);
+        const compare = await bcrypt.compare(this.password,hashPassword.rows[0].user_password);
+
+        if(compare === true){
+            const sql = 'UPDATE user_account SET email = $1 WHERE email = $2 RETURNING email';
+            const values = [this.newEmail, this.email];
+            const changeUserEmail = await  pool.query(sql,values);
+            if(changeUserEmail.rowCount < 1){
+                return 'fail';
+            }else{
+                return changeUserEmail.rows;
+            }
+        }else{
+            return 'fail';
+        }
     }
 
     async changeName(){
